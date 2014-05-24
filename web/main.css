@@ -1,0 +1,79 @@
+html {
+  font-family: "Trebuchet MS", Helvetica, sans-serif;
+  font-size: 16px;
+}
+body {
+  width: 640px;
+  padding: 0;
+}
+h1,h2,h3,h4,h5 { color: royalblue; }
+h1 { font-size: 150%; }
+h2 { font-size: 140%; }
+h3 { font-size: 130%; }
+h4 { font-size: 120%; }
+h5 { font-size: 110%; }
+
+img#icon {
+  float: left;
+  padding: 0 5px;
+  vertical-align: center;
+}
+div#main {
+  border: 2px solid lightsteelblue;
+  padding: 3px;
+  background-color: ghostwhite; /* rgb(250, 250, 254); */
+}
+div.buttons {
+    text-align: right;
+}
+span.lb,span.rb {
+  width: 15%;
+  display: inline-block;
+  text-align: right;
+  font-weight: bold;
+  color: navy;
+}
+span.ck { color: navy; }
+input {
+  font-family: Consolas, Courier, sans-serif;
+  font-size: 120%;
+  width: 80%;
+  outline-width: 0;
+  padding: 5px;
+  border: 2px solid lightsteelblue;
+  -webkit-border-radius: 10px;
+}
+input.ck {
+  font-family: Verdana, sans-serif;
+  width: inherit;
+}
+input.pw {
+  font-family: inherit;
+  font-weight: bold;
+  font-size: 150%;
+  color: ghostwhite;
+  border: 2px solid tan;
+}
+button {
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+  color: navy;
+}
+button.st {
+  padding: 10px 20px;
+}
+button#go {
+  border: 1px solid lightblue;
+  outline-width: 0px;
+  width: 70%;
+  padding: 10px;
+  font-size: 140%;
+  color: white;
+  margin: 1em 0 1em 20%;
+  text-shadow: 1px 1px steelblue;
+  background-image: -webkit-linear-gradient(top, #a7cfdf, #23538a);
+  -webkit-border-radius: 15px;
+}
+button#go:hover {
+  background-image: -webkit-linear-gradient(top, #82bbd1, #193b61);
+}

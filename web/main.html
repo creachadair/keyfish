@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+  <title>KeyFish</title>
+  <!-- HMAC/SHA256 from https://code.google.com/p/crypto-js -->
+  <script src="code/hmac-sha256.js"></script>
+  <script src="code/password.js"></script>
+  <script src="code/ui.js"></script>
+  <link rel="stylesheet" type="text/css" href="main.css" />
+</head>
+<body onload="init()">
+
+<div id="main">
+<h1><img id="icon" src="icons/keyfish32.png" />KeyFish</h1>
+
+<form name="kf">
+  <span class="lb">Site:</span>
+    <input name="siteName" type="url" size="40" tabindex=1 />
+  <br/>
+
+  <span class="lb">Master key:</span>
+    <input name="secretKey" type="password" size="40" tabindex=2 />
+  <br/>
+
+  <span class="lb"></span>
+    <input class="ck" name="usePunct" type="checkbox"
+           tabindex=3 /><span class="ck">Use punctuation</span><br/>
+
+  <button id="go" type="button" onclick="computePassword()"
+          accesskey="g" tabindex=4>Generate Password</button><br/>
+
+  <span class="lb">Password:</span>
+    <input class="pw" name="password" type="text" size="40" value="<site password>" />
+
+  <hr/>
+
+  <span class="lb">Length:</span>
+    <input class="ck" name="pwLength" type="number" value="18" min="4" max="32"/>
+    <span class="ck">characters</span><br/>
+  <span class="lb">Salt:</span>
+    <input class="ck" name="salt" type="text" size="32" /><br />
+  <span class="lb">Format:</span>
+    <input class="ck" name="fmt" type="text" size="32" /><br />
+  <div class="buttons">
+  <button class="st" type="button" onclick="saveState()"
+          title="Save current configuration to local storage">Save</button>
+  <button class="st" type="button" onclick="clearState()"
+          title="Remove current configuration from local storage">Clear</button>
+  <button class="st" type="button" onclick="clearAllState()"
+          title="Remove all saved configurations">Reset</button>
+  </div>
+</form>
+</div>
+</body>
+</html>
