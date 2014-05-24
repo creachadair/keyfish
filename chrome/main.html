@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+<!--
+ Main pop-up UI for KeyFish.
+ Author: M. J. Fromberger <michael.j.fromberger@gmail.com>
+ -->
+<head>
+ <title>KeyFish</title>
+ <link rel="stylesheet" type="text/css" href="main.css" />
+ <!-- Implementation of HMAC over SHA256, from Google Code. -->
+ <script src="code/2.5.3-crypto-sha256-hmac.js"></script>
+
+ <script src="code/utils.js"></script>
+ <script src="code/popup.js"></script>
+ <script src="code/model.js"></script>
+ <script src="code/view.js"></script>
+</head>
+<body>
+<div id="popup">
+
+<div id="main">
+  <form name="iomain">
+    <p><span class="olabel">Site name</span><br />
+    <input type="text" name="site" size="45" tabindex="1" />
+    <select name="pick">
+    </select>
+    <button type="button" class="right" name="fill">
+    Copy URL</button></p>
+
+    <p><span class="olabel">Master key</span><br />
+    <input type="password" name="secret" size="46"
+           autofocus tabindex="2" />
+    <input class="ilabel" type="checkbox" name="show_pw" />
+      <span class="ilabel">Show password</span></p>
+  </form>
+
+  <form name="output">
+    <p><button type="button" class="button blue" name="compute"
+               tabindex="3">Generate Password</button></p>
+
+    <p><span class="olabel">Password</span><br />
+    <textarea name="result" rows="1" cols="32" readonly></textarea>
+    <br />
+    <meter style="width: 50%" id="m_entropy" min="0" max="201"
+           low="80" optimum="201">125 foo</meter>
+    <span class="ilabel" id="d_entropy"></span>
+    </p>
+
+    <p>
+      <a href="doc.html" target="_self">
+      <span style="float:left" class="clabel">Help</span></a>
+      <input class="ilabel" type="checkbox" name="show_adv" tabindex="4" />
+      <span class="ilabel">Advanced settings</span></p>
+  </form>
+
+</div><!-- #main -->
+
+<div id="adv">
+  <hr style="clear: both" />
+  <p class="slabel" id="adv_label">Advanced Settings
+  <span class="status" id="adv_status"></span></p>
+  <form name="ioadv">
+  <p>
+    <button type="button" name="savekey">Save Master</button>
+    <button type="button" name="clearkey">Clear Master</button>
+    <button type="button" name="savesite">Save Site</button>
+    <button type="button" name="clearsite">Clear Site</button>
+  </p>
+
+  <p><span class="olabel">Allowed characters</span><br />
+    <input type="checkbox" name="a_lower" checked>
+      <span class="clabel">Lowercase</span></input>
+    <input type="checkbox" name="a_upper" checked>
+      <span class="clabel">Uppercase</span></input>
+    <input type="checkbox" name="a_digit" checked>
+      <span class="clabel">Digits</span></input>
+    <input type="checkbox" name="a_punct">
+      <span class="clabel">Punctuation</span></input></p>
+
+  <p><span class="olabel">Password length</span><br />
+    <input name="passlen" type="range" min="4" max="32" value="16" />
+    <span class="clabel" id="passlen_label"></span>
+    <span class="clabel">characters</span></p>
+
+  <div style="float: left">
+    <span class="olabel">Salt value</span><br />
+    <input type="text" name="salt" size="16" />
+  </div>
+  <div>
+    <span class="olabel">Key format</span><br />
+    <input type="text" name="format" size="26" /></p>
+  </div>
+  </form>
+</div><!-- #adv -->
+
+</div><!-- #popup -->
+</body>
+</html>

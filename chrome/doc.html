@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+<head>
+  <title>KeyFish Documentation</title>
+  <link rel="stylesheet" type="text/css" href="main.css" />
+</head>
+<body class="doc">
+<div id="help">
+
+
+<p><span class="dlabel">About KeyFish</span>
+<img style="float: right" width="128" height="128" 
+     src="icons/keyfish128.png" />
+</p>
+
+<p>KeyFish allows you to generate a unique password for each web site you
+visit.  It works by combining the name of the site (usually the domain name
+shown in the location bar) with a secret password (known only to you), using
+the HMAC/SHA256 algorithm.</p>
+
+<p>The output of the algorithm is turned into a password by mapping each byte
+of the HMAC value to a letter, digit, or punctuation mark.  Changing the name
+of the site or the secret password will change the password you get.</p>
+
+<ul class="doc">
+ <li><strong>Site</strong>. The name of the site to create a password for.
+ When you open KeyFish, it copies the domain name from the location bar, but
+ you may type anything you want.  Choose a saved site from the menu just below,
+ or select <strong>Copy URL</strong> to copy the URL from the browser's
+ location bar.</li>
+
+ <li><strong>Master Key</strong>. This is where you enter your secret password.
+ The password can be the same for many different sites, but should never be shared
+ with anybody else.  Enable <i>Show Password</i> if you want to see what you typed.
+ </li>
+
+ <li><strong>Password</strong>. When you click <strong>Generate Password</strong>,
+ the result is copied to this field, and also to the clipboard.</li>
+</ul>
+
+<p><span class="dlabel">Advanced Settings</span></p>
+
+<p>By default, KeyFish generates a long password using a mix of letters and
+digits.  
+
+Some sites have special password rules that don't work with the default
+settings, however.  If a site does not like the password KeyFish gave you,
+click open the <i>Advanced Settings</i> window.</p>
+
+<ul class="doc">
+  <li><strong>Allowed Characters</strong>. Select what kinds of characters you
+  would like KeyFish to use in its passwords.</li>
+
+  <li><strong>Password Length</strong>. Select how many characters you would like
+  KeyFish to use in each password.</li>
+
+  <li><strong>Salt</strong>. An extra value added to the site name.  This will
+  change the password you get for a given site and master key.  You can usually
+  leave this blank.</li>
+
+  <li><strong>Key Format</strong>. For sites with very picky password rules,
+  you can enter a password format here.  Use "A" to choose an uppercase letter,
+  "a" to choose a lowercase letter, "*" to choose an arbitrary letter of either
+  case, "?" to choose a punctuation mark, "1" to choose a digit, <i>e.g.,</i>
+  "Aaa11?**11".  To construct a password, KeyFish replaces these with
+  characters of the specified kind based on the site name and secret key.  You
+  can usually leave this blank.</li>
+</ul>
+
+<p>You can choose <strong>Save Site</strong> to save your advanced settings for
+a particular site, or <strong>Clear Site</strong> to delete your saved settings
+for that site.</p>
+
+<p>To change the default settings, click <strong>Save Site</strong> when the
+Site field is empty.</p>
+
+</div>
+</body>
+</html>
