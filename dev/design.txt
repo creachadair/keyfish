@@ -1,0 +1,61 @@
+Password creator
+
+type secret = bytes
+
+type passphrase = string
+
+type formatter = secret -> passphrase
+  A formatter renders a secret into printable format for use as a passphrase.
+
+type generator = (address, seed) -> secret
+  A generator combines an address and a seed to produce a secret.
+
+Operation:
+ formatter(generator(address, seed)) ==> passphrase
+
+Notes:
+1. The seed may be random, or may depend on the login name, e.g.,
+   seed = hash(random | id).  The seed may be stored as configuration.
+
+2. The address needs to be normalized somehow; for a URL, the query and 
+   any fragments should be stripped off.  What about the path?
+
+3. There need to be rules for formatting.
+   a. Length restrictions (>= 6 characters, < 8 characters).
+   b. Composition rules (at least one letter, letters/digits, punctuation).
+   c. Character set (letters, digits, spaces, punctuation).
+
+Top-level interface:
+   password_for(site_key, master_secret) ==> "<password>"
+
+Configurations:
+ - Length of output password (characters).
+ - Limitations on password alphabet.
+ - Index number for password.
+
+-- Alphabet
+
+Passwords will be written in printable ASCII characters only.  The alphabets
+include upper and lower case letters (26 each), the ten decimal digits (10),
+the "safe" punctuation (17)
+
+The punctuation marks considered "safe" are:
+ ! @ # $ % ^ & * - _ = + , . : / ?
+
+Notably, no string quotes, parentheses, brackets, semi-colons, or other items
+that are syntactic structure markers in common programming languages, and thus
+might run into escaping or validation rules.
+
+-- Length
+
+Each password should be as long as is allowed by the site.  Sometimes it's hard
+to know in advance what a site will allow, so length will be a parameter with a
+default value.
+
+-- Index
+
+To allow passwords to change over time, each site password will incorporate an
+index label, which acts as a salt for the hashing algorithm.  The default will
+be the string consisting of the single character "1" and can be replaced by the
+user to get a new password for the same site settings at any time.
+

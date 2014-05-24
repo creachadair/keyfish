@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+<head>
+  <title>Menu Exploration</title>
+<script type="text/javascript">
+function updatePicked() {
+  var t = document.getElementById("pick")
+  t.innerText = document.forms.test.item.value
+}
+</script>
+</head>
+<body>
+
+<form name="test">
+ <select name="item" onchange="updatePicked()">
+   <option value="?"></option>
+   <option value="a">Apple</option>
+   <option value="b">Banana</option>
+   <option value="c">Cherry</option>
+   <option value="d">Durian</option>
+ </select>
+ <meter id="peter" min="1" max="20"></meter>
+ <progress value="12.5" max="30">Whoa</progress>
+ <input name="pw" type="password" size="32" />
+</form>
+<p><strong>Last chosen:</strong> <span id="pick">(none)</span></p> 
+</body>
+</html>
