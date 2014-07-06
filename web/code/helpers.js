@@ -25,7 +25,7 @@ function modifySettings(fn) {
 }
 
 // Fetch the named setting.
-function getSetting(key) {
+function loadSetting(key) {
     var value = undefined;
     modifySettings(function (settings) {
 	value = settings[key];

@@ -3,7 +3,7 @@
 function init() {
     var kf = document.forms.kf;
 
-    showAdvanced(getSetting("adv"));
+    showAdvanced(loadSetting("adv"));
 
     // Populate input fields from the query, if possible.
     // If not, fall back to local storage if available.
