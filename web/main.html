@@ -31,13 +31,6 @@
   <button class="gen" id="go" type="button" onclick="uiComputePassword()"
           accesskey="g" tabindex=3>Generate Password</button></span>
 
-  <input class="ck" name="usePunct" type="checkbox"
-         tabindex=4 /><span class="lb">Use punctuation</span>
-  <span class="rb">Length:</span>
-    <input class="len" name="pwLength" type="number"
-           value="18" min="4" max="32" tabindex=5 />
-    <span class="tag">characters</span>
-
   <span class="bar">
   <span class="lb">Password:</span>
     <input class="pw" name="password" type="text" size="40" value="<site password>" />
@@ -52,13 +45,22 @@
   <div id="adv">
   <hr/>
 
-  <span class="bar">
-  <span class="lb">Format:</span>
-    <input name="fmt" type="text" size="40" tabindex=6 /></span>
+  <input class="ck" name="usePunct" type="checkbox"
+         tabindex=4 /><span class="lb">Use punctuation</span>
+  <span class="rb">Length:</span>
+    <input class="len" name="pwLength" type="number"
+           value="18" min="4" max="32" tabindex=5 />
+    <span class="tag">characters</span>
 
   <span class="bar">
   <span class="lb">Salt:</span>
-    <input name="salt" type="text" size="40" tabindex=7 /></span>
+    <input name="salt" type="text" size="40" tabindex=7 />
+  </span>
+
+  <span class="bar">
+  <span class="lb">Format:</span>
+    <input name="fmt" type="text" size="40" tabindex=6 />
+  </span>
 
   <span class="bar">
   <button id="ssbtn" class="st" type="button" onclick="uiSaveState()"
