@@ -8,7 +8,7 @@ function init() {
     // Populate input fields from the query, if possible.
     // If not, fall back to local storage if available.
     var q = stateFromQuery();
-    var s = loadState(q.s || "");
+    var s = loadState(q.s) || loadState("") || currentState();
     setState(q, s);
 
     // If we have enough information to generate a password, do it.
@@ -97,33 +97,33 @@ function modifyState(fn) {
 function setState(s, fb) {
     var kf = document.forms.kf;
 
-    kf.siteName.value   = s.s || (fb && fb.s);
-    kf.secretKey.value  = s.p || (fb && fb.p);
-    kf.pwLength.value   = s.n || (fb && fb.n);
-    kf.salt.value       = s.t || (fb && fb.t);
-    kf.fmt.value        = s.f || (fb && fb.f);
-    kf.usePunct.checked = s.u || (fb && fb.u);
+    kf.siteName.value   = s.s || fb.s;
+    kf.pwLength.value   = s.n || fb.n;
+    kf.salt.value       = s.t || fb.t;
+    kf.fmt.value        = s.f || fb.f;
+    kf.usePunct.checked = s.u || fb.u;
 
     kf.password.value = "";
 }
 
+
+// Save the current state in local storage.
+function uiSaveState(state) { saveState(currentState()); }
+
 // Capture the savable state in local storage.
-function uiSaveState(state) {
-    if (state == null) {
-	state = currentState();
-    }
+function saveState(state) {
     modifyState(function (sites) {
 	sites[state.s || ""] = state;
 	return true;
     });
 }
 
-var defaultState =  {s:"", p:"", n:18, t:"", f:"", u:false};
+var defaultState =  {s:"", n:18, t:"", f:"", u:false};
 
 // Load and return a state object for key from local storage.
 // Returns defaultState if no state is found for that key.
 function loadState(key) {
-    var pod = defaultState;
+    var pod = undefined;
     modifyState(function (sites) {
 	if (key in sites) {
 	    pod = sites[key];
@@ -133,12 +133,9 @@ function loadState(key) {
     return pod;
 }
 
-// Purge saved state from local storage under the given key.
-// The site name from the current state is used if key is not given.
-function uiClearState(key) {
-    if (key == null) {
-	key = currentState().s;
-    }
+// Purge saved state from local storage under the current key.
+function uiClearState() {
+    var key = currentState().s;
     modifyState(function (sites) {
 	delete sites[key];
 	return true;
@@ -160,7 +157,6 @@ function currentState() {
     var kf = document.forms.kf;
     return {
 	s: kf.siteName.value,
-	p: kf.secretKey.value,
 	n: parseInt(kf.pwLength.value),
 	t: kf.salt.value,
 	u: kf.usePunct.checked,
@@ -181,8 +177,10 @@ function stateFromQuery() {
 	if (eq > 0) {
 	    key = raw[i].substr(0, eq);
 	    val = decodeURIComponent(raw[i].substr(eq+1));
-	}
-	q[key] = val || true;
+	} else {
+            val = true;
+        }
+	q[key] = val;
     }
     return q;
 }
@@ -208,5 +206,5 @@ function uiToggleVis() {
 // values and, if so, update the rest of the state accordingly.
 function uiSiteChanged() {
     var site = document.forms.kf.siteName.value;
-    setState(loadState(site), currentState());
+    setState(loadState(site) || currentState(), defaultState);
 }
