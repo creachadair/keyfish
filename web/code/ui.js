@@ -116,3 +116,14 @@ function stateFromQuery() {
     }
     return q;
 }
+
+// Toggle the visibility of the "advanced" controls.
+function toggleVis() {
+    var div = document.getElementById("adv");
+    var vis = div.style.display;
+    if (vis == "block") {
+      div.style.display = "none";
+    } else {
+      div.style.display = "block";
+    }
+}

@@ -14,41 +14,56 @@
 <h1><img id="icon" src="icons/keyfish32.png" />KeyFish</h1>
 
 <form name="kf">
+  <span class="bar">
   <span class="lb">Site:</span>
     <input name="siteName" type="url" size="40" tabindex=1 />
-  <br/>
+  <br/></span>
 
+  <span class="bar">
   <span class="lb">Master key:</span>
     <input name="secretKey" type="password" size="40" tabindex=2 />
+  <br/></span>
+
+  <span class="bar">
+  <button class="gen" id="go" type="button" onclick="computePassword()"
+          accesskey="g" tabindex=3>Generate Password</button></span>
+
+  <input class="ck" name="usePunct" type="checkbox"
+         tabindex=4 /><span class="lb">Use punctuation</span>
+  <span class="rb">Length:</span>
+    <input class="len" name="pwLength" type="number"
+           value="18" min="4" max="32" tabindex=5 />
+    <span class="ck">characters</span>
   <br/>
 
-  <span class="lb"></span>
-    <input class="ck" name="usePunct" type="checkbox"
-           tabindex=3 /><span class="ck">Use punctuation</span><br/>
-
-  <button id="go" type="button" onclick="computePassword()"
-          accesskey="g" tabindex=4>Generate Password</button><br/>
-
+  <span class="bar">
   <span class="lb">Password:</span>
     <input class="pw" name="password" type="text" size="40" value="<site password>" />
+  </span>
 
+  <button class="adv" type="button" tabindex="-1" onclick="toggleVis()">Advanced</button>
+
+  <!-- Advanced controls, not commonly needed -->
+  <div id="adv">
   <hr/>
 
-  <span class="lb">Length:</span>
-    <input class="ck" name="pwLength" type="number" value="18" min="4" max="32"/>
-    <span class="ck">characters</span><br/>
-  <span class="lb">Salt:</span>
-    <input class="ck" name="salt" type="text" size="32" /><br />
+  <span class="bar">
   <span class="lb">Format:</span>
-    <input class="ck" name="fmt" type="text" size="32" /><br />
-  <div class="buttons">
+    <input name="fmt" type="text" size="40" tabindex=6 /><br /></span>
+
+  <span class="bar">
+  <span class="lb">Salt:</span>
+    <input name="salt" type="text" size="40" tabindex=7 /><br /></span>
+
+  <span class="bar">
   <button class="st" type="button" onclick="saveState()"
-          title="Save current configuration to local storage">Save</button>
+          title="Save current configuration to local storage">Save Site</button>
   <button class="st" type="button" onclick="clearState()"
-          title="Remove current configuration from local storage">Clear</button>
+          title="Remove current configuration from local storage">Clear Site</button>
   <button class="st" type="button" onclick="clearAllState()"
-          title="Remove all saved configurations">Reset</button>
+          title="Remove all saved configurations">Reset All</button></span>
   </div>
+
 </form>
 </div>
 </body>
