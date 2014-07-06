@@ -20,12 +20,12 @@
     <input name="siteName" type="text" size="40" tabindex=1
            list="sitelist" onchange="uiSiteChanged()" />
     <datalist id="sitelist"></datalist>
-  <br/></span>
+  </span>
 
   <span class="bar">
   <span class="lb">Master key:</span>
     <input name="secretKey" type="password" size="40" tabindex=2 />
-  <br/></span>
+  </span>
 
   <span class="bar">
   <button class="gen" id="go" type="button" onclick="uiComputePassword()"
@@ -37,7 +37,6 @@
     <input class="len" name="pwLength" type="number"
            value="18" min="4" max="32" tabindex=5 />
     <span class="tag">characters</span>
-  <br/>
 
   <span class="bar">
   <span class="lb">Password:</span>
@@ -55,17 +54,17 @@
 
   <span class="bar">
   <span class="lb">Format:</span>
-    <input name="fmt" type="text" size="40" tabindex=6 /><br /></span>
+    <input name="fmt" type="text" size="40" tabindex=6 /></span>
 
   <span class="bar">
   <span class="lb">Salt:</span>
-    <input name="salt" type="text" size="40" tabindex=7 /><br /></span>
+    <input name="salt" type="text" size="40" tabindex=7 /></span>
 
   <span class="bar">
-  <button class="st" type="button" onclick="uiSaveState()"
-          title="Save current configuration to local storage">Save Site</button>
-  <button class="st" type="button" onclick="uiClearState()"
-          title="Remove current configuration from local storage">Clear Site</button>
+  <button id="ssbtn" class="st" type="button" onclick="uiSaveState()"
+          title="Save current configuration to local storage">Save Defaults</button>
+  <button id="csbtn" class="st" type="button" onclick="uiClearState()"
+          title="Remove current configuration from local storage">Clear Defaults</button>
   <button class="st" type="button" onclick="uiClearAllState()"
           title="Remove all saved configurations">Reset All</button></span>
   </div>
