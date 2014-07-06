@@ -16,7 +16,8 @@
 <form name="kf">
   <span class="bar">
   <span class="lb">Site:</span>
-    <input name="siteName" type="url" size="40" tabindex=1 />
+    <input name="siteName" type="url" size="40" tabindex=1
+           onchange="uiSiteChanged()" />
   <br/></span>
 
   <span class="bar">
@@ -25,7 +26,7 @@
   <br/></span>
 
   <span class="bar">
-  <button class="gen" id="go" type="button" onclick="computePassword()"
+  <button class="gen" id="go" type="button" onclick="uiComputePassword()"
           accesskey="g" tabindex=3>Generate Password</button></span>
 
   <input class="ck" name="usePunct" type="checkbox"
@@ -33,7 +34,7 @@
   <span class="rb">Length:</span>
     <input class="len" name="pwLength" type="number"
            value="18" min="4" max="32" tabindex=5 />
-    <span class="ck">characters</span>
+    <span class="tag">characters</span>
   <br/>
 
   <span class="bar">
@@ -41,7 +42,10 @@
     <input class="pw" name="password" type="text" size="40" value="<site password>" />
   </span>
 
-  <button class="adv" type="button" tabindex="-1" onclick="toggleVis()">Advanced</button>
+  <span class="rbar">
+  <button class="adv" type="button" tabindex="-1"
+          onclick="uiToggleVis()">Advanced</button>
+  </span>
 
   <!-- Advanced controls, not commonly needed -->
   <div id="adv">
@@ -56,11 +60,11 @@
     <input name="salt" type="text" size="40" tabindex=7 /><br /></span>
 
   <span class="bar">
-  <button class="st" type="button" onclick="saveState()"
+  <button class="st" type="button" onclick="uiSaveState()"
           title="Save current configuration to local storage">Save Site</button>
-  <button class="st" type="button" onclick="clearState()"
+  <button class="st" type="button" onclick="uiClearState()"
           title="Remove current configuration from local storage">Clear Site</button>
-  <button class="st" type="button" onclick="clearAllState()"
+  <button class="st" type="button" onclick="uiClearAllState()"
           title="Remove all saved configurations">Reset All</button></span>
   </div>
 

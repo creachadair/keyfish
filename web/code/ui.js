@@ -3,21 +3,17 @@
 function init() {
     var kf = document.forms.kf;
 
+    showAdvanced(getSetting("adv"));
+
     // Populate input fields from the query, if possible.
     // If not, fall back to local storage if available.
     var q = stateFromQuery();
-    var s = loadState(q.s);
-
-    kf.siteName.value   = q.s || s.s;
-    kf.secretKey.value  = q.p || s.p;
-    kf.pwLength.value   = q.n || s.n;
-    kf.salt.value       = q.t || s.t;
-    kf.fmt.value        = q.f || s.f;
-    kf.usePunct.checked = q.u || s.u;
+    var s = loadState(q.s || "");
+    setState(q, s);
 
     // If we have enough information to generate a password, do it.
     if (kf.siteName.value && kf.secretKey.value) {
-	computePassword();
+	uiComputePassword();
     } else if (kf.siteName.value) {
 	kf.secretKey.focus();
     } else {
@@ -27,7 +23,7 @@ function init() {
 
 // Compute the password from the current settings and store it into the output
 // text field.
-function computePassword() {
+function uiComputePassword() {
     var kf = document.forms.kf;
     var site = kf.siteName.value;
     var fmt = kf.fmt.value;
@@ -54,13 +50,72 @@ function computePassword() {
     kf.password.select();
 }
 
+// Apply fn to the current settings data.  If fn returns true, the modified
+// value is written back; otherwise not.
+function modifySettings(fn) {
+    var settings = {};
+    if ("settings" in window.localStorage) {
+	settings = JSON.parse(window.localStorage.settings);
+    }
+    if (fn(settings)) {
+	window.localStorage.setItem("settings", JSON.stringify(settings));
+    }
+}
+
+// Fetch the named setting.
+function getSetting(key) {
+    var value = undefined;
+    modifySettings(function (settings) {
+	value = settings[key];
+	return false;
+    });
+    return value;
+}
+
+// Store the named setting.
+function storeSetting(key, val) {
+    modifySettings(function (settings) {
+	settings[key] = val;
+	return true;
+    });
+}
+
+// Apply fn to the current saved sites data.  If fn returns true, the modified
+// value is written back; otherwise not.
+function modifyState(fn) {
+    var sites = {};
+    if ("sites" in window.localStorage) {
+	sites = JSON.parse(window.localStorage.sites);
+    }
+    if (fn(sites)) {
+	window.localStorage.setItem("sites", JSON.stringify(sites));
+    }
+}
+
+// Set the current state of the UI to the given values.  If a field value is
+// not present in s, but is present in fb, the value from fb is used.
+function setState(s, fb) {
+    var kf = document.forms.kf;
+
+    kf.siteName.value   = s.s || (fb && fb.s);
+    kf.secretKey.value  = s.p || (fb && fb.p);
+    kf.pwLength.value   = s.n || (fb && fb.n);
+    kf.salt.value       = s.t || (fb && fb.t);
+    kf.fmt.value        = s.f || (fb && fb.f);
+    kf.usePunct.checked = s.u || (fb && fb.u);
+
+    kf.password.value = "";
+}
+
 // Capture the savable state in local storage.
-function saveState(state) {
+function uiSaveState(state) {
     if (state == null) {
 	state = currentState();
     }
-    var key = state.s || "";
-    window.localStorage.setItem(key, JSON.stringify(state));
+    modifyState(function (sites) {
+	sites[state.s || ""] = state;
+	return true;
+    });
 }
 
 var defaultState =  {s:"", p:"", n:18, t:"", f:"", u:false};
@@ -68,22 +123,37 @@ var defaultState =  {s:"", p:"", n:18, t:"", f:"", u:false};
 // Load and return a state object for key from local storage.
 // Returns defaultState if no state is found for that key.
 function loadState(key) {
-    var pod = window.localStorage.getItem(key || "");
-    if (!pod) { return defaultState; }
-    return JSON.parse(pod);
+    var pod = defaultState;
+    modifyState(function (sites) {
+	if (key in sites) {
+	    pod = sites[key];
+	}
+	return false;
+    });
+    return pod;
 }
 
 // Purge saved state from local storage under the given key.
 // The site name from the current state is used if key is not given.
-function clearState(key) {
+function uiClearState(key) {
     if (key == null) {
 	key = currentState().s;
     }
-    window.localStorage.removeItem(key);
+    modifyState(function (sites) {
+	delete sites[key];
+	return true;
+    });
 }
 
 // Purge all saved state from local storage.
-function clearAllState() { window.localStorage.clear(); window.location.reload(); }
+function uiClearAllState() {
+    modifyState(function (sites) {
+	for (var key in sites) {
+	    delete sites[key];
+	}
+	return true;
+    });
+}
 
 // Returns an object capturing the current state of the UI.
 function currentState() {
@@ -117,13 +187,26 @@ function stateFromQuery() {
     return q;
 }
 
-// Toggle the visibility of the "advanced" controls.
-function toggleVis() {
+// Set the visibility of the "advanced" controls.
+function showAdvanced(tf) {
     var div = document.getElementById("adv");
-    var vis = div.style.display;
-    if (vis == "block") {
-      div.style.display = "none";
+    if (tf) {
+	div.style.display = "block";
     } else {
-      div.style.display = "block";
+	div.style.display = "none";
     }
+}
+
+// Toggle the visibility of the "advanced" controls.
+function uiToggleVis() {
+    var vis = document.getElementById("adv").style.display != "block";
+    showAdvanced(vis);
+    storeSetting("adv", vis);
+}
+
+// Check whether the current site name corresponds to one of the saved state
+// values and, if so, update the rest of the state accordingly.
+function uiSiteChanged() {
+    var site = document.forms.kf.siteName.value;
+    setState(loadState(site), currentState());
 }
