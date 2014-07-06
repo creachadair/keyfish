@@ -5,6 +5,7 @@
   <!-- HMAC/SHA256 from https://code.google.com/p/crypto-js -->
   <script src="code/hmac-sha256.js"></script>
   <script src="code/password.js"></script>
+  <script src="code/helpers.js"></script>
   <script src="code/ui.js"></script>
   <link rel="stylesheet" type="text/css" href="main.css" />
 </head>
@@ -16,7 +17,7 @@
 <form name="kf">
   <span class="bar">
   <span class="lb">Site:</span>
-    <input name="siteName" type="url" size="40" tabindex=1
+    <input name="siteName" type="text" size="40" tabindex=1
            list="sitelist" onchange="uiSiteChanged()" />
     <datalist id="sitelist"></datalist>
   <br/></span>
