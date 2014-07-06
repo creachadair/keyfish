@@ -75,7 +75,7 @@ function uiClearState() {
 }
 
 // Purge all saved state from local storage.
-// Click handler for the "Reset All" button.
+// Click handler for the "Clear All" button.
 function uiClearAllState() {
     modifyState(function (sites) {
 	for (var key in sites) {
