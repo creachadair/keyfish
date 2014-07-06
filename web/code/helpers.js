@@ -8,6 +8,11 @@
 // Each key represents a site name, with "" denoting the default settings.
 // The value is an object with keys:
 //   s=sitename, u=usepunct, n=length, t=salt, f=format
+//
+// Secret keys are saved as a JSON object under the name "keys".  Each key
+// represents a user name, with "" denoting the default setting.  The value is
+// the obfuscated secret key (obfuscation is just encoding with base64, and is
+// not a security measure).
 
 // The default state values used when nothing is found in local storage.
 var defaultState =  {s:"", n:18, t:"", f:"", u:false};
@@ -38,6 +43,44 @@ function loadSetting(key) {
 function storeSetting(key, val) {
     modifySettings(function (settings) {
 	settings[key] = val;
+	return true;
+    });
+}
+
+// Apply fn to the current keys data.  If fn returns true, the modified value
+// is written back; otherwise not.
+function modifyKeys(fn) {
+    var keys = {};
+    if ("keys" in window.localStorage) {
+	keys = JSON.parse(window.localStorage.keys);
+    }
+    if (fn(keys)) {
+	window.localStorage.setItem("keys", JSON.stringify(keys));
+    }
+}
+
+// Fetch and de-obfuscate the key for the named user.
+function loadKey(user) {
+    var value = undefined;
+    modifyKeys(function (keys) {
+	value = keys[user];
+	return false;
+    });
+    return value && deobfuscateKey(value);
+}
+
+// Obfuscate and store the given key for the specified user.
+function storeKey(user, key) {
+    modifyKeys(function (keys) {
+	keys[user] = obfuscateKey(key);
+	return true;
+    });
+}
+
+// Remove the key for the specified user.
+function removeKey(user) {
+    modifyKeys(function (keys) {
+	delete keys[user];
 	return true;
     });
 }
@@ -151,5 +194,18 @@ function updateStateButtons(site) {
     } else {
 	document.getElementById("ssbtn").firstChild.nodeValue = 'Save "'+site+'"';
 	document.getElementById("csbtn").firstChild.nodeValue = 'Clear "'+site+'"';
+    }
+}
+
+// Insecurely obfuscate a secret key for recording in local storage.
+function obfuscateKey(key) { return btoa(key); }
+
+// Reverse the obfuscation performed by obfuscateKey.
+function deobfuscateKey(key) { return atob(key); }
+
+// Remove all the children from the given tag.
+function removeKids(tag) {
+    while (tag.firstChild) {
+	tag.removeChild(tag.firstChild);
     }
 }

@@ -54,6 +54,7 @@ input.pw {
   border: 0.15rem solid tan;
 }
 
+button { color: navy; }
 button.gen { width: inherit; }
 button.st { width: 32.6%; }
 button.st,button.gen {

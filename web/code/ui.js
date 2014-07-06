@@ -11,6 +11,12 @@ function init() {
     var s = loadState(q.s) || loadState("") || currentState();
     setState(q, s);
     uiUpdateSiteList();
+    uiUpdateKeysMenu();
+    var u = loadSetting("username");
+    if (u != undefined) {
+	kf.userName.value = u
+    }
+    uiUpdateSecret();
     updateStateButtons(kf.siteName.value);
 
     // If we have enough information to generate a password, do it.
@@ -88,16 +94,67 @@ function uiToggleVis() {
 function uiSiteChanged() {
     var site = document.forms.kf.siteName.value;
     setState(loadState(site) || currentState(), defaultState);
+    updateStateButtons(site);
 }
 
 // Update the data list used by the siteName field.
 function uiUpdateSiteList() {
     var list = document.getElementById("sitelist");
-    while (list.firstChild) {
-	list.removeChild(list.firstChild);
-    }
+    removeKids(list);
     var names = loadSiteNames();
     for (var i in names) {
 	list.appendChild(new Option(names[i]));
     }
+}
+
+// Update the user keys menu.
+function uiUpdateKeysMenu() {
+    var menu = document.forms.kf.userName;
+    removeKids(menu);
+    modifyKeys(function (keys) {
+	var names = Object.keys(keys);
+	names.sort();
+	for (var i in names) {
+	    menu.appendChild(new Option(names[i]));
+	}
+	return false;
+    });
+}
+
+// Populate the secret key from the selected user value, if any.
+function uiUpdateSecret() {
+    var kf = document.forms.kf;
+    var key = loadKey(kf.userName.value);
+    if (key == undefined) {
+	kf.secretKey.value = "";
+    } else {
+	kf.secretKey.value = key;
+    }
+}
+
+// Update the various state settings in response to a change in the user menu.
+function uiUserChanged() {
+    uiUpdateSecret();
+    storeSetting("username", document.forms.kf.userName.value);
+}
+
+// Save the current master key under a (possibly new) username.
+function uiSaveMaster() {
+    var kf = document.forms.kf;
+    var user = prompt("Enter the username to save this key for",
+		      kf.userName.value);
+    if (user == null) {
+	return;
+    }
+    storeKey(user, kf.secretKey.value);
+    storeSetting("username", user);
+    uiUpdateKeysMenu();
+}
+
+// Clear the master key belonging to the currently-selected user.
+function uiClearMaster() {
+    var user = document.forms.kf.userName.value;
+    removeKey(user);
+    uiUpdateKeysMenu();
+    uiUserChanged();
 }
