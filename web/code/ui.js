@@ -1,5 +1,4 @@
-// One-time initialization for the main UI.
-// Invoke from body.onload.
+// One-time initialization for the main UI.  Invoke from body.onload.
 function init() {
     var kf = document.forms.kf;
 
@@ -10,6 +9,8 @@ function init() {
     var q = stateFromQuery();
     var s = loadState(q.s) || loadState("") || currentState();
     setState(q, s);
+
+    // Update various UI components based on saved state.
     uiUpdateSiteList();
     uiUpdateKeysMenu();
     var u = loadSetting("username");
@@ -31,6 +32,7 @@ function init() {
 
 // Compute the password from the current settings and store it into the output
 // text field.
+// Click handler for the "Generate" button.
 function uiComputePassword() {
     var kf = document.forms.kf;
     var site = kf.siteName.value;
@@ -59,11 +61,11 @@ function uiComputePassword() {
 }
 
 // Save the current state in local storage.
-function uiSaveState(state) { 
-    saveState(currentState()); 
-}
+// Click handler for the "Save Defaults/Site" button.
+function uiSaveState() { saveState(currentState()); }
 
 // Purge saved state from local storage under the current key.
+// Click handler for the "Clear Defaults/Site" button.
 function uiClearState() {
     var key = currentState().s;
     modifyState(function (sites) {
@@ -73,6 +75,7 @@ function uiClearState() {
 }
 
 // Purge all saved state from local storage.
+// Click handler for the "Reset All" button.
 function uiClearAllState() {
     modifyState(function (sites) {
 	for (var key in sites) {
@@ -83,6 +86,7 @@ function uiClearAllState() {
 }
 
 // Toggle the visibility of the "advanced" controls.
+// Click handler for the "Advanced" button.
 function uiToggleVis() {
     var vis = document.getElementById("adv").style.display != "block";
     showAdvanced(vis);
@@ -91,6 +95,7 @@ function uiToggleVis() {
 
 // Check whether the current site name corresponds to one of the saved state
 // values and, if so, update the rest of the state accordingly.
+// Change handler for the site name field.
 function uiSiteChanged() {
     var site = document.forms.kf.siteName.value;
     setState(loadState(site) || currentState(), defaultState);
@@ -133,12 +138,14 @@ function uiUpdateSecret() {
 }
 
 // Update the various state settings in response to a change in the user menu.
+// Change handler for the user name menu.
 function uiUserChanged() {
     uiUpdateSecret();
     storeSetting("username", document.forms.kf.userName.value);
 }
 
 // Save the current master key under a (possibly new) username.
+// Click handler for the "Save Master Key" button.
 function uiSaveMaster() {
     var kf = document.forms.kf;
     var user = prompt("Enter the username to save this key for",
@@ -152,6 +159,7 @@ function uiSaveMaster() {
 }
 
 // Clear the master key belonging to the currently-selected user.
+// Click handler for the "Clear Master Key" button.
 function uiClearMaster() {
     var user = document.forms.kf.userName.value;
     removeKey(user);
