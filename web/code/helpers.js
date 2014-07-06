@@ -142,3 +142,14 @@ function loadSiteNames() {
     names.sort();
     return names;
 }
+
+// Update the text on the state buttons to reflect the value of site.
+function updateStateButtons(site) {
+    if (site == "") {
+	document.getElementById("ssbtn").firstChild.nodeValue = "Save Defaults";
+	document.getElementById("csbtn").firstChild.nodeValue = "Clear Defaults";
+    } else {
+	document.getElementById("ssbtn").firstChild.nodeValue = 'Save "'+site+'"';
+	document.getElementById("csbtn").firstChild.nodeValue = 'Clear "'+site+'"';
+    }
+}

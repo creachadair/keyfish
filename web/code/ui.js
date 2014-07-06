@@ -11,6 +11,7 @@ function init() {
     var s = loadState(q.s) || loadState("") || currentState();
     setState(q, s);
     uiUpdateSiteList();
+    updateStateButtons(kf.siteName.value);
 
     // If we have enough information to generate a password, do it.
     if (kf.siteName.value && kf.secretKey.value) {
