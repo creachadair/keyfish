@@ -1,9 +1,13 @@
 {
     "name": "KeyFish",
     "description": "Local password management tool.",
-    "version": "0.997",
+    "version": "0.998",
     "manifest_version": 2,
-    "icons": { "128": "icons/keyfish128.png" },
+    "icons": {
+	"128": "icons/keyfish128.png",
+	"32": "icons/keyfish32.png",
+	"19": "icons/keyfish19.png"
+    },
     "permissions": [
 	"tabs",
 	"http://*/*",
