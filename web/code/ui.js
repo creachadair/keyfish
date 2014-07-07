@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (typeof chrome != 'undefined') {
 	document.body.style.minWidth = "380px";
     }
-    init()
+    init();
 }, false);
 
 // Compute the password from the current settings and store it into the output

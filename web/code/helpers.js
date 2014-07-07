@@ -209,3 +209,27 @@ function removeKids(tag) {
 	tag.removeChild(tag.firstChild);
     }
 }
+
+// Make a good-faith effort to extract a URL from the browser.
+// Returns "" if that is impossible.
+function getBrowserURL() {
+    if (typeof chrome == 'undefined' || chrome.tabs == null) {
+	return location.hostname || location.pathname;
+    }
+    var url = "";
+    chrome.tabs.getSelected(null, function (tab) {
+	var site = tab.url, parsed;
+	console.log("SITE: "+site);
+	try {
+	    parsed = new URL(site);
+	} catch (err) {
+	    console.log("Invalid tab URL: "+site);
+	    return;
+	}
+	console.log("URL: "+parsed);
+	if (parsed.protocol != "chrome:") {
+	    url = parsed.hostname || parsed.path;
+	}
+    });
+    return url.trim();
+}
