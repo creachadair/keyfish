@@ -17,8 +17,7 @@
 <form name="kf">
   <span class="bar">
   <span class="lb">Site:</span>
-    <input name="siteName" type="url" size="40" tabindex=1
-           list="sitelist" onchange="uiSiteChanged()" />
+    <input name="siteName" type="url" size="40" tabindex=1 list="sitelist" />
     <datalist id="sitelist"></datalist>
   </span>
 
@@ -28,7 +27,7 @@
   </span>
 
   <span class="bar">
-  <button class="gen" id="go" type="button" onclick="uiComputePassword()"
+  <button class="gen" id="go" type="button"
           accesskey="g" tabindex=3>Generate Password</button></span>
 
   <span class="bar">
@@ -37,8 +36,7 @@
   </span>
 
   <span class="rbar">
-  <button class="adv" type="button" tabindex="-1"
-          onclick="uiToggleVis()">Advanced</button>
+  <button class="adv" id="advbtn" type="button" tabindex="-1">Advanced</button>
   </span>
 
   <!-- Advanced controls, not commonly needed -->
@@ -47,10 +45,10 @@
 
   <div id="user">
   <span class="lb">User:</span>
-    <select name="userName" onchange="uiUserChanged()"></select>
-  <button class="adv" type="button" tabindex="-1" onclick="uiSaveMaster()">
+    <select name="userName"></select>
+  <button class="adv" id="sm" type="button" tabindex="-1">
     Save Master Key</button>
-  <button class="adv" type="button" tabindex="-1" onclick="uiClearMaster()">
+  <button class="adv" id="cm" type="button" tabindex="-1">
     Clear Master Key</button>
   </div>
 
@@ -74,11 +72,11 @@
   </span>
 
   <span class="bar">
-  <button id="ssbtn" class="st" type="button" onclick="uiSaveState()"
+  <button id="ssbtn" class="st" type="button"
           title="Save current configuration to local storage">Save Defaults</button>
-  <button id="csbtn" class="st" type="button" onclick="uiClearState()"
+  <button id="csbtn" class="st" type="button"
           title="Remove current configuration from local storage">Clear Defaults</button>
-  <button class="st" type="button" onclick="uiClearAllState()"
+  <button id="cabtn" class="st" type="button"
           title="Remove all saved site configurations">Clear All</button></span>
   </div>
 

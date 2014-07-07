@@ -2,6 +2,17 @@
 function init() {
     var kf = document.forms.kf;
 
+    // Set up handlers.
+    kf.siteName.addEventListener("change", uiSiteChanged, false);
+    kf.go.addEventListener("click", uiComputePassword, false);
+    kf.advbtn.addEventListener("click", uiToggleVis, false);
+    kf.userName.addEventListener("change", uiUserChanged, false);
+    kf.sm.addEventListener("click", uiSaveMaster, false);
+    kf.cm.addEventListener("click", uiClearMaster, false);
+    kf.ssbtn.addEventListener("click", uiSaveState, false);
+    kf.csbtn.addEventListener("click", uiClearState, false);
+    kf.cabtn.addEventListener("click", uiClearAllState, false);
+
     showAdvanced(loadSetting("adv"));
 
     // Populate input fields from the query, if possible.
