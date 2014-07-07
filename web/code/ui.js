@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // the popup will get a very narrow default size.  For everything else, we
     // are happy with the device width.
     if (typeof chrome != 'undefined') {
-	document.body.style.minWidth = "400px";
+	document.body.style.minWidth = "380px";
     }
     init()
 }, false);
