@@ -251,3 +251,13 @@ function getPreviousHost() {
     }
     return "";
 }
+
+// Remove all but the last two components of a hostname, e.g., "www.foo.com"
+// becomes "foo.com", but "bar.org" remains "bar.org".
+function trimHost(host) {
+    var parts = host.split(".")
+    if (parts.length > 2) {
+       return parts.slice(1).join('.')
+    }
+    return host
+}
