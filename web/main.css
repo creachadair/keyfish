@@ -22,6 +22,8 @@ div#main {
   padding: 0.3rem;
 }
 div#adv { display: none; }
+div#user { float: right; clear: left; }
+div#ctrl { float: left; }
 
 span.bar, span.rbar { width: 99%; display: inline-block; }
 span.rbar { text-align: right; }

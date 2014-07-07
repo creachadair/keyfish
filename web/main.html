@@ -17,7 +17,7 @@
 <form name="kf">
   <span class="bar">
   <span class="lb">Site:</span>
-    <input name="siteName" type="text" size="40" tabindex=1
+    <input name="siteName" type="url" size="40" tabindex=1
            list="sitelist" onchange="uiSiteChanged()" />
     <datalist id="sitelist"></datalist>
   </span>
@@ -45,18 +45,23 @@
   <div id="adv">
   <hr/>
 
+  <div id="user">
+  <span class="lb">User:</span>
+    <select name="userName" onchange="uiUserChanged()"></select>
+  <button class="adv" type="button" tabindex="-1" onclick="uiSaveMaster()">
+    Save Master Key</button>
+  <button class="adv" type="button" tabindex="-1" onclick="uiClearMaster()">
+    Clear Master Key</button>
+  </div>
+
+  <div id="ctrl">
   <input class="ck" name="usePunct" type="checkbox"
          tabindex=4 /><span class="lb">Use punctuation</span>
   <span class="rb">Length:</span>
     <input class="len" name="pwLength" type="number"
            value="18" min="4" max="32" tabindex=5 />
     <span class="tag">characters</span>
-  <span class="rb">User:</span>
-    <select name="userName" onchange="uiUserChanged()"></select>
-  <button class="adv" type="button" tabindex="-1" onclick="uiSaveMaster()">
-    Save Master Key</button>
-  <button class="adv" type="button" tabindex="-1" onclick="uiClearMaster()">
-    Clear Master Key</button>
+  </div>
 
   <span class="bar">
   <span class="lb">Salt:</span>
