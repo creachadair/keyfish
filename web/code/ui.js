@@ -41,6 +41,17 @@ function init() {
     }
 }
 
+// Attach the load listener to the document body.
+document.addEventListener("DOMContentLoaded", function() {
+    // When loading as a Chrome extension, we have to set a reasonable width or
+    // the popup will get a very narrow default size.  For everything else, we
+    // are happy with the device width.
+    if (typeof chrome != 'undefined') {
+	document.body.style.minWidth = "400px";
+    }
+    init()
+}, false);
+
 // Compute the password from the current settings and store it into the output
 // text field.
 // Click handler for the "Generate" button.
