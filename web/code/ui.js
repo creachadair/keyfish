@@ -49,7 +49,9 @@ document.addEventListener("DOMContentLoaded", function() {
     if (typeof chrome != 'undefined') {
 	document.body.style.minWidth = "380px";
 	getBrowserHost(function (host) {
-	    document.forms.kf.siteName.value = trimHost(host || getPreviousHost());
+	    document.forms.kf.siteName.value =
+		trimHost(host || getPreviousHost());
+	    uiSiteChanged();
 	});
     }
 
