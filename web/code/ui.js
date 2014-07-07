@@ -48,7 +48,13 @@ document.addEventListener("DOMContentLoaded", function() {
     // are happy with the device width.
     if (typeof chrome != 'undefined') {
 	document.body.style.minWidth = "380px";
+	getBrowserHost(function (host) {
+	    document.forms.kf.siteName.value = host || getPreviousHost();
+	});
     }
+
+    // Do this after checking the Chrome stuff, so settings from the page query
+    // will override the defaults.
     init();
 }, false);
 

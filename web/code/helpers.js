@@ -210,28 +210,34 @@ function removeKids(tag) {
     }
 }
 
-// Make a good-faith effort to extract the URL hostname from the browser.
-// Returns "" if that is impossible.
-function getBrowserHost() {
+// Make a good-faith effort to extract the URL hostname from the browser,
+// and calls cont with it.  Calls with "" if no hostname as found.
+function getBrowserHost(cont) {
     if (typeof chrome == 'undefined' || chrome.tabs == null) {
-	return location.hostname || location.pathname;
+	cont(location.hostname || "");
+	return;
     }
-    var url = "";
-    chrome.tabs.getSelected(null, function (tab) {
-	var site = tab.url, parsed;
+
+    // Who thought this design was a good idea? :P
+    chrome.tabs.query({active:true, currentWindow:true}, function (tabs) {
+	if (tabs.length == 0) {
+	    cont("");
+	    return;
+	}
+	var site = tabs[0].url, parsed;
 	console.log("SITE: "+site);
 	try {
 	    parsed = new URL(site);
 	} catch (err) {
 	    console.log("Invalid tab URL: "+site);
+	    cont("");
 	    return;
 	}
 	console.log("URL: "+parsed);
 	if (parsed.protocol != "chrome:") {
-	    url = parsed.hostname || parsed.path;
+	    cont(parsed.hostname.trim());
 	}
     });
-    return url.trim();
 }
 
 // Make a good-faith effort to extract the refering URL's hostname.
@@ -239,8 +245,7 @@ function getBrowserHost() {
 function getPreviousHost() {
     try {
 	var parsed = new URL(document.referrer);
-	console.log("OK: "+parsed);
-	return parsed.hostname || parsed.path;
+	return parsed.hostname || "";
     } catch (err) {
 	console.log("Invalid referring URL: "+document.referrer);
     }
