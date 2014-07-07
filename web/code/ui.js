@@ -88,6 +88,14 @@ function uiComputePassword() {
 
     kf.password.value = pw;
     kf.password.select();
+
+    // If we're allowed to copy (e.g., we're in an extension with permissions
+    // enabled, or similar), send the password to the system pasteboard.
+    try {
+	document.execCommand("Copy");
+    } catch (err) {
+	// Probably not allowed or supported, but that's OK.
+    }
 }
 
 // Save the current state in local storage.
