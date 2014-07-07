@@ -210,9 +210,9 @@ function removeKids(tag) {
     }
 }
 
-// Make a good-faith effort to extract a URL from the browser.
+// Make a good-faith effort to extract the URL hostname from the browser.
 // Returns "" if that is impossible.
-function getBrowserURL() {
+function getBrowserHost() {
     if (typeof chrome == 'undefined' || chrome.tabs == null) {
 	return location.hostname || location.pathname;
     }
@@ -232,4 +232,17 @@ function getBrowserURL() {
 	}
     });
     return url.trim();
+}
+
+// Make a good-faith effort to extract the refering URL's hostname.
+// Returns "" if that is impossible.
+function getPreviousHost() {
+    try {
+	var parsed = new URL(document.referrer);
+	console.log("OK: "+parsed);
+	return parsed.hostname || parsed.path;
+    } catch (err) {
+	console.log("Invalid referring URL: "+document.referrer);
+    }
+    return "";
 }
