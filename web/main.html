@@ -7,37 +7,38 @@
   <script src="code/password.js"></script>
   <script src="code/helpers.js"></script>
   <script src="code/ui.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <link rel="stylesheet" type="text/css" href="main.css" />
 </head>
-<body onload="init()">
+<body>
 
 <div id="main">
 <h1><img id="icon" src="icons/keyfish32.png" />KeyFish</h1>
 
 <form name="kf">
-  <span class="bar">
+  <div class="bar">
   <span class="lb">Site:</span>
     <input name="siteName" type="url" size="40" tabindex=1 list="sitelist" />
     <datalist id="sitelist"></datalist>
-  </span>
+  </div>
 
-  <span class="bar">
+  <div class="bar">
   <span class="lb">Master key:</span>
     <input name="secretKey" type="password" size="40" tabindex=2 />
-  </span>
+  </div>
 
-  <span class="bar">
+  <div class="bar">
   <button class="gen" id="go" type="button"
-          accesskey="g" tabindex=3>Generate Password</button></span>
+          accesskey="g" tabindex=3>Generate Password</button></div>
 
-  <span class="bar">
+  <div class="bar">
   <span class="lb">Password:</span>
     <input class="pw" name="password" type="text" size="40" value="<site password>" />
-  </span>
+  </div>
 
-  <span class="rbar">
+  <div class="rbar">
   <button class="adv" id="advbtn" type="button" tabindex="-1">Advanced</button>
-  </span>
+  </div>
 
   <!-- Advanced controls, not commonly needed -->
   <div id="adv">
@@ -61,23 +62,24 @@
     <span class="tag">characters</span>
   </div>
 
-  <span class="bar">
+  <div class="bar">
   <span class="lb">Salt:</span>
     <input name="salt" type="text" size="40" tabindex=7 />
-  </span>
+  </div>
 
-  <span class="bar">
+  <div class="bar">
   <span class="lb">Format:</span>
     <input name="fmt" type="text" size="40" tabindex=6 />
-  </span>
+  </div>
 
-  <span class="bar">
+  <div class="bar">
   <button id="ssbtn" class="st" type="button"
           title="Save current configuration to local storage">Save Defaults</button>
   <button id="csbtn" class="st" type="button"
           title="Remove current configuration from local storage">Clear Defaults</button>
   <button id="cabtn" class="st" type="button"
-          title="Remove all saved site configurations">Clear All</button></span>
+          title="Remove all saved site configurations">Clear All</button>
+  </div>
   </div>
 
 </form>

@@ -24,9 +24,14 @@ div#main {
 div#adv { display: none; }
 div#user { float: right; clear: left; }
 div#ctrl { float: left; }
+div.bar, div.rbar {
+  display: inline-block;
+  align-content: stretch;
+  justify-content: space-around;
+  width: 98.5%;
+}
+div.rbar { text-align: right; }
 
-span.bar, span.rbar { width: 99%; display: inline-block; }
-span.rbar { text-align: right; }
 span.lb,span.rb {
   width: 6rem;
   color: navy;
@@ -61,8 +66,8 @@ button.gen { width: inherit; }
 button.st { width: 32.6%; }
 button.st,button.gen {
   font-family: Helvetica, sans-serif;
-  padding: 1rem 0;
-  font-size: 1.2rem;
+  padding: 1.2rem 0;
+  font-size: 1.1rem;
   -webkit-border-radius: 0.8rem;
   background: -webkit-gradient(linear, left top, left bottom,
 			       color-stop(0.05, #6B9BC3),
