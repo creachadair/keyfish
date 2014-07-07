@@ -26,8 +26,6 @@ div#user { float: right; clear: left; }
 div#ctrl { float: left; }
 div.bar, div.rbar {
   display: inline-block;
-  align-content: stretch;
-  justify-content: space-around;
   width: 98.5%;
 }
 div.rbar { text-align: right; }
