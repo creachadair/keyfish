@@ -51,12 +51,23 @@ func init() {
 	flag.StringVar(&context.Secret, "secret", "", "Secret key")
 
 	flag.Usage = func() {
-		fmt.Println("Usage: keyfish [options] <site.name>+")
+		fmt.Fprintln(os.Stderr, `Usage: keyfish [options] <site.name>+
+
+Generates a site-specific password based on the given site name.  By default,
+the resulting password is printed to stdout; use the --copy flag to cause the
+password to be sent to the system pasteboard instead (MacOS only, at present).
+
+If --secret is set, it is used as the master key to generate passwords.  If
+not, the value of the KEYFISH_SECRET environment variable is used if it is
+defined.  Otherwise, the user is prompted at the terminal.
+
+Use --format to specify an exact password layout, with "A" for an uppercase
+letter, "a" for a lowercase letter, "*" for a letter of either case, "?" for a
+punctuation mark.  All other non-letters are copied verbatim.  Letters are all
+used as wildcards of the appropriate case.
+
+Flags:`)
 		flag.PrintDefaults()
-		fmt.Println(`
-If the --secret flag is omitted, the value of the KEYFISH_SECRET
-environment variable is used, if defined.  Otherwise, the user is
-prompted at the terminal.`)
 	}
 }
 
