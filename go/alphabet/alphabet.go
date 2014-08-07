@@ -50,3 +50,9 @@ func (a Alphabet) Pick(b byte) byte {
 func (a Alphabet) Contains(r rune) bool {
 	return strings.ContainsRune(string(a), r)
 }
+
+// Implementations of the flag.Value and flag.Getter interfaces.
+
+func (a Alphabet) String() string      { return string(a) }
+func (a Alphabet) Get() interface{}    { return string(a) }
+func (a *Alphabet) Set(s string) error { *a = Alphabet(s); return nil }
