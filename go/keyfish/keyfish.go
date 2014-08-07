@@ -68,9 +68,10 @@ not, the value of the KEYFISH_SECRET environment variable is used if it is
 defined.  Otherwise, the user is prompted at the terminal.
 
 Use --format to specify an exact password layout, with "A" for an uppercase
-letter, "a" for a lowercase letter, "*" for a letter of either case, "?" for a
-punctuation mark.  All other non-letters are copied verbatim.  Letters are all
-used as wildcards of the appropriate case.
+letter, "a" for a lowercase letter, "1" for a digit, "*" for a letter of either
+case, "?" for a punctuation mark.  All other non-letters are copied verbatim.
+All letters are wildcards for a letter of the appropriate case, all digits are
+wildcards for a digit.
 
 Flags:`)
 		flag.PrintDefaults()
