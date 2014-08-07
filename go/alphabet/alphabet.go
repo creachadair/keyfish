@@ -4,6 +4,7 @@
 package alphabet
 
 import (
+	"errors"
 	"math"
 	"strings"
 )
@@ -51,8 +52,16 @@ func (a Alphabet) Contains(r rune) bool {
 	return strings.ContainsRune(string(a), r)
 }
 
-// Implementations of the flag.Value and flag.Getter interfaces.
+func (a Alphabet) String() string { return string(a) }
 
-func (a Alphabet) String() string      { return string(a) }
-func (a Alphabet) Get() interface{}    { return string(a) }
-func (a *Alphabet) Set(s string) error { *a = Alphabet(s); return nil }
+// Get implements the flag.Getter interface.  The concrete value is a string.
+func (a Alphabet) Get() interface{} { return string(a) }
+
+// Set implements the flag.Value interface.
+func (a *Alphabet) Set(s string) error {
+	if s == "" {
+		return errors.New("invalid alphabet")
+	}
+	*a = Alphabet(s)
+	return nil
+}
