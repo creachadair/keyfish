@@ -24,6 +24,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"runtime"
 
 	"bitbucket.org/creachadair/keyfish/go/alphabet"
 	"bitbucket.org/creachadair/keyfish/go/password"
@@ -37,25 +38,30 @@ const (
 
 var (
 	usePunct = flag.Bool("punct", false, "Use punctuation?")
-	doCopy   = flag.Bool("copy", false, "Copy to clipboard")
 	format   = flag.String("format", "", "Password format")
 	length   = flag.Int("length", 18, "Password length")
 
 	context = password.Context{
 		Alphabet: alphabet.NoPunct,
 	}
+	doCopy = false
 )
 
 func init() {
 	flag.StringVar(&context.Salt, "salt", context.Salt, "Salt to hash with the site name")
 	flag.StringVar(&context.Secret, "secret", "", "Secret key")
 
+	// Only enable the -copy flag if it's supported by the system.
+	// Right now, that means MacOS.
+	if runtime.GOOS == "darwin" {
+		flag.BoolVar(&doCopy, "copy", false, "Copy to clipboard instead of printing")
+	}
+
 	flag.Usage = func() {
 		fmt.Fprintln(os.Stderr, `Usage: keyfish [options] <site.name>+
 
-Generates a site-specific password based on the given site name.  By default,
-the resulting password is printed to stdout; use the --copy flag to cause the
-password to be sent to the system pasteboard instead (MacOS only, at present).
+Generates a site-specific password based on the given site name.  The resulting
+password is printed to stdout.
 
 If --secret is set, it is used as the master key to generate passwords.  If
 not, the value of the KEYFISH_SECRET environment variable is used if it is
@@ -124,7 +130,7 @@ func main() {
 		} else {
 			pw = context.Password(arg)[:*length]
 		}
-		if *doCopy {
+		if doCopy {
 			if err := toClipboard(pw); err != nil {
 				log.Printf("Error copying to clipboard: %v", err)
 			}
