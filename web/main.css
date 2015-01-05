@@ -64,21 +64,13 @@ input.pw {
 }
 
 button { color: navy; }
-button.gen { width: inherit; }
-button.st { width: 32.6%; }
-button.st,button.gen {
+button.gen { width: 100%; }
+button.st { width: 31.8%; }
+button.adv { padding: 0.5rem; }
+button.st,button.gen,button.adv {
   font-family: Helvetica, sans-serif;
-  padding: 1.2rem 0;
-  font-size: 1.1rem;
-  border-radius: 0.8rem;
-  -webkit-border-radius: 0.8rem;
-  -moz-border-radius: 0.8rem;
-  background: -webkit-gradient(linear, left top, left bottom,
-			       color-stop(0.05, #6B9BC3),
-			       color-stop(1, #97B9D5));
-  background: -moz-linear-gradient(left, #6B9BC3, #97B9D5);
-  box-shadow: inset 0px 0px 5px 0px #;
-  -webkit-box-shadow: inset 0px 0px 5px 0px #cae3fc;
-  -moz-box-shadow: inset 0px 0px 5px 0px #cae3fc;
-  color: white;
+  margin: 0.1rem;
+}
+button.st,button.gen {
+  padding: 1rem;
 }
