@@ -19,8 +19,11 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -37,19 +40,20 @@ const (
 )
 
 var (
-	usePunct = flag.Bool("punct", false, "Use punctuation?")
-	format   = flag.String("format", "", "Password format")
-	length   = flag.Int("length", 18, "Password length")
-
-	context = password.Context{
-		Alphabet: alphabet.NoPunct,
-	}
-	doCopy = false
+	base      = siteConfig{Length: 18, Punct: new(bool)}
+	secretKey string
+	doCopy    bool
+	verbose   bool
 )
 
 func init() {
-	flag.StringVar(&context.Salt, "salt", context.Salt, "Salt to hash with the site name")
-	flag.StringVar(&context.Secret, "secret", "", "Secret key")
+	flag.IntVar(&base.Length, "length", 18, "Password length")
+	flag.BoolVar(base.Punct, "punct", false, "Use punctuation")
+	flag.StringVar(&base.Format, "format", "", "Password format")
+	flag.StringVar(&base.Salt, "salt", "", "Salt to hash with the site name")
+	flag.BoolVar(&verbose, "v", false, "Verbose logging")
+
+	flag.StringVar(&secretKey, "secret", os.Getenv("KEYFISH_SECRET"), "Secret key")
 
 	// Only enable the -copy flag if it's supported by the system.
 	// Right now, that means MacOS.
@@ -61,7 +65,7 @@ func init() {
 		fmt.Fprintln(os.Stderr, `Usage: keyfish [options] <site.name>+
 
 Generates a site-specific password based on the given site name.  The resulting
-password is printed to stdout.
+password is printed to stdout, or copied to the clipboard if --copy is set.
 
 If --secret is set, it is used as the master key to generate passwords.  If
 not, the value of the KEYFISH_SECRET environment variable is used if it is
@@ -97,6 +101,76 @@ func toClipboard(pw string) error {
 	return cmd.Wait()
 }
 
+type siteConfig struct {
+	Host   string `json:"host,omitempty"`
+	Format string `json:"format,omitempty"`
+	Length int    `json:"length,omitempty"`
+	Punct  *bool  `json:"punct,omitempty"`
+	Salt   string `json:"salt,omitempty"`
+}
+
+func (s *siteConfig) context(secret string) password.Context {
+	a := alphabet.NoPunct
+	if p := s.Punct; p != nil && *p {
+		a = alphabet.All
+	}
+	return password.Context{
+		Alphabet: a,
+		Salt:     s.Salt,
+		Secret:   secret,
+	}
+}
+
+func (s *siteConfig) merge(c siteConfig) siteConfig {
+	if s.Host == "" {
+		s.Host = c.Host
+	}
+	if s.Format == "" {
+		s.Format = c.Format
+	}
+	if s.Length <= 0 {
+		s.Length = c.Length
+	}
+	if s.Punct == nil && c.Punct != nil {
+		s.Punct = new(bool)
+		*s.Punct = *c.Punct
+	}
+	if s.Salt == "" {
+		s.Salt = c.Salt
+	}
+	return *s
+}
+
+func (s siteConfig) String() string {
+	var buf bytes.Buffer
+	fmt.Fprintf(&buf, "host=%q", s.Host)
+	if s.Format == "" {
+		fmt.Fprintf(&buf, ", n=%d", s.Length)
+	} else {
+		fmt.Fprintf(&buf, ", fmt=%q", s.Format)
+	}
+	if s.Punct != nil {
+		fmt.Fprintf(&buf, ", punct=%v", *s.Punct)
+	}
+	fmt.Fprintf(&buf, ", salt=%q", s.Salt)
+	return buf.String()
+}
+
+func loadConfig() (map[string]siteConfig, error) {
+	path := os.ExpandEnv("$HOME/.keyfish")
+	bits, err := ioutil.ReadFile(path)
+	if os.IsNotExist(err) {
+		return nil, nil
+	} else if err != nil {
+		return nil, err
+	}
+	conf := make(map[string]siteConfig)
+	if err := json.Unmarshal(bits, &conf); err != nil {
+		return nil, err
+	}
+	return conf, nil
+}
+
 // usage prints a usage message to stderr and terminates the program.
 func fail(msg string, args ...interface{}) {
 	log.Fatalf(msg, args...)
@@ -105,38 +179,46 @@ func fail(msg string, args ...interface{}) {
 func main() {
 	flag.Parse()
 
-	if *length < minLength || *length > maxLength {
-		fail("Password length must be ≥ %d and ≤ %d", minLength, maxLength)
-	}
 	if flag.NArg() == 0 {
-		fail("At least one site name must be given")
+		fail("You must specify at least one site name")
 	}
-	if context.Secret == "" {
-		if pw := os.Getenv("KEYFISH_SECRET"); pw != "" {
-			context.Secret = pw
-		} else if pw, err := gopass.GetPass("Secret key: "); err == nil {
-			context.Secret = pw
-		} else {
+	configs, err := loadConfig()
+	if err != nil {
+		fail("Error loading configuration: %v", err)
+	}
+	if secretKey == "" {
+		pw, err := gopass.GetPass("Secret key: ")
+		if err != nil {
 			fail("Error reading secret key: %v", err)
 		}
-	}
-	if *usePunct {
-		context.Alphabet = alphabet.All
+		secretKey = pw
 	}
 
 	for _, arg := range flag.Args() {
-		var pw string
-		if *format != "" {
-			pw = context.Format(arg, *format)
+		config := base
+		if c, ok := configs[arg]; ok {
+			config = c.merge(base)
 		} else {
-			pw = context.Password(arg)[:*length]
+			config.Host = arg
 		}
-		if doCopy {
-			if err := toClipboard(pw); err != nil {
-				log.Printf("Error copying to clipboard: %v", err)
-			}
+		if n := config.Length; n < minLength || n > maxLength {
+			fail("Password length must be ≥ %d and ≤ %d", minLength, maxLength)
+		}
+		if verbose {
+			log.Printf("Config: %v", config)
+		}
+
+		ctx := config.context(secretKey)
+		var pw string
+		if fmt := config.Format; fmt != "" {
+			pw = ctx.Format(config.Host, fmt)
 		} else {
+			pw = ctx.Password(config.Host)[:config.Length]
+		}
+		if !doCopy {
 			fmt.Println(pw)
+		} else if err := toClipboard(pw); err != nil {
+			log.Printf("Error copying to clipboard: %v", err)
 		}
 	}
 }
