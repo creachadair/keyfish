@@ -31,7 +31,7 @@ import (
 
 	"bitbucket.org/creachadair/keyfish/go/alphabet"
 	"bitbucket.org/creachadair/keyfish/go/password"
-	"code.google.com/p/gopass"
+	"github.com/stackengine/gopass"
 )
 
 const (
