@@ -19,17 +19,13 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
 	"runtime"
 
-	"bitbucket.org/creachadair/keyfish/alphabet"
 	"bitbucket.org/creachadair/keyfish/password"
 	"github.com/stackengine/gopass"
 )
@@ -40,25 +36,25 @@ const (
 )
 
 var (
-	base      = siteConfig{Length: 18, Punct: new(bool)}
+	config = &Config{
+		Default: &Site{Length: 18, Punct: new(bool)},
+	}
 	secretKey string
-	doCopy    bool
-	verbose   bool
 )
 
 func init() {
-	flag.IntVar(&base.Length, "length", 18, "Password length")
-	flag.BoolVar(base.Punct, "punct", false, "Use punctuation")
-	flag.StringVar(&base.Format, "format", "", "Password format")
-	flag.StringVar(&base.Salt, "salt", "", "Salt to hash with the site name")
-	flag.BoolVar(&verbose, "v", false, "Verbose logging")
+	flag.IntVar(&config.Default.Length, "length", 18, "Password length")
+	flag.BoolVar(config.Default.Punct, "punct", false, "Use punctuation")
+	flag.StringVar(&config.Default.Format, "format", "", "Password format")
+	flag.StringVar(&config.Default.Salt, "salt", "", "Salt to hash with the site name")
+	flag.BoolVar(&config.Flags.Verbose, "v", false, "Verbose logging")
 
 	flag.StringVar(&secretKey, "secret", os.Getenv("KEYFISH_SECRET"), "Secret key")
 
 	// Only enable the -copy flag if it's supported by the system.
 	// Right now, that means MacOS.
 	if runtime.GOOS == "darwin" {
-		flag.BoolVar(&doCopy, "copy", false, "Copy to clipboard instead of printing")
+		flag.BoolVar(&config.Flags.Copy, "copy", false, "Copy to clipboard instead of printing")
 	}
 
 	flag.Usage = func() {
@@ -101,80 +97,8 @@ func toClipboard(pw string) error {
 	return cmd.Wait()
 }
 
-type siteConfig struct {
-	Host   string `json:"host,omitempty"`
-	Format string `json:"format,omitempty"`
-	Length int    `json:"length,omitempty"`
-	Punct  *bool  `json:"punct,omitempty"`
-	Salt   string `json:"salt,omitempty"`
-}
-
-func (s *siteConfig) context(secret string) password.Context {
-	a := alphabet.NoPunct
-	if p := s.Punct; p != nil && *p {
-		a = alphabet.All
-	}
-	return password.Context{
-		Alphabet: a,
-		Salt:     s.Salt,
-		Secret:   secret,
-	}
-}
-
-func (s *siteConfig) merge(c siteConfig) siteConfig {
-	if s.Host == "" {
-		s.Host = c.Host
-	}
-	if s.Format == "" {
-		s.Format = c.Format
-	}
-	if s.Length <= 0 {
-		s.Length = c.Length
-	}
-	if s.Punct == nil && c.Punct != nil {
-		s.Punct = new(bool)
-		*s.Punct = *c.Punct
-	}
-	if s.Salt == "" {
-		s.Salt = c.Salt
-	}
-	return *s
-}
-
-func (s siteConfig) String() string {
-	var buf bytes.Buffer
-	fmt.Fprintf(&buf, "host=%q", s.Host)
-	if s.Format == "" {
-		fmt.Fprintf(&buf, ", n=%d", s.Length)
-	} else {
-		fmt.Fprintf(&buf, ", fmt=%q", s.Format)
-	}
-	if s.Punct != nil {
-		fmt.Fprintf(&buf, ", punct=%v", *s.Punct)
-	}
-	fmt.Fprintf(&buf, ", salt=%q", s.Salt)
-	return buf.String()
-}
-
-func loadConfig() (map[string]siteConfig, error) {
-	path := os.ExpandEnv("$HOME/.keyfish")
-	bits, err := ioutil.ReadFile(path)
-	if os.IsNotExist(err) {
-		return nil, nil
-	} else if err != nil {
-		return nil, err
-	}
-	conf := make(map[string]siteConfig)
-	if err := json.Unmarshal(bits, &conf); err != nil {
-		return nil, err
-	}
-	return conf, nil
-}
-
 // usage prints a usage message to stderr and terminates the program.
-func fail(msg string, args ...interface{}) {
-	log.Fatalf(msg, args...)
-}
+func fail(msg string, args ...interface{}) { log.Fatalf(msg, args...) }
 
 func main() {
 	flag.Parse()
@@ -182,8 +106,7 @@ func main() {
 	if flag.NArg() == 0 {
 		fail("You must specify at least one site name")
 	}
-	configs, err := loadConfig()
-	if err != nil {
+	if err := config.Load(os.ExpandEnv("$HOME/.keyfish")); err != nil {
 		fail("Error loading configuration: %v", err)
 	}
 	if secretKey == "" {
@@ -195,27 +118,26 @@ func main() {
 	}
 
 	for _, arg := range flag.Args() {
-		config := base
-		if c, ok := configs[arg]; ok {
-			config = c.merge(base)
-		} else {
-			config.Host = arg
+		site, ok := config.Sites[arg]
+		if !ok {
+			site = &Site{Host: arg}
 		}
-		if n := config.Length; n < minLength || n > maxLength {
+		site.merge(config.Default)
+		if n := site.Length; n < minLength || n > maxLength {
 			fail("Password length must be ≥ %d and ≤ %d", minLength, maxLength)
 		}
-		if verbose {
-			log.Printf("Config: %v", config)
+		if config.Flags.Verbose {
+			log.Printf("Site: %v", site)
 		}
 
-		ctx := config.context(secretKey)
+		ctx := site.context(secretKey)
 		var pw string
-		if fmt := config.Format; fmt != "" {
-			pw = ctx.Format(config.Host, fmt)
+		if fmt := site.Format; fmt != "" {
+			pw = ctx.Format(site.Host, fmt)
 		} else {
-			pw = ctx.Password(config.Host)[:config.Length]
+			pw = ctx.Password(site.Host)[:site.Length]
 		}
-		if !doCopy {
+		if !config.Flags.Copy {
 			fmt.Println(pw)
 		} else if err := toClipboard(pw); err != nil {
 			log.Printf("Error copying to clipboard: %v", err)
