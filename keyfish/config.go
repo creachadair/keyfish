@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 
 	"bitbucket.org/creachadair/keyfish/alphabet"
 	"bitbucket.org/creachadair/keyfish/password"
@@ -42,10 +43,23 @@ func (c *Config) Load(path string) error {
 	return json.Unmarshal(data, c)
 }
 
+// site returns a site configuration for the given name, which has the form
+// host.name or salt@host.name. If a matching entry is found in the config, the
+// corresponding Site is returned; otherwise a default Site is build using the
+// name to derive the host (and possibly the salt).
 func (c *Config) site(name string) Site {
-	site, ok := c.Sites[name]
-	if !ok {
-		site.Host = name
+	host, salt := name, ""
+	if i := strings.Index(name, "@"); i >= 0 {
+		host = name[i+1:]
+		salt = name[:i]
+	}
+
+	site, ok := c.Sites[host]
+	if !ok || site.Host == "" {
+		site.Host = host
+	}
+	if salt != "" {
+		site.Salt = salt
 	}
 	return site.merge(c.Default)
 }

@@ -74,6 +74,10 @@ case, "?" for a punctuation mark.  All other non-letters are copied verbatim.
 All letters are wildcards for a letter of the appropriate case, all digits are
 wildcards for a digit.
 
+A site name has the form "host.org" or "salt@host.org". If the site matches one
+of the sites named in the user's ~/.keyfish file, the corresponding settings
+are used.
+
 Flags:`)
 		flag.PrintDefaults()
 	}
