@@ -13,8 +13,8 @@ import (
 
 // A Config represents the contents of a keyfish config file.
 type Config struct {
-	Sites   map[string]*Site `json:"sites,omitempty"`
-	Default *Site            `json:"default,omitempty"`
+	Sites   map[string]Site `json:"sites,omitempty"`
+	Default Site            `json:"default,omitempty"`
 	Flags   struct {
 		Copy    bool `json:"copy,omitempty"`
 		Verbose bool `json:"verbose,omitempty"`
@@ -26,7 +26,7 @@ type Site struct {
 	Host   string `json:"host,omitempty"`
 	Format string `json:"format,omitempty"`
 	Length int    `json:"length,omitempty"`
-	Punct  *bool  `json:"punct,omitempty"`
+	Punct  bool   `json:"punct,omitempty"`
 	Salt   string `json:"salt,omitempty"`
 }
 
@@ -42,10 +42,18 @@ func (c *Config) Load(path string) error {
 	return json.Unmarshal(data, c)
 }
 
+func (c *Config) site(name string) Site {
+	site, ok := c.Sites[name]
+	if !ok {
+		site.Host = name
+	}
+	return site.merge(c.Default)
+}
+
 // context returns a password generation context from s.
-func (s *Site) context(secret string) password.Context {
+func (s Site) context(secret string) password.Context {
 	a := alphabet.NoPunct
-	if p := s.Punct; p != nil && *p {
+	if s.Punct {
 		a = alphabet.All
 	}
 	return password.Context{
@@ -55,12 +63,9 @@ func (s *Site) context(secret string) password.Context {
 	}
 }
 
-// merge copies non-empty fields from c to fill empty fields of s.
-// Modifies *s in place.
-func (s *Site) merge(c *Site) {
-	if c == nil {
-		return
-	}
+// merge returns a copy of s in which non-empty fields of c are used to fill
+// empty fields of s.
+func (s Site) merge(c Site) Site {
 	if s.Host == "" {
 		s.Host = c.Host
 	}
@@ -70,16 +75,16 @@ func (s *Site) merge(c *Site) {
 	if s.Length <= 0 {
 		s.Length = c.Length
 	}
-	if s.Punct == nil && c.Punct != nil {
-		s.Punct = new(bool)
-		*s.Punct = *c.Punct
+	if !s.Punct && c.Punct {
+		s.Punct = c.Punct
 	}
 	if s.Salt == "" {
 		s.Salt = c.Salt
 	}
+	return s
 }
 
-func (s *Site) String() string {
+func (s Site) String() string {
 	var buf bytes.Buffer
 	fmt.Fprintf(&buf, "host=%q", s.Host)
 	if s.Format == "" {
@@ -87,9 +92,6 @@ func (s *Site) String() string {
 	} else {
 		fmt.Fprintf(&buf, ", fmt=%q", s.Format)
 	}
-	if s.Punct != nil {
-		fmt.Fprintf(&buf, ", punct=%v", *s.Punct)
-	}
-	fmt.Fprintf(&buf, ", salt=%q", s.Salt)
+	fmt.Fprintf(&buf, ", punct=%v, salt=%q", s.Punct, s.Salt)
 	return buf.String()
 }

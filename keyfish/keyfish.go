@@ -37,16 +37,14 @@ const (
 )
 
 var (
-	config = &Config{
-		Default: &Site{Length: 18, Punct: new(bool)},
-	}
+	config    = &Config{Default: Site{Length: 18}}
 	secretKey string
 	doSites   bool
 )
 
 func init() {
 	flag.IntVar(&config.Default.Length, "length", 18, "Password length")
-	flag.BoolVar(config.Default.Punct, "punct", false, "Use punctuation")
+	flag.BoolVar(&config.Default.Punct, "punct", false, "Use punctuation")
 	flag.StringVar(&config.Default.Format, "format", "", "Password format")
 	flag.StringVar(&config.Default.Salt, "salt", "", "Salt to hash with the site name")
 	flag.BoolVar(&doSites, "sites", false, "List known sites and exit")
@@ -104,17 +102,23 @@ func toClipboard(pw string) error {
 func fail(msg string, args ...interface{}) { log.Fatalf(msg, args...) }
 
 func main() {
-	flag.Parse()
-
+	// Load configuration settings from the user's file, if it exists.
+	// Do this prior to flag parsing so that flags can override defaults.
 	if err := config.Load(os.ExpandEnv("$HOME/.keyfish")); err != nil {
 		fail("Error loading configuration: %v", err)
 	}
+
+	flag.Parse()
+
+	// Unless we're listing sites, at least one must be requested.
 	if doSites {
 		fmt.Printf("Known sites: %s\n", stringset.FromKeys(config.Sites))
 		return
 	} else if flag.NArg() == 0 {
 		fail("You must specify at least one site name")
 	}
+
+	// Establish the secret key.
 	if secretKey == "" {
 		pw, err := gopass.GetPass("Secret key: ")
 		if err != nil {
@@ -124,11 +128,7 @@ func main() {
 	}
 
 	for _, arg := range flag.Args() {
-		site, ok := config.Sites[arg]
-		if !ok {
-			site = &Site{Host: arg}
-		}
-		site.merge(config.Default)
+		site := config.site(arg)
 		if n := site.Length; n < minLength || n > maxLength {
 			fail("Password length must be ≥ %d and ≤ %d", minLength, maxLength)
 		}
