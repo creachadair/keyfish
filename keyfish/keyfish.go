@@ -29,8 +29,8 @@ import (
 	"os/exec"
 	"runtime"
 
-	"bitbucket.org/creachadair/keyfish/go/alphabet"
-	"bitbucket.org/creachadair/keyfish/go/password"
+	"bitbucket.org/creachadair/keyfish/alphabet"
+	"bitbucket.org/creachadair/keyfish/password"
 	"github.com/stackengine/gopass"
 )
 

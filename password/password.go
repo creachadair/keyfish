@@ -13,7 +13,7 @@ import (
 	"crypto/sha256"
 	"math"
 
-	"bitbucket.org/creachadair/keyfish/go/alphabet"
+	"bitbucket.org/creachadair/keyfish/alphabet"
 )
 
 // MaxLength is the length in bytes of the longest password that can be

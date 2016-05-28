@@ -6,7 +6,7 @@ package password
 import (
 	"testing"
 
-	"bitbucket.org/creachadair/keyfish/go/alphabet"
+	"bitbucket.org/creachadair/keyfish/alphabet"
 )
 
 // Check test vectors confirmed against the Chrome extension.
