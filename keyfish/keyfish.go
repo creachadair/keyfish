@@ -27,6 +27,7 @@ import (
 	"runtime"
 
 	"bitbucket.org/creachadair/keyfish/password"
+	"bitbucket.org/creachadair/stringset"
 	"github.com/stackengine/gopass"
 )
 
@@ -40,6 +41,7 @@ var (
 		Default: &Site{Length: 18, Punct: new(bool)},
 	}
 	secretKey string
+	doSites   bool
 )
 
 func init() {
@@ -47,6 +49,7 @@ func init() {
 	flag.BoolVar(config.Default.Punct, "punct", false, "Use punctuation")
 	flag.StringVar(&config.Default.Format, "format", "", "Password format")
 	flag.StringVar(&config.Default.Salt, "salt", "", "Salt to hash with the site name")
+	flag.BoolVar(&doSites, "sites", false, "List known sites and exit")
 	flag.BoolVar(&config.Flags.Verbose, "v", false, "Verbose logging")
 
 	flag.StringVar(&secretKey, "secret", os.Getenv("KEYFISH_SECRET"), "Secret key")
@@ -103,11 +106,14 @@ func fail(msg string, args ...interface{}) { log.Fatalf(msg, args...) }
 func main() {
 	flag.Parse()
 
-	if flag.NArg() == 0 {
-		fail("You must specify at least one site name")
-	}
 	if err := config.Load(os.ExpandEnv("$HOME/.keyfish")); err != nil {
 		fail("Error loading configuration: %v", err)
+	}
+	if doSites {
+		fmt.Printf("Known sites: %s\n", stringset.FromKeys(config.Sites))
+		return
+	} else if flag.NArg() == 0 {
+		fail("You must specify at least one site name")
 	}
 	if secretKey == "" {
 		pw, err := gopass.GetPass("Secret key: ")
