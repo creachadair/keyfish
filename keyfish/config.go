@@ -24,11 +24,14 @@ type Config struct {
 
 // A Site represents the non-secret configuration for a single site.
 type Site struct {
-	Host   string `json:"host,omitempty"`
-	Format string `json:"format,omitempty"`
-	Length int    `json:"length,omitempty"`
-	Punct  bool   `json:"punct,omitempty"`
-	Salt   string `json:"salt,omitempty"`
+	Host   string            `json:"host,omitempty"`
+	Format string            `json:"format,omitempty"`
+	Length int               `json:"length,omitempty"`
+	Punct  bool              `json:"punct,omitempty"`
+	Salt   string            `json:"salt,omitempty"`
+	Login  string            `json:"login,omitempty"`
+	EMail  string            `json:"email,omitempty"`
+	Hints  map[string]string `json:"hints,omitempty"`
 }
 
 // Load loads the contents of the specified path into c.  If path does not
@@ -95,7 +98,20 @@ func (s Site) merge(c Site) Site {
 	if s.Salt == "" {
 		s.Salt = c.Salt
 	}
+	if s.Login == "" {
+		s.Login = c.Login
+	}
+	if s.EMail == "" || strings.HasPrefix(s.EMail, "+") {
+		s.EMail = mergeEMail(c.EMail, s.EMail)
+	}
 	return s
+}
+
+func mergeEMail(base, tag string) string {
+	if i := strings.Index(base, "@"); i >= 0 {
+		return base[:i] + tag + base[i:]
+	}
+	return base + tag
 }
 
 func (s Site) String() string {
