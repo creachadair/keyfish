@@ -83,7 +83,7 @@ Flags:`)
 	}
 }
 
-// Attempts to copy the given password to the system clipboard.
+// toClipboard attempts to copy the given password to the system clipboard.
 func toClipboard(pw string) error {
 	cmd := exec.Command("pbcopy")
 	p, err := cmd.StdinPipe()
