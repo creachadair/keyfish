@@ -102,6 +102,14 @@ func toClipboard(pw string) error {
 	return cmd.Wait()
 }
 
+func vcode(pw string) string {
+	var vc uint16
+	for _, b := range []byte(pw) {
+		vc = ((vc << 3) | (vc >> 13)) + uint16(b)
+	}
+	return fmt.Sprintf("%04x", vc)
+}
+
 // usage prints a usage message to stderr and terminates the program.
 func fail(msg string, args ...interface{}) { log.Fatalf(msg, args...) }
 
@@ -151,6 +159,8 @@ func main() {
 			fmt.Println(pw)
 		} else if err := toClipboard(pw); err != nil {
 			log.Printf("Error copying to clipboard: %v", err)
+		} else {
+			fmt.Println(vcode(pw))
 		}
 	}
 }
