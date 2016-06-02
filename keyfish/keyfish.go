@@ -19,6 +19,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -40,6 +41,7 @@ var (
 	config    = &Config{Default: Site{Length: 18}}
 	secretKey string
 	doSites   bool
+	doPrint   bool
 )
 
 func init() {
@@ -47,7 +49,8 @@ func init() {
 	flag.BoolVar(&config.Default.Punct, "punct", false, "Use punctuation")
 	flag.StringVar(&config.Default.Format, "format", "", "Password format")
 	flag.StringVar(&config.Default.Salt, "salt", "", "Salt to hash with the site name")
-	flag.BoolVar(&doSites, "sites", false, "List known sites and exit")
+	flag.BoolVar(&doSites, "list", false, "List known sites and exit")
+	flag.BoolVar(&doPrint, "print", false, "Print specified configurations and exit")
 	flag.BoolVar(&config.Flags.Verbose, "v", false, "Verbose logging")
 
 	flag.StringVar(&secretKey, "secret", os.Getenv("KEYFISH_SECRET"), "Secret key")
@@ -128,6 +131,16 @@ func main() {
 		return
 	} else if flag.NArg() == 0 {
 		fail("You must specify at least one site name")
+	}
+	if doPrint {
+		out := json.NewEncoder(os.Stdout)
+		for _, arg := range flag.Args() {
+			site := config.site(arg)
+			if err := out.Encode(site); err != nil {
+				fail("Error encoding site %q: %v", arg, err)
+			}
+		}
+		return
 	}
 
 	// Establish the secret key.
