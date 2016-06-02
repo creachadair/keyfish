@@ -173,7 +173,10 @@ func main() {
 		} else if err := toClipboard(pw); err != nil {
 			log.Printf("Error copying to clipboard: %v", err)
 		} else {
-			fmt.Println(vcode(pw))
+			if u := site.Login; u != "" {
+				fmt.Print(u, "@")
+			}
+			fmt.Print(site.Host, "\t", vcode(pw), "\n")
 		}
 	}
 }
