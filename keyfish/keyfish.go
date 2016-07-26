@@ -53,7 +53,7 @@ func init() {
 	flag.StringVar(&config.Default.Salt, "salt", "", "Salt to hash with the site name")
 	flag.BoolVar(&doSites, "list", false, "List known sites and exit")
 	flag.BoolVar(&doPrint, "print", false, "Print specified configurations and exit")
-	flag.BoolVar(&config.Flags.Verbose, "v", false, "Verbose logging")
+	flag.BoolVar(&config.Flags.Verbose, "v", false, "Verbose logging (includes hints with -print)")
 
 	flag.StringVar(&secretKey, "secret", os.Getenv("KEYFISH_SECRET"), "Secret key")
 
@@ -162,6 +162,9 @@ func main() {
 		out := json.NewEncoder(os.Stdout)
 		for _, arg := range flag.Args() {
 			site := config.site(arg)
+			if !config.Flags.Verbose {
+				site.Hints = nil
+			}
 			if err := out.Encode(site); err != nil {
 				fail("Error encoding site %q: %v", arg, err)
 			}
