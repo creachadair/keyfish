@@ -14,12 +14,28 @@ import (
 
 // A Config represents the contents of a keyfish config file.
 type Config struct {
-	Sites   map[string]Site `json:"sites,omitempty"`
-	Default Site            `json:"default,omitempty"`
-	Flags   struct {
+	// A map from site names to site configurations.
+	Sites map[string]Site `json:"sites,omitempty"`
+
+	// A default site, overrides empty fields of a named config.
+	Default Site `json:"default,omitempty"`
+
+	// Default values for flags.
+	Flags struct {
 		Copy    bool `json:"copy,omitempty"`
 		Verbose bool `json:"verbose,omitempty"`
 	} `json:"flags,omitempty"`
+
+	// Named user configuration settings, which override missing fields of a
+	// site config if a user is named.
+	Users map[string]User `json:"users,omitempty"`
+}
+
+// A User represents a collection of shared login information.
+type User struct {
+	Login string `json:"login,omitempty"`
+	EMail string `json:"email,omitempty"`
+	Salt  string `json:"salt,omitempty"`
 }
 
 // A Site represents the non-secret configuration for a single site.
@@ -31,6 +47,7 @@ type Site struct {
 	Salt   string            `json:"salt,omitempty"`
 	Login  string            `json:"login,omitempty"`
 	EMail  string            `json:"email,omitempty"`
+	User   string            `json:"user,omitempty"`
 	Hints  map[string]string `json:"hints,omitempty"`
 }
 
@@ -64,7 +81,7 @@ func (c *Config) site(name string) Site {
 	if salt != "" {
 		site.Salt = salt
 	}
-	return site.merge(c.Default)
+	return site.merge(c.Default, c.Users[site.User])
 }
 
 // context returns a password generation context from s.
@@ -82,7 +99,8 @@ func (s Site) context(secret string) password.Context {
 
 // merge returns a copy of s in which non-empty fields of c are used to fill
 // empty fields of s.
-func (s Site) merge(c Site) Site {
+func (s Site) merge(c Site, u User) Site {
+	s.User = ""
 	if s.Host == "" {
 		s.Host = c.Host
 	}
@@ -96,20 +114,38 @@ func (s Site) merge(c Site) Site {
 		s.Punct = c.Punct
 	}
 	if s.Salt == "" {
-		s.Salt = c.Salt
+		if u.Salt != "" {
+			s.Salt = u.Salt
+		} else {
+			s.Salt = c.Salt
+		}
 	}
 	if s.Login == "" {
-		s.Login = c.Login
+		if u.Login != "" {
+			s.Login = u.Login
+		} else {
+			s.Login = c.Login
+		}
 	}
-	if s.EMail == "" || strings.HasPrefix(s.EMail, "+") {
-		s.EMail = mergeEMail(c.EMail, s.EMail)
+	if s.EMail == "" {
+		if u.EMail != "" {
+			s.EMail = u.EMail
+		} else {
+			s.EMail = c.EMail
+		}
+	}
+	if strings.HasPrefix(s.EMail, "+") {
+		s.EMail = insertAddressTag(c.EMail, s.EMail)
 	} else if strings.HasPrefix(s.EMail, "@") && s.Login != "" {
 		s.EMail = s.Login + s.EMail
 	}
 	return s
 }
 
-func mergeEMail(base, tag string) string {
+// insertAddressTag inserts tag into a base e-mail address. If base has the
+// form "name@addr", the result has the form "name<tag>@addr"; otherwise the
+// function returns base + tag.
+func insertAddressTag(base, tag string) string {
 	if i := strings.Index(base, "@"); i >= 0 {
 		return base[:i] + tag + base[i:]
 	}
