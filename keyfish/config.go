@@ -103,6 +103,8 @@ func (s Site) merge(c Site) Site {
 	}
 	if s.EMail == "" || strings.HasPrefix(s.EMail, "+") {
 		s.EMail = mergeEMail(c.EMail, s.EMail)
+	} else if strings.HasPrefix(s.EMail, "@") && s.Login != "" {
+		s.EMail = s.Login + s.EMail
 	}
 	return s
 }
