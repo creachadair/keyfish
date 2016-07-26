@@ -22,10 +22,12 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"os/exec"
 	"runtime"
+	"text/tabwriter"
 
 	"bitbucket.org/creachadair/keyfish/password"
 	"bitbucket.org/creachadair/stringset"
@@ -116,6 +118,30 @@ func vcode(pw string) string {
 // usage prints a usage message to stderr and terminates the program.
 func fail(msg string, args ...interface{}) { log.Fatalf(msg, args...) }
 
+// listSites renders a nicely-formatted listing of sites to w.
+func listSites(w io.Writer, sites stringset.Set) {
+	fmt.Fprintln(w, "▷ Known sites:")
+	const padding = 2
+	const fieldWidth = 12 + padding
+	const lineWidth = 80
+	tw := tabwriter.NewWriter(w, fieldWidth, 0, padding, ' ', tabwriter.TabIndent)
+	nc := 0
+	for _, site := range sites.Elements() {
+		fmt.Fprint(tw, site)
+		nc += fieldWidth
+		if nc > lineWidth {
+			fmt.Fprintln(tw)
+			nc = 0
+		} else {
+			fmt.Fprint(tw, "\t")
+		}
+	}
+	if nc != 0 {
+		fmt.Fprintln(tw)
+	}
+	tw.Flush()
+}
+
 func main() {
 	// Load configuration settings from the user's file, if it exists.
 	// Do this prior to flag parsing so that flags can override defaults.
@@ -127,7 +153,7 @@ func main() {
 
 	// Unless we're listing sites, at least one must be requested.
 	if doSites {
-		fmt.Printf("Known sites: %s\n", stringset.FromKeys(config.Sites))
+		listSites(os.Stdout, stringset.FromKeys(config.Sites))
 		return
 	} else if flag.NArg() == 0 {
 		fail("You must specify at least one site name")
