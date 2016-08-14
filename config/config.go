@@ -1,4 +1,6 @@
-package main
+// Package config handles keyfish configuration settings. Configurations are
+// typically stored as JSON on disk.
+package config
 
 import (
 	"bytes"
@@ -63,11 +65,11 @@ func (c *Config) Load(path string) error {
 	return json.Unmarshal(data, c)
 }
 
-// site returns a site configuration for the given name, which has the form
+// Site returns a site configuration for the given name, which has the form
 // host.name or salt@host.name. If a matching entry is found in the config, the
 // corresponding Site is returned; otherwise a default Site is build using the
 // name to derive the host (and possibly the salt).
-func (c *Config) site(name string) Site {
+func (c *Config) Site(name string) Site {
 	host, salt := name, ""
 	if i := strings.Index(name, "@"); i >= 0 {
 		host = name[i+1:]
@@ -84,8 +86,8 @@ func (c *Config) site(name string) Site {
 	return site.merge(c.Default, c.Users[site.User])
 }
 
-// context returns a password generation context from s.
-func (s Site) context(secret string) password.Context {
+// Context returns a password generation context from s.
+func (s Site) Context(secret string) password.Context {
 	a := alphabet.NoPunct
 	if s.Punct {
 		a = alphabet.All

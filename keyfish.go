@@ -29,6 +29,7 @@ import (
 	"runtime"
 	"text/tabwriter"
 
+	"bitbucket.org/creachadair/keyfish/config"
 	"bitbucket.org/creachadair/keyfish/password"
 	"bitbucket.org/creachadair/stringset"
 	"github.com/stackengine/gopass"
@@ -40,27 +41,27 @@ const (
 )
 
 var (
-	config    = &Config{Default: Site{Length: 18}}
+	cfg       = &config.Config{Default: config.Site{Length: 18}}
 	secretKey string
 	doSites   bool
 	doPrint   bool
 )
 
 func init() {
-	flag.IntVar(&config.Default.Length, "length", 18, "Password length")
-	flag.BoolVar(&config.Default.Punct, "punct", false, "Use punctuation")
-	flag.StringVar(&config.Default.Format, "format", "", "Password format")
-	flag.StringVar(&config.Default.Salt, "salt", "", "Salt to hash with the site name")
+	flag.IntVar(&cfg.Default.Length, "length", 18, "Password length")
+	flag.BoolVar(&cfg.Default.Punct, "punct", false, "Use punctuation")
+	flag.StringVar(&cfg.Default.Format, "format", "", "Password format")
+	flag.StringVar(&cfg.Default.Salt, "salt", "", "Salt to hash with the site name")
 	flag.BoolVar(&doSites, "list", false, "List known sites and exit")
 	flag.BoolVar(&doPrint, "print", false, "Print specified configurations and exit")
-	flag.BoolVar(&config.Flags.Verbose, "v", false, "Verbose logging (includes hints with -print)")
+	flag.BoolVar(&cfg.Flags.Verbose, "v", false, "Verbose logging (includes hints with -print)")
 
 	flag.StringVar(&secretKey, "secret", os.Getenv("KEYFISH_SECRET"), "Secret key")
 
 	// Only enable the -copy flag if it's supported by the system.
 	// Right now, that means MacOS.
 	if runtime.GOOS == "darwin" {
-		flag.BoolVar(&config.Flags.Copy, "copy", false, "Copy to clipboard instead of printing")
+		flag.BoolVar(&cfg.Flags.Copy, "copy", false, "Copy to clipboard instead of printing")
 	}
 
 	flag.Usage = func() {
@@ -145,7 +146,7 @@ func listSites(w io.Writer, sites stringset.Set) {
 func main() {
 	// Load configuration settings from the user's file, if it exists.
 	// Do this prior to flag parsing so that flags can override defaults.
-	if err := config.Load(os.ExpandEnv("$HOME/.keyfish")); err != nil {
+	if err := cfg.Load(os.ExpandEnv("$HOME/.keyfish")); err != nil {
 		fail("Error loading configuration: %v", err)
 	}
 
@@ -153,7 +154,7 @@ func main() {
 
 	// Unless we're listing sites, at least one must be requested.
 	if doSites {
-		listSites(os.Stdout, stringset.FromKeys(config.Sites))
+		listSites(os.Stdout, stringset.FromKeys(cfg.Sites))
 		return
 	} else if flag.NArg() == 0 {
 		fail("You must specify at least one site name")
@@ -161,8 +162,8 @@ func main() {
 	if doPrint {
 		out := json.NewEncoder(os.Stdout)
 		for _, arg := range flag.Args() {
-			site := config.site(arg)
-			if !config.Flags.Verbose {
+			site := cfg.Site(arg)
+			if !cfg.Flags.Verbose {
 				site.Hints = nil
 			}
 			if err := out.Encode(site); err != nil {
@@ -182,22 +183,22 @@ func main() {
 	}
 
 	for _, arg := range flag.Args() {
-		site := config.site(arg)
+		site := cfg.Site(arg)
 		if n := site.Length; n < minLength || n > maxLength {
 			fail("Password length must be ≥ %d and ≤ %d", minLength, maxLength)
 		}
-		if config.Flags.Verbose {
+		if cfg.Flags.Verbose {
 			log.Printf("Site: %v", site)
 		}
 
-		ctx := site.context(secretKey)
+		ctx := site.Context(secretKey)
 		var pw string
 		if fmt := site.Format; fmt != "" {
 			pw = ctx.Format(site.Host, fmt)
 		} else {
 			pw = ctx.Password(site.Host)[:site.Length]
 		}
-		if !config.Flags.Copy {
+		if !cfg.Flags.Copy {
 			fmt.Println(pw)
 		} else if err := toClipboard(pw); err != nil {
 			log.Printf("Error copying to clipboard: %v", err)
