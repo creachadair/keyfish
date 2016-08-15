@@ -10,8 +10,6 @@
     },
     "permissions": [
 	"tabs",
-	"http://*/*",
-	"https://*/*",
 	"clipboardWrite"
     ],
     "browser_action": {
