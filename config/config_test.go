@@ -48,15 +48,18 @@ func TestSiteLookup(t *testing.T) {
 }
 
 func TestContext(t *testing.T) {
+	pctx := func(a alphabet.Alphabet, salt, secret string) password.Context {
+		return password.Context{Alphabet: a, Salt: salt, Secret: secret}
+	}
 	tests := []struct {
 		site, secret string
 		want         password.Context
 	}{
-		{"nonesuch", "foo", password.Context{alphabet.NoPunct, "", "foo"}},
-		{"xyz@nonesuch", "bar", password.Context{alphabet.NoPunct, "xyz", "bar"}},
-		{"alpha", "baz", password.Context{alphabet.All, "NaCl", "baz"}},
-		{"xyz@alpha", "frob", password.Context{alphabet.All, "xyz", "frob"}},
-		{"bravo", "quux", password.Context{alphabet.NoPunct, "", "quux"}},
+		{"nonesuch", "foo", pctx(alphabet.NoPunct, "", "foo")},
+		{"xyz@nonesuch", "bar", pctx(alphabet.NoPunct, "xyz", "bar")},
+		{"alpha", "baz", pctx(alphabet.All, "NaCl", "baz")},
+		{"xyz@alpha", "frob", pctx(alphabet.All, "xyz", "frob")},
+		{"bravo", "quux", pctx(alphabet.NoPunct, "", "quux")},
 	}
 	for _, test := range tests {
 		site := testConfig.Site(test.site)
