@@ -48,11 +48,15 @@ KeyFish.prototype.Password = function(site) {
 // Format returns a password for the given site based on a template that
 // describes the desired output string.
 //
-// Each character of the format chooses a single character of the password.
-// Each letter is a wildcard for a letter of the same case.  Each digit is a
-// wildcard for a decimal digit.  An asterisk ("*") is a wildcard for a letter
-// of either case.  A question mark ("?") is a wildcard for any punctuation
-// character.  All other characters are copied literally to the output.
+// The format string specifies the format of the resulting password: Each
+// character of the format chooses a single character of the password.
+//
+// A hash mark ("#") in the format is a wildcard for a decimal digit.
+// An asterisk ("*") is a wildcard for a letter of either case.
+// A caret ("^") is a wildcard for an uppercase letter.
+// An underscore ("_") is a wildcard for a lowercase letter.
+// A question mark ("?") is a wildcard for any punctuation character.
+// All other characters are copied literally to the output.
 KeyFish.prototype.Format = function(site, format) {
     if (format == "") {
 	return format
@@ -67,11 +71,11 @@ KeyFish.prototype.Format = function(site, format) {
 	    buf.push(pick(Alphabet.Letters, raw[i]));
 	} else if (format[i] == "?") {
 	    buf.push(pick(Alphabet.Puncts, raw[i]));
-	} else if (Alphabet.Digits.indexOf(format[i]) >= 0) {
+	} else if (format[i] == "#") {
 	    buf.push(pick(Alphabet.Digits, raw[i]));
-	} else if (Alphabet.Uppercase.indexOf(format[i]) >= 0) {
+	} else if (format[i] == "^") {
 	    buf.push(pick(Alphabet.Uppercase, raw[i]));
-	} else if (Alphabet.Lowercase.indexOf(format[i]) >= 0) {
+	} else if (format[i] == "_") {
 	    buf.push(pick(Alphabet.Lowercase, raw[i]));
 	} else {
 	    buf.push(format[i]);
