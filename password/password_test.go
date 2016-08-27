@@ -44,31 +44,30 @@ func TestFormat(t *testing.T) {
 		salt, format, expect string
 	}{
 		// Examples with mixed uppercase and lowercase.
-		{"", "password", "ckwpxgpz"},
-		{"", "PassWord", "CkwpXgpz"},
+		{"", "________", "ckwpxgpz"},
+		{"", "^___^___", "CkwpXgpz"},
 
 		// The asterisk can generate upper and lowercase results.
-		{"", "a**A", "cUtP"},
+		{"", "_**^", "cUtP"},
 
 		// Characters not in the alphabets are passed through unchanged.
-		{"", "<pass>", "<kwpx>"},
+		{"", "<____>", "<kwpx>"},
 
 		// Some examples with punctuation wildcards.
-		{"", "Aa?a?", "Ck/p/"},
-		{"", "Aa?b?Bb?cDDDDDDe??", "Ck/p/Gp?mIFHBHDk./"},
+		{"", "^_?_?", "Ck/p/"},
+		{"", "^_?_?^_?_^^^^^^_??", "Ck/p/Gp?mIFHBHDk./"},
 
-		// Punctuation other than the '?' wildcard is preserved, but the
-		// wildcard does work.
-		{"", "[%.+&#%]", "[%.+&#%]"},
-		{"", "[%.??#%]", "[%.=/#%]"},
+		// Punctuation marks other than the wildcards are preserved, but the
+		// wildcards work.
+		{"", "[%.+&@%]", "[%.+&@%]"},
+		{"", "[%.??@%]", "[%.=/@%]"},
+		{"", "[%.??^%]", "[%.=/G%]"},
 
 		// Password generation respects the seed.
-		{"foo", "A????bCde", "A?:?.nFoj"},
+		{"foo", "^????_^__", "A?:?.nFoj"},
 
 		// The exact identity of characters doesn't matter, only category.
-		{"foo", "a0000bcde1", "a9897nfoj9"},
-		{"foo", "a0503bcqe9", "a9897nfoj9"},
-		{"foo", "z1503bkqe0", "a9897nfoj9"},
+		{"foo", "_####____#", "a9897nfoj9"},
 	}
 	for _, test := range tests {
 		c.Salt = test.salt

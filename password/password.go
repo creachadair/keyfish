@@ -47,9 +47,10 @@ func (c *Context) Password(site string) string {
 // The format string specifies the format of the resulting password: Each
 // character of the format chooses a single character of the password.
 //
-// A letter in the format is a wildcard for a letter of the same case.
-// A digit in the format is a wildcard for a decimal digit.
+// A hash mark ("#") in the format is a wildcard for a decimal digit.
 // An asterisk ("*") is a wildcard for a letter of either case.
+// A caret ("^") is a wildcard for an uppercase letter.
+// An underscore ("_") is a wildcard for a lowercase letter.
 // A question mark ("?") is a wildcard for any punctuation character.
 // All other characters are copied literally to the output.
 func (c *Context) Format(site, format string) string {
@@ -63,17 +64,17 @@ func (c *Context) Format(site, format string) string {
 	pw := make([]byte, len(format))
 
 	for i := 0; i < len(pw); i++ {
-		switch t := rune(format[i]); {
-		case t == '*':
+		switch rune(format[i]) {
+		case '*':
 			pw[i] = alphabet.Letters.Pick(raw[i])
-		case t == '?':
+		case '?':
 			pw[i] = alphabet.Puncts.Pick(raw[i])
-		case alphabet.Uppercase.Contains(t):
-			pw[i] = alphabet.Uppercase.Pick(raw[i])
-		case alphabet.Lowercase.Contains(t):
-			pw[i] = alphabet.Lowercase.Pick(raw[i])
-		case alphabet.Digits.Contains(t):
+		case '#':
 			pw[i] = alphabet.Digits.Pick(raw[i])
+		case '^':
+			pw[i] = alphabet.Uppercase.Pick(raw[i])
+		case '_':
+			pw[i] = alphabet.Lowercase.Pick(raw[i])
 		default:
 			pw[i] = format[i]
 		}
