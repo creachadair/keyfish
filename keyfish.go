@@ -74,11 +74,16 @@ If --secret is set, it is used as the master key to generate passwords.  If
 not, the value of the KEYFISH_SECRET environment variable is used if it is
 defined.  Otherwise, the user is prompted at the terminal.
 
-Use --format to specify an exact password layout, with "A" for an uppercase
-letter, "a" for a lowercase letter, "1" for a digit, "*" for a letter of either
-case, "?" for a punctuation mark.  All other non-letters are copied verbatim.
-All letters are wildcards for a letter of the appropriate case, all digits are
-wildcards for a digit.
+Use --format to specify an exact password layout, with wildcards to substitute
+elements of the alphabet:
+
+  ^   for an uppercase letter
+  _   for a lowercase letter
+  #   for a digit
+  *   for a letter of either case
+  ?   for a punctuation mark
+
+All other characters are copied verbatim.
 
 A site name has the form "host.org" or "salt@host.org". If the site matches one
 of the sites named in the user's ~/.keyfish file, the corresponding settings
