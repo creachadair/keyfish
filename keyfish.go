@@ -166,6 +166,9 @@ func main() {
 	}
 	if doPrint {
 		out := json.NewEncoder(os.Stdout)
+		if cfg.Flags.Verbose {
+			out.SetIndent("", "  ")
+		}
 		for _, arg := range flag.Args() {
 			site := cfg.Site(arg)
 			if !cfg.Flags.Verbose {
