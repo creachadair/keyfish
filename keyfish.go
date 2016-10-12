@@ -29,10 +29,10 @@ import (
 	"runtime"
 	"text/tabwriter"
 
+	"bitbucket.org/creachadair/getpass"
 	"bitbucket.org/creachadair/keyfish/config"
 	"bitbucket.org/creachadair/keyfish/password"
 	"bitbucket.org/creachadair/stringset"
-	"github.com/stackengine/gopass"
 )
 
 const (
@@ -183,7 +183,7 @@ func main() {
 
 	// Establish the secret key.
 	if secretKey == "" {
-		pw, err := gopass.GetPass("Secret key: ")
+		pw, err := getpass.Prompt("Secret key: ")
 		if err != nil {
 			fail("Error reading secret key: %v", err)
 		}
