@@ -45,6 +45,10 @@ var (
 	secretKey string
 	doSites   bool
 	doPrint   bool
+
+	// Only enable the -copy flag if it's supported by the system.
+	// Right now, that means MacOS.
+	canCopy = runtime.GOOS == "darwin"
 )
 
 func init() {
@@ -55,14 +59,8 @@ func init() {
 	flag.BoolVar(&doSites, "list", false, "List known sites and exit")
 	flag.BoolVar(&doPrint, "print", false, "Print specified configurations and exit")
 	flag.BoolVar(&cfg.Flags.Verbose, "v", false, "Verbose logging (includes hints with -print)")
-
+	flag.BoolVar(&cfg.Flags.Copy, "copy", false, "Copy to clipboard instead of printing")
 	flag.StringVar(&secretKey, "secret", os.Getenv("KEYFISH_SECRET"), "Secret key")
-
-	// Only enable the -copy flag if it's supported by the system.
-	// Right now, that means MacOS.
-	if runtime.GOOS == "darwin" {
-		flag.BoolVar(&cfg.Flags.Copy, "copy", false, "Copy to clipboard instead of printing")
-	}
 
 	flag.Usage = func() {
 		fmt.Fprintln(os.Stderr, `Usage: keyfish [options] <site.name>+
@@ -206,7 +204,7 @@ func main() {
 		} else {
 			pw = ctx.Password(site.Host)[:site.Length]
 		}
-		if !cfg.Flags.Copy {
+		if !cfg.Flags.Copy || !canCopy {
 			fmt.Println(pw)
 		} else if err := toClipboard(pw); err != nil {
 			log.Printf("Error copying to clipboard: %v", err)
