@@ -76,12 +76,23 @@ func (c *Config) Site(name string) Site {
 		salt = name[:i]
 	}
 
+	// Try to find a named configuration for the host.
 	site, ok := c.Sites[host]
-	if !ok || site.Host == "" {
+	if !ok {
+		// If we didn't find one, see if there is a named config that has this as
+		// its host name.
+		for _, cfg := range c.Sites {
+			if cfg.Host == host {
+				site = cfg
+				break
+			}
+		}
+	}
+	if site.Host == "" {
 		site.Host = host
 	}
 	if salt != "" {
-		site.Salt = salt
+		site.Salt = salt // override the salt with the user's spec.
 	}
 	return site.merge(c.Default, c.Users[site.User])
 }
