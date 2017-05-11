@@ -25,7 +25,6 @@ import (
 	"io"
 	"log"
 	"os"
-	"runtime"
 	"text/tabwriter"
 
 	"bitbucket.org/creachadair/getpass"
@@ -44,10 +43,6 @@ var (
 	secretKey string
 	doSites   bool
 	doPrint   bool
-
-	// Only enable the -copy flag if it's supported by the system.
-	// Right now, that means MacOS.
-	canCopy = runtime.GOOS == "darwin"
 )
 
 func init() {
@@ -184,7 +179,7 @@ func main() {
 		} else {
 			pw = ctx.Password(site.Host)[:site.Length]
 		}
-		if !cfg.Flags.Copy || !canCopy {
+		if !cfg.Flags.Copy {
 			fmt.Println(pw)
 		} else if err := toClipboard(pw); err != nil {
 			log.Printf("Error copying to clipboard: %v", err)
