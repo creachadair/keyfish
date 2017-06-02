@@ -10,7 +10,10 @@ import (
 )
 
 // String generates a human-readable digest of data as a printable string.
-func String(data []byte) string { return words.hash(data) }
+func String(data string) string { return words.hash([]byte(data)) }
+
+// Bytes generates a human-readable digest of data as a printable string.
+func Bytes(data []byte) string { return words.hash(data) }
 
 type wordmap [256]string
 

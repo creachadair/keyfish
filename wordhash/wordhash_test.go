@@ -21,9 +21,13 @@ func TestString(t *testing.T) {
 		{"0123456789abcdef!@#$%^&;", "hover-black-monad-jenny"},
 	}
 	for _, test := range tests {
-		got := String([]byte(test.input))
+		got := String(test.input)
 		if got != test.want {
 			t.Errorf("String(%q): got %q, want %q", test.input, got, test.want)
+		}
+		got = Bytes([]byte(test.input))
+		if got != test.want {
+			t.Errorf("Bytes(%q): got %q, want %q", test.input, got, test.want)
 		}
 	}
 }
