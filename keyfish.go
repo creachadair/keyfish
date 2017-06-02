@@ -30,6 +30,7 @@ import (
 	"bitbucket.org/creachadair/getpass"
 	"bitbucket.org/creachadair/keyfish/config"
 	"bitbucket.org/creachadair/keyfish/password"
+	"bitbucket.org/creachadair/keyfish/wordhash"
 	"bitbucket.org/creachadair/stringset"
 )
 
@@ -84,14 +85,6 @@ are used.
 Flags:`)
 		flag.PrintDefaults()
 	}
-}
-
-func vcode(pw string) string {
-	var vc uint16
-	for _, b := range []byte(pw) {
-		vc = ((vc << 3) | (vc >> 13)) + uint16(b)
-	}
-	return fmt.Sprintf("%04x", vc)
 }
 
 // usage prints a usage message to stderr and terminates the program.
@@ -187,7 +180,7 @@ func main() {
 			if u := site.Login; u != "" {
 				fmt.Print(u, "@")
 			}
-			fmt.Print(site.Host, "\t", vcode(pw), "\n")
+			fmt.Print(site.Host, "\t", wordhash.String(pw), "\n")
 		}
 	}
 }
