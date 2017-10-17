@@ -49,7 +49,6 @@ type Site struct {
 	Salt   string            `json:"salt,omitempty"`
 	Login  string            `json:"login,omitempty"`
 	EMail  string            `json:"email,omitempty"`
-	User   string            `json:"user,omitempty"`
 	Hints  map[string]string `json:"hints,omitempty"`
 }
 
@@ -94,7 +93,7 @@ func (c *Config) Site(name string) Site {
 	if salt != "" {
 		site.Salt = salt // override the salt with the user's spec.
 	}
-	return site.merge(c.Default, c.Users[site.User])
+	return site.merge(c.Default)
 }
 
 // Context returns a password generation context from s.
@@ -112,8 +111,7 @@ func (s Site) Context(secret string) password.Context {
 
 // merge returns a copy of s in which non-empty fields of c are used to fill
 // empty fields of s.
-func (s Site) merge(c Site, u User) Site {
-	s.User = ""
+func (s Site) merge(c Site) Site {
 	if s.Host == "" {
 		s.Host = c.Host
 	}
@@ -127,25 +125,13 @@ func (s Site) merge(c Site, u User) Site {
 		s.Punct = c.Punct
 	}
 	if s.Salt == "" {
-		if u.Salt != "" {
-			s.Salt = u.Salt
-		} else {
-			s.Salt = c.Salt
-		}
+		s.Salt = c.Salt
 	}
 	if s.Login == "" {
-		if u.Login != "" {
-			s.Login = u.Login
-		} else {
-			s.Login = c.Login
-		}
+		s.Login = c.Login
 	}
 	if s.EMail == "" {
-		if u.EMail != "" {
-			s.EMail = u.EMail
-		} else {
-			s.EMail = c.EMail
-		}
+		s.EMail = c.EMail
 	}
 	if strings.HasPrefix(s.EMail, "+") {
 		s.EMail = insertAddressTag(c.EMail, s.EMail)
