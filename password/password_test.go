@@ -13,14 +13,19 @@ import (
 func TestKnownValues(t *testing.T) {
 	const site = "xyzzy"
 	tests := []struct {
-		alpha              alphabet.Alphabet
-		secret, salt, want string
+		alpha        alphabet.Alphabet
+		size         int
+		secret, salt string
+		want         string
 	}{
-		{alphabet.All, "cabezon", "", "Hf*w_Tv/nZRWDVJf#=9u$Yhu@DnKl@ez"},
-		{alphabet.All, "cabezon", "foo", "B,&?!nPrd/Y&CbE%CYxz&bwOL!Ym16P:"},
-		{alphabet.NoPunct, "bloodfish", "", "jq77585eZJxN2uyD5IUEKcNxll2jWQys"},
-		{alphabet.NoPunct, "bloodfish", "foo", "ZenZA1Ht88eewraGuFLkXIu92NQlV3rk"},
-		{alphabet.Lowercase + alphabet.Digits, "cabezon", "foo", "a8592shtn9k5amb4blwx5mwgf2kry0h8"},
+		{alphabet.All, 10, "cabezon", "", "Hf*w_Tv/nZ"},
+		{alphabet.All, 32, "cabezon", "", "Hf*w_Tv/nZRWDVJf#=9u$Yhu@DnKl@ez"},
+		{alphabet.All, 32, "cabezon", "foo", "B,&?!nPrd/Y&CbE%CYxz&bwOL!Ym16P:"},
+		{alphabet.All, 50, "cabezon", "foo", "B,&?!nPrd/Y&CbE%CYxz&bwOL!Ym16P:H^mtkRNv^^Wlw$6^i?"},
+		{alphabet.All, 50, "cabezon", "bar", "l!?9F+hJq8F^ewy%5l:YEt!H?73/bCWAZk=77RZ#d95,e0d:!="},
+		{alphabet.NoPunct, 32, "bloodfish", "", "jq77585eZJxN2uyD5IUEKcNxll2jWQys"},
+		{alphabet.NoPunct, 32, "bloodfish", "foo", "ZenZA1Ht88eewraGuFLkXIu92NQlV3rk"},
+		{alphabet.Lowercase + alphabet.Digits, 32, "cabezon", "foo", "a8592shtn9k5amb4blwx5mwgf2kry0h8"},
 	}
 	for _, test := range tests {
 		c := &Context{
@@ -28,7 +33,7 @@ func TestKnownValues(t *testing.T) {
 			Alphabet: test.alpha,
 			Salt:     test.salt,
 		}
-		if got := c.Password(site); got != test.want {
+		if got := c.Password(site, test.size); got != test.want {
 			t.Errorf("Password %q [%q]: got %q, want %q", site, test.secret, got, test.want)
 		}
 	}
@@ -68,6 +73,18 @@ func TestFormat(t *testing.T) {
 
 		// The exact identity of characters doesn't matter, only category.
 		{"foo", "_####____#", "a9897nfoj9"},
+
+		// Length and salt.
+		{"", "?????????????????? ??????????????????????", "@&/=/%=?-^$%!%#&./ =:^*_.!-#-.&+%!%-$:!/:"},
+		{"", "__________________ ______________________", "ckwpxgpzmifhbhdkvx pvhlpubmdmujqgagmfvayv"},
+		{"", "^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^^^^^^^^^^^^^", "CKWPXGPZMIFHBHDKVX PVHLPUBMDMUJQGAGMFVAYV"},
+		{"", "****************** **********************", "EUtfuMfzZQLPCOGUqv eqPWepCZGYpThMAMZLqBwr"},
+		{"", "################## ######################", "048692594322021489 5834580414836202428098"},
+		{"q", "????????????????????????????????????????", ",@?_$^!$*,/,*/-=$!^?:,-&:+$&..-?&^,_*_$+"},
+		{"r", "________________________________________", "cxrmjefrfpovbxfikkaxrmmzzljqrqoogpkocpke"},
+		{"s", "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^", "IABGPSJYGWECVOLVJTTJBYVISEJDHLCAHQYIERFL"},
+		{"t", "****************************************", "aoUqoKKrLyxHBtcypBMzPukXNcTbOJpBayrQHCst"},
+		{"u", "########################################", "8364621019243126110487340041013976073505"},
 	}
 	for _, test := range tests {
 		c.Salt = test.salt
