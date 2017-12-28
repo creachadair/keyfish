@@ -29,15 +29,11 @@ import (
 
 	"bitbucket.org/creachadair/getpass"
 	"bitbucket.org/creachadair/keyfish/config"
-	"bitbucket.org/creachadair/keyfish/password"
 	"bitbucket.org/creachadair/keyfish/wordhash"
 	"bitbucket.org/creachadair/stringset"
 )
 
-const (
-	minLength = 6
-	maxLength = password.MaxLength
-)
+const minLength = 6 // Allow no passwords shorter than this
 
 var (
 	cfg       = &config.Config{Default: config.Site{Length: 18}}
@@ -158,8 +154,12 @@ func main() {
 
 	for _, arg := range flag.Args() {
 		site := cfg.Site(arg)
-		if n := site.Length; n < minLength || n > maxLength {
-			fail("Password length must be ≥ %d and ≤ %d", minLength, maxLength)
+
+		// Check minimum length.
+		if site.Length < minLength {
+			fail("Password length must be ≥ %d", minLength)
+		} else if site.Format != "" && len(site.Format) < minLength {
+			fail("Format length must be ≥ %d", minLength)
 		}
 		if cfg.Flags.Verbose {
 			log.Printf("Site: %v", site)
@@ -170,7 +170,7 @@ func main() {
 		if fmt := site.Format; fmt != "" {
 			pw = ctx.Format(site.Host, fmt)
 		} else {
-			pw = ctx.Password(site.Host)[:site.Length]
+			pw = ctx.Password(site.Host, site.Length)
 		}
 		if !cfg.Flags.Copy {
 			fmt.Println(pw)
