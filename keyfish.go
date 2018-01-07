@@ -75,8 +75,11 @@ elements of the alphabet:
 All other characters are copied verbatim.
 
 A site name has the form "host.org" or "salt@host.org". If the site matches one
-of the sites named in the user's ~/.keyfish file, the corresponding settings
-are used.
+of the sites named in the user's config file, the corresponding settings are used.
+
+If KEYFISH_CONFIG is set in the environment, that is used as the config file
+path; otherwise config is read from ~/.keyfish if it exists. If KEYFISH_CONFIG
+is set but empty, no configuration will be loaded.
 
 Flags:`)
 		flag.PrintDefaults()
@@ -113,7 +116,7 @@ func listSites(w io.Writer, sites stringset.Set) {
 func main() {
 	// Load configuration settings from the user's file, if it exists.
 	// Do this prior to flag parsing so that flags can override defaults.
-	if err := cfg.Load(os.ExpandEnv("$HOME/.keyfish")); err != nil {
+	if err := cfg.Load(configFilePath()); err != nil {
 		fail("Error loading configuration: %v", err)
 	}
 
@@ -183,4 +186,11 @@ func main() {
 			fmt.Print(site.Host, "\t", wordhash.String(pw), "\n")
 		}
 	}
+}
+
+func configFilePath() string {
+	if path, ok := os.LookupEnv("KEYFISH_CONFIG"); ok {
+		return path
+	}
+	return os.ExpandEnv("$HOME/.keyfish")
 }
