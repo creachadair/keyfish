@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"os"
 	"strings"
 
 	"bitbucket.org/creachadair/keyfish/alphabet"
@@ -53,12 +52,10 @@ type Site struct {
 }
 
 // Load loads the contents of the specified path into c.  If path does not
-// exist, this is a no-op without error.
+// exist, the reported error satisfies os.IsNotExist and c is unmodified.
 func (c *Config) Load(path string) error {
 	data, err := ioutil.ReadFile(path)
-	if os.IsNotExist(err) {
-		return nil
-	} else if err != nil {
+	if err != nil {
 		return err
 	}
 	return json.Unmarshal(data, c)

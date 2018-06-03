@@ -116,7 +116,7 @@ func listSites(w io.Writer, sites stringset.Set) {
 func main() {
 	// Load configuration settings from the user's file, if it exists.
 	// Do this prior to flag parsing so that flags can override defaults.
-	if err := cfg.Load(configFilePath()); err != nil {
+	if err := cfg.Load(configFilePath()); err != nil && !os.IsNotExist(err) {
 		fail("Error loading configuration: %v", err)
 	}
 
