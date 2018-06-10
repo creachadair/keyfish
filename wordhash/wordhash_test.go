@@ -1,6 +1,9 @@
 package wordhash
 
-import "testing"
+import (
+	"hash/crc32"
+	"testing"
+)
 
 func TestString(t *testing.T) {
 	// These test vectors were constructed by hand for the built-in word list,
@@ -22,6 +25,8 @@ func TestString(t *testing.T) {
 	}
 	for _, test := range tests {
 		got := String(test.input)
+		t.Logf("Input: %q, CRC: %08x, Hash: %q",
+			test.input, crc32.ChecksumIEEE([]byte(test.input)), got)
 		if got != test.want {
 			t.Errorf("String(%q): got %q, want %q", test.input, got, test.want)
 		}

@@ -31,36 +31,36 @@ var words = wordmap{
 	// This word list was constructed by hand. If you make any changes here,
 	// either to the order or content of entries, you will need to update the
 	// test cases too.
-	"abbot", "adder", "anode", "apple", "argon", "ashes", "aster", "attic",
+	"abbot", "adder", "anode", "apple", "argon", "ashes", "aster", "attic", // 0
 	"axiom", "azure", "baker", "banjo", "baron", "birch", "black", "blame",
-	"boron", "botch", "brief", "brine", "burro", "bylaw", "cabin", "cable",
+	"boron", "botch", "brief", "brine", "burro", "bylaw", "cabin", "cable", // 1
 	"calyx", "camel", "cedar", "child", "clank", "cobra", "coral", "cross",
-	"cumin", "cubic", "daily", "dance", "decal", "delta", "demon", "diary",
+	"cumin", "cubic", "daily", "dance", "decal", "delta", "demon", "diary", // 2
 	"dodge", "dogma", "dolor", "dough", "drape", "dryad", "eagle", "edict",
-	"eight", "elope", "embed", "epoch", "erode", "erupt", "essay", "ethos",
+	"eight", "elope", "embed", "epoch", "erode", "erupt", "essay", "ethos", // 3
 	"evoke", "exile", "fable", "facet", "false", "favor", "feral", "finch",
-	"focus", "forty", "found", "friar", "frost", "fuzzy", "gamma", "gavel",
+	"focus", "forty", "found", "friar", "frost", "fuzzy", "gamma", "gavel", // 4
 	"gecko", "geode", "gills", "glade", "goose", "grave", "grind", "guess",
-	"guide", "guilt", "habit", "handy", "happy", "heath", "hedge", "heron",
+	"guide", "guilt", "habit", "handy", "happy", "heath", "hedge", "heron", // 5
 	"hippo", "holly", "horse", "hover", "humor", "hyena", "ictus", "idiom",
-	"idler", "igloo", "image", "incur", "infix", "ingot", "inlay", "ionic",
+	"idler", "igloo", "image", "incur", "infix", "ingot", "inlay", "ionic", // 6
 	"itchy", "ivory", "jabot", "jaded", "jaunt", "jeans", "jenny", "jewel",
-	"joint", "joker", "jolly", "joust", "jumbo", "juror", "kazoo", "kebab",
+	"joint", "joker", "jolly", "joust", "jumbo", "juror", "kazoo", "kebab", // 7
 	"kefir", "ketch", "knave", "kneel", "knife", "knoll", "koala", "kudzu",
-	"label", "lance", "lapse", "larch", "linen", "lithe", "llama", "loose",
+	"label", "lance", "lapse", "larch", "linen", "lithe", "llama", "loose", // 8
 	"lucid", "lyric", "mango", "marsh", "mason", "meter", "mimic", "miser",
-	"monad", "moose", "motet", "music", "naiad", "nerve", "niche", "nifty",
+	"monad", "moose", "motet", "music", "naiad", "nerve", "niche", "nifty", // 9
 	"night", "noise", "nonce", "notch", "novel", "nymph", "oasis", "ocean",
-	"octet", "omega", "opera", "orbit", "otter", "ovary", "oxide", "ozone",
+	"octet", "omega", "opera", "orbit", "otter", "ovary", "oxide", "ozone", // A
 	"paint", "panda", "parse", "perch", "pique", "pixie", "plumb", "pouch",
-	"proto", "proxy", "quail", "quake", "quart", "queen", "queue", "quill",
+	"proto", "proxy", "quail", "quake", "quart", "queen", "queue", "quill", // B
 	"quote", "radar", "rainy", "razor", "reset", "rhyme", "ridge", "river",
-	"roost", "rowan", "royal", "rumor", "sable", "satin", "scarf", "screw",
+	"roost", "rowan", "royal", "rumor", "sable", "satin", "scarf", "screw", // C
 	"shark", "sixty", "slate", "spade", "stash", "sugar", "table", "tease",
-	"thane", "timer", "torch", "totem", "triad", "tulip", "tuner", "twist",
+	"thane", "timer", "torch", "totem", "triad", "tulip", "tuner", "twist", // D
 	"umber", "unary", "unbox", "uncle", "unity", "upset", "urban", "usurp",
-	"utter", "uvula", "vague", "verse", "vetch", "vigil", "viola", "vivid",
+	"utter", "uvula", "vague", "verse", "vetch", "vigil", "viola", "vivid", // E
 	"vixen", "vocal", "vodka", "voter", "wager", "waist", "water", "whale",
-	"wharf", "wheat", "whelp", "woman", "wrist", "xenon", "xylem", "yacht",
+	"wharf", "wheat", "whelp", "woman", "wrist", "xenon", "xylem", "yacht", // F
 	"yucca", "yeast", "yodel", "yield", "youth", "zebra", "zesty", "zippy",
 }
