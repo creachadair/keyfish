@@ -62,10 +62,11 @@ func (c *Config) Load(path string) error {
 }
 
 // Site returns a site configuration for the given name, which has the form
-// host.name or salt@host.name. If a matching entry is found in the config, the
-// corresponding Site is returned; otherwise a default Site is build using the
+// host.name or salt@host.name, and reports whether the config arose from a
+// matching entry in the config. If a matching entry was found, the
+// corresponding Site is returned; otherwise a default Site is built using the
 // name to derive the host (and possibly the salt).
-func (c *Config) Site(name string) Site {
+func (c *Config) Site(name string) (Site, bool) {
 	host, salt := name, ""
 	if i := strings.Index(name, "@"); i >= 0 {
 		host = name[i+1:]
@@ -90,7 +91,7 @@ func (c *Config) Site(name string) Site {
 	if salt != "" {
 		site.Salt = salt // override the salt with the user's spec.
 	}
-	return site.merge(c.Default)
+	return site.merge(c.Default), ok
 }
 
 // Context returns a password generation context from s.

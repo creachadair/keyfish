@@ -135,7 +135,7 @@ func main() {
 			out.SetIndent("", "  ")
 		}
 		for _, arg := range flag.Args() {
-			site := cfg.Site(arg)
+			site, _ := cfg.Site(arg)
 			if !cfg.Flags.Verbose {
 				site.Hints = nil
 			}
@@ -156,7 +156,7 @@ func main() {
 	}
 
 	for _, arg := range flag.Args() {
-		site := cfg.Site(arg)
+		site, _ := cfg.Site(arg)
 
 		// Check minimum length.
 		if site.Length < minLength {

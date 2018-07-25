@@ -29,20 +29,24 @@ func TestSiteLookup(t *testing.T) {
 	tests := []struct {
 		name string
 		want Site
+		ok   bool
 	}{
 		// A site that isn't found returns the default, with that site name.
-		{"nonesuch", Site{Host: "nonesuch", Login: "frodo"}},
+		{"nonesuch", Site{Host: "nonesuch", Login: "frodo"}, false},
 
 		// Defaults fill in the missing fields.
-		{"alpha", Site{Host: "alpha", Length: 10, Punct: true, Login: "frodo", Salt: "NaCl"}},
+		{"alpha", Site{Host: "alpha", Length: 10, Punct: true, Login: "frodo", Salt: "NaCl"}, true},
 
 		// A site name with a salt overrides the salt value.
-		{"xyz@bravo", Site{Host: "bravo", Format: "******1", Login: "sam", Salt: "xyz"}},
+		{"xyz@bravo", Site{Host: "bravo", Format: "******1", Login: "sam", Salt: "xyz"}, true},
 	}
 	for _, test := range tests {
-		got := testConfig.Site(test.name)
+		got, ok := testConfig.Site(test.name)
 		if diff := pretty.Compare(got, test.want); diff != "" {
 			t.Errorf("Site %q differs from expected (-got, +want)\n%s", test.name, diff)
+		}
+		if ok != test.ok {
+			t.Errorf("Site %q in config: got %v, want %v", test.name, ok, test.ok)
 		}
 	}
 }
@@ -62,7 +66,7 @@ func TestContext(t *testing.T) {
 		{"bravo", "quux", pctx(alphabet.NoPunct, "", "quux")},
 	}
 	for _, test := range tests {
-		site := testConfig.Site(test.site)
+		site, _ := testConfig.Site(test.site)
 		got := site.Context(test.secret)
 		if diff := pretty.Compare(got, test.want); diff != "" {
 			t.Errorf("Context %q differs from expected (-got, +want)\n%s", test.secret, diff)
