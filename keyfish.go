@@ -39,7 +39,7 @@ var (
 	cfg       = &config.Config{Default: config.Site{Length: 18}}
 	secretKey string
 	doSites   bool
-	doPrint   bool
+	doShow    bool
 )
 
 func init() {
@@ -48,7 +48,7 @@ func init() {
 	flag.StringVar(&cfg.Default.Format, "format", "", "Password format")
 	flag.StringVar(&cfg.Default.Salt, "salt", "", "Salt to hash with the site name")
 	flag.BoolVar(&doSites, "list", false, "List known sites and exit")
-	flag.BoolVar(&doPrint, "print", false, "Print specified configurations and exit")
+	flag.BoolVar(&doShow, "show", false, "Print specified configurations and exit")
 	flag.BoolVar(&cfg.Flags.Verbose, "v", false, "Verbose logging (includes hints with -print)")
 	flag.BoolVar(&cfg.Flags.Copy, "copy", false, "Copy to clipboard instead of printing")
 	flag.StringVar(&secretKey, "secret", os.Getenv("KEYFISH_SECRET"), "Secret key")
@@ -129,7 +129,7 @@ func main() {
 	} else if flag.NArg() == 0 {
 		fail("You must specify at least one site name")
 	}
-	if doPrint {
+	if doShow {
 		out := json.NewEncoder(os.Stdout)
 		if cfg.Flags.Verbose {
 			out.SetIndent("", "  ")
