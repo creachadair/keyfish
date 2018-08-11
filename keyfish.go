@@ -38,8 +38,9 @@ const minLength = 6 // Allow no passwords shorter than this
 var (
 	cfg       = &config.Config{Default: config.Site{Length: 18}}
 	secretKey string
-	doSites   bool
-	doShow    bool
+	doSites   bool // list known site configuations
+	doShow    bool // show the named configurations
+	doPrint   bool // print the result, overriding -copy
 )
 
 func init() {
@@ -49,6 +50,7 @@ func init() {
 	flag.StringVar(&cfg.Default.Salt, "salt", "", "Salt to hash with the site name")
 	flag.BoolVar(&doSites, "list", false, "List known sites and exit")
 	flag.BoolVar(&doShow, "show", false, "Print specified configurations and exit")
+	flag.BoolVar(&doPrint, "print", false, "Print the result rather than copying (overrides -copy)")
 	flag.BoolVar(&cfg.Flags.Verbose, "v", false, "Verbose logging (includes hints with -print)")
 	flag.BoolVar(&cfg.Flags.Copy, "copy", false, "Copy to clipboard instead of printing")
 	flag.StringVar(&secretKey, "secret", os.Getenv("KEYFISH_SECRET"), "Secret key")
@@ -175,7 +177,7 @@ func main() {
 		} else {
 			pw = ctx.Password(site.Host, site.Length)
 		}
-		if !cfg.Flags.Copy {
+		if doPrint || !cfg.Flags.Copy {
 			fmt.Println(pw)
 		} else if err := toClipboard(pw); err != nil {
 			log.Printf("Error copying to clipboard: %v", err)
