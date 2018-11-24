@@ -26,17 +26,6 @@ type Config struct {
 		Copy    bool `json:"copy,omitempty"`
 		Verbose bool `json:"verbose,omitempty"`
 	} `json:"flags,omitempty"`
-
-	// Named user configuration settings, which override missing fields of a
-	// site config if a user is named.
-	Users map[string]User `json:"users,omitempty"`
-}
-
-// A User represents a collection of shared login information.
-type User struct {
-	Login string `json:"login,omitempty"`
-	EMail string `json:"email,omitempty"`
-	Salt  string `json:"salt,omitempty"`
 }
 
 // A Site represents the non-secret configuration for a single site.
