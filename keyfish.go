@@ -36,7 +36,7 @@ import (
 const minLength = 6 // Allow no passwords shorter than this
 
 var (
-	cfg       = &config.Config{Default: config.Site{Length: 18}}
+	cfg       = &config.Config{Default: config.Site{Length: 18, Punct: new(bool)}}
 	secretKey string
 	doSites   bool // list known site configuations
 	doShow    bool // show the named configurations
@@ -45,7 +45,7 @@ var (
 
 func init() {
 	flag.IntVar(&cfg.Default.Length, "length", 18, "Password length")
-	flag.BoolVar(&cfg.Default.Punct, "punct", false, "Use punctuation")
+	flag.BoolVar(cfg.Default.Punct, "punct", false, "Use punctuation")
 	flag.StringVar(&cfg.Default.Format, "format", "", "Password format")
 	flag.StringVar(&cfg.Default.Salt, "salt", "", "Salt to hash with the site name")
 	flag.BoolVar(&doSites, "list", false, "List known sites and exit")

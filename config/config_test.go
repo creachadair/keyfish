@@ -9,14 +9,16 @@ import (
 	"github.com/kylelemons/godebug/pretty"
 )
 
+func pbool(t bool) *bool { return &t }
+
 var testConfig = &Config{
 	Sites: map[string]Site{
-		"alpha": {Host: "alpha", Punct: true, Length: 10, Salt: "NaCl"},
+		"alpha": {Host: "alpha", Punct: pbool(true), Length: 10, Salt: "NaCl"},
 		"bravo": {Host: "bravo", Format: "******1", Login: "sam"},
 	},
 	Default: Site{
 		Host:  "mos.def",
-		Punct: false,
+		Punct: pbool(false),
 		Login: "frodo",
 	},
 }
@@ -32,13 +34,15 @@ func TestSiteLookup(t *testing.T) {
 		ok   bool
 	}{
 		// A site that isn't found returns the default, with that site name.
-		{"nonesuch", Site{Host: "nonesuch", Login: "frodo"}, false},
+		{"nonesuch", Site{Host: "nonesuch", Punct: pbool(false), Login: "frodo"}, false},
 
 		// Defaults fill in the missing fields.
-		{"alpha", Site{Host: "alpha", Length: 10, Punct: true, Login: "frodo", Salt: "NaCl"}, true},
+		{"alpha", Site{Host: "alpha", Length: 10, Punct: pbool(true), Login: "frodo", Salt: "NaCl"}, true},
 
 		// A site name with a salt overrides the salt value.
-		{"xyz@bravo", Site{Host: "bravo", Format: "******1", Login: "sam", Salt: "xyz"}, true},
+		{"xyz@bravo", Site{
+			Host: "bravo", Format: "******1", Login: "sam", Punct: pbool(false), Salt: "xyz",
+		}, true},
 	}
 	for _, test := range tests {
 		got, ok := testConfig.Site(test.name)

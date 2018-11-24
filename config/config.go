@@ -33,7 +33,7 @@ type Site struct {
 	Host   string            `json:"host,omitempty"`
 	Format string            `json:"format,omitempty"`
 	Length int               `json:"length,omitempty"`
-	Punct  bool              `json:"punct,omitempty"`
+	Punct  *bool             `json:"punct,omitempty"`
 	Salt   string            `json:"salt,omitempty"`
 	Login  string            `json:"login,omitempty"`
 	EMail  string            `json:"email,omitempty"`
@@ -86,7 +86,7 @@ func (c *Config) Site(name string) (Site, bool) {
 // Context returns a password generation context from s.
 func (s Site) Context(secret string) password.Context {
 	a := alphabet.NoPunct
-	if s.Punct {
+	if s.usePunct() {
 		a = alphabet.All
 	}
 	return password.Context{
@@ -108,7 +108,7 @@ func (s Site) merge(c Site) Site {
 	if s.Length <= 0 {
 		s.Length = c.Length
 	}
-	if !s.Punct && c.Punct {
+	if s.Punct == nil && c.Punct != nil {
 		s.Punct = c.Punct
 	}
 	if s.Salt == "" {
@@ -130,6 +130,8 @@ func (s Site) merge(c Site) Site {
 	}
 	return s
 }
+
+func (s Site) usePunct() bool { return s.Punct != nil && *s.Punct }
 
 // insertAddressTag inserts tag into a base e-mail address. If base has the
 // form "name@addr", the result has the form "name<tag>@addr"; otherwise the
