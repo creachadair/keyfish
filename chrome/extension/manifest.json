@@ -1,7 +1,7 @@
 {
     "name": "KeyFish",
     "description": "Local password management tool.",
-    "version": "1.1",
+    "version": "1.2",
     "manifest_version": 2,
     "icons": {
 	"128": "icons/keyfish128.png",
@@ -18,5 +18,12 @@
 	"default_popup": "main.html"
     },
     "incognito": "spanning",
-    "offline_enabled": true
+    "offline_enabled": true,
+    "commands": {
+	"_execute_browser_action": {
+	    "suggested_key": {
+		"default": "Ctrl+Shift+K"
+	    }
+	}
+    }
 }
