@@ -2,16 +2,25 @@
 #
 # Update the precompiled code for CryptoJS.
 # Usage: update.sh [<version>]
-# Output replaces the existing crypt-js.js.
-
-# If a version is not specified, the latest known-good version is used.
-# Update this script if you verify a newer version works.
-readonly version="${1:-3.1.9-1}"
+# Output replaces the existing crypto-js.min.js.
+#
 
 # Verify that we have the tools we need.
 check() { which "$1" >/dev/null || { echo "Missing $1" 1>&2; exit 1; } }
 check browserify
+check curl
+check jq
 check uglifyjs
+
+# If a version is not specified, fetch the latest tagged version.
+version="$1"
+if [ "$version" = "" ] ; then
+    version=$(
+      curl --silent https://api.github.com/repos/brix/crypto-js/tags | \
+      jq -r '[.[] | select(.name|match("^\\d"))][0].name' \
+    )
+    echo "Latest crypto-js tag: $version"
+fi
 
 echo "--- Updating CryptoJS to ${version} ..." 1>&2
 readonly url="https://github.com/brix/crypto-js/archive/${version}.zip"
@@ -31,13 +40,17 @@ cd "$tmp" 1>/dev/null
 
 # Fetch the specified version of CryptoJS and run webpack to collapse the
 # requirements and minify the components we need here.
+echo ">> Fetching ${url}" 1>&2
 curl -L -O "$url"
 unzip -q "$(basename $url)"
-browserify --bare -s CryptoJS crypto-js-3.1.9-1/crypto-js.js \
+
+echo ">> Bundling ${rootdir}" 1>&2
+browserify --bare -s CryptoJS "$rootdir/crypto-js.js" \
     | uglifyjs --mangle --compress hoist_funs=1,passes=3 > crypto-js.min.js
 cp -f -- crypto-js.min.js "$old"
 
+echo "--- update complete" 1>&2
 cd "$old"
 if git diff --stat --exit-code crypto-js.min.js ; then
-    echo "NO CHANGE"
+    echo "NO CHANGE" 1>&2
 fi
