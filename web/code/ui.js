@@ -20,7 +20,6 @@ function init() {
 
     // Update various UI components based on saved state.
     uiUpdateSiteList();
-    uiUpdateKeysMenu();
     updateStateButtons(kf.siteName.value);
 
     // If we have enough information to generate a password, do it.
