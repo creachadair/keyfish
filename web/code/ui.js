@@ -77,6 +77,7 @@ function uiComputePassword() {
 	pw = pw.substr(0, len);
     }
 
+    kf.verifier.value = WordHash(pw);
     kf.password.value = pw;
     kf.password.select();
 
