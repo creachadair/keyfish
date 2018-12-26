@@ -1,10 +1,8 @@
-bitbucket.org/creachadair/getpass v0.0.1 h1:dkN/s1aQEhrLCFG0rsrLWEbxHbz0qMe/CpCCt1jqdao=
-bitbucket.org/creachadair/getpass v0.0.1/go.mod h1:hWlcSkFHhwEFbrdg0BMZ60bUWwvtIBdYgcJhQldcdV0=
+bitbucket.org/creachadair/getpass v0.0.2 h1:0sv0P7lFb1KK/Vg6/PKRy5/mEDP4+DawsP8qM2hTJ6c=
+bitbucket.org/creachadair/getpass v0.0.2/go.mod h1:/MCNdfWnl5p3BYJdgmDRcevHiOCovCWNefh6EaN6LpY=
 bitbucket.org/creachadair/stringset v0.0.3 h1:VmH2SQ+vEqTSgPHpiVZcGF/21spNbmJ86sSgkb8XMFU=
 bitbucket.org/creachadair/stringset v0.0.3/go.mod h1:RieQmTKc3bD7Tg+9AnSl6lOoTpWD95zIxZFurx/cxM4=
 github.com/kylelemons/godebug v0.0.0-20170820004349-d65d576e9348 h1:MtvEpTB6LX3vkb4ax0b5D2DHbNAUsen0Gx5wZoq3lV4=
 github.com/kylelemons/godebug v0.0.0-20170820004349-d65d576e9348/go.mod h1:B69LEHPfb2qLo0BaaOLcbitczOKLWTsrBG9LczfCD4k=
-golang.org/x/sys v0.0.0-20181005133103-4497e2df6f9e h1:EfdBzeKbFSvOjoIqSZcfS8wp0FBLokGBEs9lz1OtSg0=
-golang.org/x/sys v0.0.0-20181005133103-4497e2df6f9e/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
 golang.org/x/sys v0.0.0-20181221143128-b4a75ba826a6 h1:IcgEB62HYgAhX0Nd/QrVgZlxlcyxbGQHElLUhW2X4Fo=
 golang.org/x/sys v0.0.0-20181221143128-b4a75ba826a6/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
