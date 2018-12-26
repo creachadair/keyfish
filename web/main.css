@@ -51,16 +51,19 @@ input {
   -moz-border-radius: 0.8rem;
 }
 input.ck { width: 1rem; }
+input#vf { text-align: center; }
 input.len {
   width: 3rem;
   font-family: inherit;
 }
-input.pw {
-  font-family: inherit;
-  font-weight: bold;
-  font-size: 1.5rem;
-  color: ghostwhite;
-  border: 0.15rem solid tan;
+input#cp {
+  border: none;
+  padding: 0;
+  width: 1px;
+  height: 1px;
+  position: absolute;
+  left: -100px;
+  top: -100px;
 }
 
 button { color: navy; }
