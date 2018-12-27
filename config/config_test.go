@@ -15,6 +15,7 @@ var testConfig = &Config{
 	Sites: map[string]Site{
 		"alpha": {Host: "alpha", Punct: pbool(true), Length: 10, Salt: "NaCl"},
 		"bravo": {Host: "bravo", Format: "******1", Login: "sam"},
+		"tango": {Host: "tangy.com", Length: 45, Salt: "K2Cr2O7"},
 	},
 	Default: Site{
 		Host:  "mos.def",
@@ -42,6 +43,11 @@ func TestSiteLookup(t *testing.T) {
 		// A site name with a salt overrides the salt value.
 		{"xyz@bravo", Site{
 			Host: "bravo", Format: "******1", Login: "sam", Punct: pbool(false), Salt: "xyz",
+		}, true},
+
+		// A site that matches by host reports lookup success.
+		{"hoy@tangy.com", Site{
+			Host: "tangy.com", Punct: pbool(false), Length: 45, Login: "frodo", Salt: "hoy",
 		}, true},
 	}
 	for _, test := range tests {

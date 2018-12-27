@@ -70,6 +70,7 @@ func (c *Config) Site(name string) (Site, bool) {
 		for _, cfg := range c.Sites {
 			if cfg.Host == host {
 				site = cfg
+				ok = true
 				break
 			}
 		}
