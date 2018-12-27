@@ -55,6 +55,9 @@ func TestFormat(t *testing.T) {
 		// The asterisk can generate upper and lowercase results.
 		{"", "_**^", "cUtP"},
 
+		// The tilde covers letters and digits.
+		{"0", "~~~~~~~~", "PZpkOX2o"},
+
 		// Characters not in the alphabets are passed through unchanged.
 		{"", "<____>", "<kwpx>"},
 

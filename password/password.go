@@ -50,6 +50,7 @@ func (c *Context) Password(site string, n int) string {
 // A caret ("^") is a wildcard for an uppercase letter.
 // An underscore ("_") is a wildcard for a lowercase letter.
 // A question mark ("?") is a wildcard for any punctuation character.
+// A tilde ("~") is a wildcard for any non-punctuation character.
 // All other characters are copied literally to the output.
 func (c *Context) Format(site, format string) string {
 	if format == "" {
@@ -70,6 +71,8 @@ func (c *Context) Format(site, format string) string {
 			pw[i] = alphabet.Uppercase.Pick(pw[i])
 		case '_':
 			pw[i] = alphabet.Lowercase.Pick(pw[i])
+		case '~':
+			pw[i] = alphabet.NoPunct.Pick(pw[i])
 		default:
 			pw[i] = format[i]
 		}

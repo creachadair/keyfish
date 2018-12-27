@@ -73,6 +73,7 @@ elements of the alphabet:
   #   for a digit
   *   for a letter of either case
   ?   for a punctuation mark
+  ~   for a non-punctuation mark (* or #)
 
 All other characters are copied verbatim.
 
