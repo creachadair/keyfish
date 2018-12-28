@@ -39,7 +39,7 @@ const minLength = 6 // Allow no passwords shorter than this
 
 var (
 	cfg       = &config.Config{Default: config.Site{Length: 18, Punct: new(bool)}}
-	secretKey string
+	secretKey = os.Getenv("KEYFISH_SECRET")
 	doSites   bool // list known site configuations
 	doShow    bool // show the named configurations
 	doPrint   bool // print the result, overriding -copy
@@ -55,7 +55,6 @@ func init() {
 	flag.BoolVar(&doPrint, "print", false, "Print the result rather than copying (overrides -copy)")
 	flag.BoolVar(&cfg.Flags.Verbose, "v", false, "Verbose logging (includes hints with -print)")
 	flag.BoolVar(&cfg.Flags.Copy, "copy", false, "Copy to clipboard instead of printing")
-	flag.StringVar(&secretKey, "secret", os.Getenv("KEYFISH_SECRET"), "Secret key")
 
 	flag.Usage = func() {
 		cf := configFilePath()
@@ -67,9 +66,8 @@ func init() {
 Generates a site-specific password based on the given site name.  The resulting
 password is printed to stdout, or copied to the clipboard if --copy is set.
 
-If --secret is set, it is used as the master key to generate passwords.  If
-not, the value of the KEYFISH_SECRET environment variable is used if it is
-defined.  Otherwise, the user is prompted at the terminal.
+If the KEYFISH_SECRET environment variable is set, it is used as the secret key
+to generate passwords.  Otherwise, the user is prompted at the terminal.
 
 Use --format to specify an exact password layout, with wildcards to substitute
 elements of the alphabet:
