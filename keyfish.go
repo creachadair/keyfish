@@ -25,6 +25,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"text/tabwriter"
@@ -32,6 +33,7 @@ import (
 	"bitbucket.org/creachadair/getpass"
 	"bitbucket.org/creachadair/keyfish/config"
 	"bitbucket.org/creachadair/keyfish/wordhash"
+	"bitbucket.org/creachadair/shell"
 	"bitbucket.org/creachadair/stringset"
 )
 
@@ -66,8 +68,10 @@ func init() {
 Generates a site-specific password based on the given site name.  The resulting
 password is printed to stdout, or copied to the clipboard if --copy is set.
 
-If the KEYFISH_SECRET environment variable is set, it is used as the secret key
-to generate passwords.  Otherwise, the user is prompted at the terminal.
+If the KEYFISH_SECRET environment variable is set, it is used as the passphrase
+for password generation.  Otherwise, the user is prompted at the terminal.
+However, if KEYFISH_SECRET ends with a "|" symbol, it is instead treated as a
+command line to execute to return the passphrase.
 
 Use --format to specify an exact password layout, with wildcards to substitute
 elements of the alphabet:
@@ -160,6 +164,12 @@ func main() {
 			fail("Error reading secret key: %v", err)
 		}
 		secretKey = pw
+	} else if pc, ok := isPipeCommand(secretKey); ok {
+		pw, err := exec.Command(pc[0], pc[1:]...).Output()
+		if err != nil {
+			fail("Error reading secret key: %v", err)
+		}
+		secretKey = strings.TrimSuffix(string(pw), "\n")
 	}
 
 	for _, arg := range flag.Args() {
@@ -202,4 +212,11 @@ func configFilePath() string {
 		return path
 	}
 	return os.ExpandEnv(defaultConfig)
+}
+
+func isPipeCommand(key string) ([]string, bool) {
+	if t := strings.TrimSuffix(key, "|"); t != key {
+		return shell.Split(t)
+	}
+	return nil, false
 }
