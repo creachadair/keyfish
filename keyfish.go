@@ -191,9 +191,11 @@ func main() {
 	}
 }
 
+var defaultConfig = "$HOME/.keyfish"
+
 func configFilePath() string {
 	if path, ok := os.LookupEnv("KEYFISH_CONFIG"); ok {
 		return path
 	}
-	return os.ExpandEnv("$HOME/.keyfish")
+	return os.ExpandEnv(defaultConfig)
 }
