@@ -25,6 +25,8 @@ import (
 	"io"
 	"log"
 	"os"
+	"path/filepath"
+	"strings"
 	"text/tabwriter"
 
 	"bitbucket.org/creachadair/getpass"
@@ -56,7 +58,11 @@ func init() {
 	flag.StringVar(&secretKey, "secret", os.Getenv("KEYFISH_SECRET"), "Secret key")
 
 	flag.Usage = func() {
-		fmt.Fprintln(os.Stderr, `Usage: keyfish [options] <site.name>+
+		cf := configFilePath()
+		if t := strings.TrimPrefix(cf, os.Getenv("HOME")); t != cf {
+			cf = "~" + t
+		}
+		fmt.Fprintf(os.Stderr, `Usage: %[1]s [options] <site.name>+
 
 Generates a site-specific password based on the given site name.  The resulting
 password is printed to stdout, or copied to the clipboard if --copy is set.
@@ -80,11 +86,11 @@ All other characters are copied verbatim.
 A site name has the form "host.org" or "salt@host.org". If the site matches one
 of the sites named in the user's config file, the corresponding settings are used.
 
-If KEYFISH_CONFIG is set in the environment, that is used as the config file
-path; otherwise config is read from ~/.keyfish if it exists. If KEYFISH_CONFIG
-is set but empty, no configuration will be loaded.
+By default, configuration is read from %[2]s.
+If KEYFISH_CONFIG is set to a non-empty path, that path is used instead.
+If KEYFISH_CONFIG is set empty, no config file is loaded.
 
-Flags:`)
+Flags:`+"\n", filepath.Base(os.Args[0]), cf)
 		flag.PrintDefaults()
 	}
 }
