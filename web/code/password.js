@@ -37,12 +37,25 @@ KeyFish.prototype.Entropy = function(length) {
 // settings in the object.  The longest possible password is returned; the
 // caller is responsible for truncating it if desired.
 KeyFish.prototype.Password = function(site) {
+    var p = this.parseSite(site);
     var buf = [];
-    var raw = this.Hash(site);
+    var raw = this.Hash(p.site, p.salt);
     for (var i = 0; i < raw.length; i++) {
 	buf.push(this.Pick(raw[i]));
     }
     return buf.join("");
+}
+
+// parseSite parses a site of the form [salt@]hostname, returning an object
+// with site and salt keys. The salt defaults to this.salt if not specified.
+KeyFish.prototype.parseSite = function(site) {
+    var salt = this.salt;
+    var i = site.search("@");
+    if (i >= 0) {
+	salt = site.substr(0, i);
+	site = site.substr(i+1);
+    }
+    return {site: site, salt: salt}
 }
 
 // Format returns a password for the given site based on a template that
@@ -64,8 +77,9 @@ KeyFish.prototype.Format = function(site, format) {
     if (format.length > 32) {
 	format = format.substr(0, 32);
     }
+    var p = this.parseSite(site);
     var buf = [];
-    var raw = this.Hash(site);
+    var raw = this.Hash(p.site, p.salt);
     for (var i = 0; i < format.length; i++) {
 	if (format[i] == "*") {
 	    buf.push(pick(Alphabet.Letters, raw[i]));
@@ -86,9 +100,9 @@ KeyFish.prototype.Format = function(site, format) {
 
 // Hash computes the HMAC/SHA256 of the given site key using the stored salt
 // and secret from the object.  Returns an array of octet values.
-KeyFish.prototype.Hash = function(site) {
-    if (this.salt != "") {
-	site += "/" + this.salt;
+KeyFish.prototype.Hash = function(site, salt) {
+    if (salt != "") {
+	site += "/" + salt;
     }
     var hex = CryptoJS.HmacSHA256(site, this.secret).toString();
     var bytes = [];
