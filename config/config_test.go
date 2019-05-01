@@ -6,7 +6,7 @@ import (
 	"bitbucket.org/creachadair/keyfish/alphabet"
 	"bitbucket.org/creachadair/keyfish/password"
 
-	"github.com/kylelemons/godebug/pretty"
+	"github.com/google/go-cmp/cmp"
 )
 
 func pbool(t bool) *bool { return &t }
@@ -52,8 +52,8 @@ func TestSiteLookup(t *testing.T) {
 	}
 	for _, test := range tests {
 		got, ok := testConfig.Site(test.name)
-		if diff := pretty.Compare(got, test.want); diff != "" {
-			t.Errorf("Site %q differs from expected (-got, +want)\n%s", test.name, diff)
+		if diff := cmp.Diff(test.want, got); diff != "" {
+			t.Errorf("Site %q differs from expected (-want, +got)\n%s", test.name, diff)
 		}
 		if ok != test.ok {
 			t.Errorf("Site %q in config: got %v, want %v", test.name, ok, test.ok)
@@ -78,8 +78,8 @@ func TestContext(t *testing.T) {
 	for _, test := range tests {
 		site, _ := testConfig.Site(test.site)
 		got := site.Context(test.secret)
-		if diff := pretty.Compare(got, test.want); diff != "" {
-			t.Errorf("Context %q differs from expected (-got, +want)\n%s", test.secret, diff)
+		if diff := cmp.Diff(test.want, got); diff != "" {
+			t.Errorf("Context %q differs from expected (-want, +got)\n%s", test.secret, diff)
 		}
 	}
 }
