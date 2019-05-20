@@ -32,6 +32,7 @@ import (
 
 	"bitbucket.org/creachadair/getpass"
 	"bitbucket.org/creachadair/keyfish/config"
+	"bitbucket.org/creachadair/keyfish/otp"
 	"bitbucket.org/creachadair/keyfish/wordhash"
 	"bitbucket.org/creachadair/shell"
 	"bitbucket.org/creachadair/stringset"
@@ -42,6 +43,7 @@ const minLength = 6 // Allow no passwords shorter than this
 var (
 	cfg       = &config.Config{Default: config.Site{Length: 18, Punct: new(bool)}}
 	secretKey = os.Getenv("KEYFISH_SECRET")
+	doOTP     bool // generate an OTP along with the passphrase
 	doSites   bool // list known site configuations
 	doShow    bool // show the named configurations
 	doPrint   bool // print the result, overriding -copy
@@ -52,6 +54,7 @@ func init() {
 	flag.BoolVar(cfg.Default.Punct, "punct", false, "Use punctuation")
 	flag.StringVar(&cfg.Default.Format, "format", "", "Password format")
 	flag.StringVar(&cfg.Default.Salt, "salt", "", "Salt to hash with the site name")
+	flag.BoolVar(&doOTP, "otp", false, "Generate an OTP for the site (if configured)")
 	flag.BoolVar(&doSites, "list", false, "List known sites and exit")
 	flag.BoolVar(&doShow, "show", false, "Print specified configurations and exit")
 	flag.BoolVar(&doPrint, "print", false, "Print the result rather than copying (overrides -copy)")
@@ -200,7 +203,11 @@ func main() {
 			if u := site.Login; u != "" {
 				fmt.Print(u, "@")
 			}
-			fmt.Print(site.Host, "\t", wordhash.String(pw), "\n")
+			fmt.Print(site.Host, "\t", wordhash.String(pw))
+			if doOTP && site.OTP != nil {
+				fmt.Print("\t", otp.Config{Key: string(site.OTP.Key)}.TOTP())
+			}
+			fmt.Println()
 		}
 	}
 }
