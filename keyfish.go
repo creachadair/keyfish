@@ -32,8 +32,8 @@ import (
 
 	"bitbucket.org/creachadair/getpass"
 	"bitbucket.org/creachadair/keyfish/config"
-	"bitbucket.org/creachadair/keyfish/otp"
 	"bitbucket.org/creachadair/keyfish/wordhash"
+	"bitbucket.org/creachadair/otp"
 	"bitbucket.org/creachadair/shell"
 	"bitbucket.org/creachadair/stringset"
 )
