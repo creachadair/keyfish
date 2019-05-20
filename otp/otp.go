@@ -15,10 +15,10 @@ import (
 	"time"
 )
 
-// TimeWindow returns a time step generator that yields the number of 30-second
+// TimeWindow returns a time step generator that yields the number of n-second
 // intervals elapsed at the current wallclock time since the Unix epoch.
-func TimeWindow(sec int) func() uint64 {
-	return func() uint64 { return uint64(time.Now().Unix()) / uint64(sec) }
+func TimeWindow(n int) func() uint64 {
+	return func() uint64 { return uint64(time.Now().Unix()) / uint64(n) }
 }
 
 // Config holds the settings the control generation of authenticator codes.
