@@ -16,6 +16,7 @@ var testConfig = &Config{
 		"alpha": {Host: "alpha", Punct: pbool(true), Length: 10, Salt: "NaCl"},
 		"bravo": {Host: "bravo", Format: "******1", Login: "sam"},
 		"tango": {Host: "tangy.com", Length: 45, Salt: "K2Cr2O7"},
+		"oscar": {Host: "zesty.org", Length: 11, OTP: &OTP{Key: []byte("foobar")}},
 	},
 	Default: Site{
 		Host:  "mos.def",

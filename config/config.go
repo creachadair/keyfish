@@ -37,7 +37,14 @@ type Site struct {
 	Salt   string            `json:"salt,omitempty"`
 	Login  string            `json:"login,omitempty"`
 	EMail  string            `json:"email,omitempty"`
+	OTP    *OTP              `json:"otp,omitempty"`
 	Hints  map[string]string `json:"hints,omitempty"`
+}
+
+// An OTP represents the settings for an OTP generator.
+type OTP struct {
+	Key    []byte `json:"key"`
+	Digits int    `json:"digits,omitempty"`
 }
 
 // Load loads the contents of the specified path into c.  If path does not
