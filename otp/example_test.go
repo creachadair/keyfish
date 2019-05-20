@@ -3,13 +3,13 @@ package otp_test
 import (
 	"crypto/sha256"
 	"fmt"
+	"log"
 
 	"bitbucket.org/creachadair/keyfish/otp"
 )
 
 func Example() {
 	cfg := otp.Config{
-		Key:    "44b56d71-07e4-40db-a36b-215ebcea0164",
 		Hash:   sha256.New, // default is sha1.New
 		Digits: 8,          // default is 6
 
@@ -19,13 +19,19 @@ func Example() {
 		TimeStep: func() uint64 { return 1 },
 	}
 
+	// 2FA setup tools often present the shared secret as a base32 string.
+	// ParseKey decodes this format.
+	if err := cfg.ParseKey("MFYH A3DF EB2G C4TU"); err != nil {
+		log.Fatalf("Parsing key: %v", err)
+	}
+
 	fmt.Println("HOTP", 0, cfg.HOTP(0))
 	fmt.Println("HOTP", 1, cfg.HOTP(1))
 	fmt.Println()
 	fmt.Println("TOTP", cfg.TOTP())
 	// Output:
-	// HOTP 0 35517826
-	// HOTP 1 04957339
+	// HOTP 0 59590364
+	// HOTP 1 86761489
 	//
-	// TOTP 04957339
+	// TOTP 86761489
 }

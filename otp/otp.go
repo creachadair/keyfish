@@ -7,9 +7,11 @@ package otp
 import (
 	"crypto/hmac"
 	"crypto/sha1"
+	"encoding/base32"
 	"encoding/binary"
 	"hash"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -27,6 +29,22 @@ type Config struct {
 	Hash     func() hash.Hash // hash constructor (default is sha1.New)
 	TimeStep func() uint64    // TOTP time step (default is TimeWindow(30))
 	Digits   int              // number of OTP digits (default 6)
+}
+
+// ParseKey parses a key encoded as base32, which is the typical format used by
+// two-factor authentication setup tools. On success, the parsed key is stored
+// into c.Key. Whitespace is ignored.
+func (c *Config) ParseKey(s string) error {
+	clean := strings.ToUpper(strings.Join(strings.Fields(s), ""))
+	if n := len(clean) % 8; n != 0 {
+		clean += strings.Repeat("=", 8-n)
+	}
+	dec, err := base32.StdEncoding.DecodeString(clean)
+	if err != nil {
+		return err
+	}
+	c.Key = string(dec)
+	return nil
 }
 
 // HOTP returns the HOTP code for the specified counter value.
