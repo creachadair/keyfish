@@ -6,5 +6,5 @@ require (
 	bitbucket.org/creachadair/shell v0.0.5
 	bitbucket.org/creachadair/stringset v0.0.5
 	github.com/google/go-cmp v0.3.0
-	golang.org/x/sys v0.0.0-20190528183647-3626398d7749 // indirect
+	golang.org/x/sys v0.0.0-20190531175056-4c3a928424d2 // indirect
 )
