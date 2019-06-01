@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"io"
 	"log"
 	"os/exec"
 )
@@ -16,7 +16,7 @@ func toClipboard(pw string) error {
 	if err = cmd.Start(); err != nil {
 		return err
 	}
-	fmt.Fprint(p, pw)
+	io.WriteString(p, pw)
 
 	// We must close the pipe, so the process can exit.
 	if err := p.Close(); err != nil {
