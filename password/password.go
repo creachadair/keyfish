@@ -91,7 +91,8 @@ func (c *Context) Entropy(length int) int {
 }
 
 // makeHash computes the HMAC/SHA256 of the site key using the salt from the
-// context.  Returns the digest as a slice of raw bytes.
+// context and fills bits with the digest. If len(bits) exceeds the size of the
+// HMAC, the digest is updated as often as necessary to fill the whole buffer.
 func (c *Context) makeHash(site string, bits []byte) {
 	siteKey := site
 	if s := c.Salt; s != "" {
