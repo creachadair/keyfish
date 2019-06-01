@@ -10,12 +10,12 @@
 //
 // Passwords are constructed by computing a HMAC/SHA256 of the site name and a
 // salt string ("" by default, set using -salt), with the password as the key.
-// The resulting digest is mapped to a password of up to 32 bytes by mapping
-// the digest bytes to printable ASCII characters.
+// The resulting digest is converted to a password by mapping the digest bytes
+// to printable ASCII characters.
 //
-// Passwords may contain ASCII letters, digits, and punctuation; by default,
-// letters and digits are used, but no punctuation.  Use -punct to enable
-// punctuation and -format to override the password format explicitly.
+// Passwords may contain letters, digits, and punctuation; by default, letters
+// and digits are used, but no punctuation.  Use -punct to enable punctuation
+// and -format to override the password format explicitly.
 package main
 
 import (
