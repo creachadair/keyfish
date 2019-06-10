@@ -9,8 +9,8 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"bitbucket.org/creachadair/keyfish/alphabet"
-	"bitbucket.org/creachadair/keyfish/password"
+	"github.com/creachadair/keyfish/alphabet"
+	"github.com/creachadair/keyfish/password"
 )
 
 // A Config represents the contents of a keyfish config file.

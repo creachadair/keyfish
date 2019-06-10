@@ -3,9 +3,8 @@ package config
 import (
 	"testing"
 
-	"bitbucket.org/creachadair/keyfish/alphabet"
-	"bitbucket.org/creachadair/keyfish/password"
-
+	"github.com/creachadair/keyfish/alphabet"
+	"github.com/creachadair/keyfish/password"
 	"github.com/google/go-cmp/cmp"
 )
 

@@ -31,11 +31,11 @@ import (
 	"text/tabwriter"
 
 	"bitbucket.org/creachadair/getpass"
-	"bitbucket.org/creachadair/keyfish/config"
-	"bitbucket.org/creachadair/keyfish/wordhash"
 	"bitbucket.org/creachadair/otp"
 	"bitbucket.org/creachadair/shell"
 	"bitbucket.org/creachadair/stringset"
+	"github.com/creachadair/keyfish/config"
+	"github.com/creachadair/keyfish/wordhash"
 )
 
 const minLength = 6 // Allow no passwords shorter than this

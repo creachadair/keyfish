@@ -14,7 +14,7 @@ import (
 	"math"
 	"strconv"
 
-	"bitbucket.org/creachadair/keyfish/alphabet"
+	"github.com/creachadair/keyfish/alphabet"
 )
 
 // A Context contains the information needed to generate a password given the
