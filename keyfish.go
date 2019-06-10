@@ -30,10 +30,10 @@ import (
 	"strings"
 	"text/tabwriter"
 
-	"bitbucket.org/creachadair/getpass"
 	"bitbucket.org/creachadair/otp"
 	"bitbucket.org/creachadair/shell"
 	"bitbucket.org/creachadair/stringset"
+	"github.com/creachadair/getpass"
 	"github.com/creachadair/keyfish/config"
 	"github.com/creachadair/keyfish/wordhash"
 )
