@@ -6,11 +6,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"strings"
 
 	"github.com/creachadair/keyfish/alphabet"
 	"github.com/creachadair/keyfish/password"
+	"github.com/creachadair/staticfile"
 )
 
 // A Config represents the contents of a keyfish config file.
@@ -50,7 +50,7 @@ type OTP struct {
 // Load loads the contents of the specified path into c.  If path does not
 // exist, the reported error satisfies os.IsNotExist and c is unmodified.
 func (c *Config) Load(path string) error {
-	data, err := ioutil.ReadFile(path)
+	data, err := staticfile.ReadFile(path)
 	if err != nil {
 		return err
 	}
