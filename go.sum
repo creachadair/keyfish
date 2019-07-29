@@ -8,8 +8,8 @@ github.com/creachadair/getpass v0.1.0/go.mod h1:Wup04NkmcX+Af5Z2pt3FJFySTC7bs9Pc
 github.com/creachadair/otp v0.1.0 h1:JgsbBS3KYbZ7/HE4t5ylRIFRjtDrhzpUHwmpZc03INY=
 github.com/creachadair/otp v0.1.0/go.mod h1:vPuEqgSogZ1vtpF8OeUg28ke/PK2FIo85GZHJz74d0M=
 github.com/creachadair/staticfile v0.0.3/go.mod h1:a3qySzCIXEprDGxk6tSxSI+dBBdLzqeBOMhZ+o2d3pM=
-github.com/creachadair/staticfile v0.1.1 h1:KpMtcNXa5jN5ybt0COhNiuZx7OVWPO/DwotT6TeYvGE=
-github.com/creachadair/staticfile v0.1.1/go.mod h1:a3qySzCIXEprDGxk6tSxSI+dBBdLzqeBOMhZ+o2d3pM=
+github.com/creachadair/staticfile v0.1.2 h1:QG0u27/Ietu0UVOk1aMbF6jrWrEzPIdZP4ju3c1PPfY=
+github.com/creachadair/staticfile v0.1.2/go.mod h1:a3qySzCIXEprDGxk6tSxSI+dBBdLzqeBOMhZ+o2d3pM=
 github.com/google/go-cmp v0.3.0 h1:crn/baboCvb5fXaQ0IJ1SGTsTVrWpDsCWC8EGETZijY=
 github.com/google/go-cmp v0.3.0/go.mod h1:8QqcDgzrUqlUb/G2PQTWiueGozuR1884gddMywk6iLU=
 golang.org/x/sys v0.0.0-20190610081024-1e42afee0f76 h1:QSmW7Q3mFdAGjtAd0byXmFJ55inUydyZ4WQmiuItAIQ=
