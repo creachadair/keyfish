@@ -182,12 +182,17 @@ func main() {
 		return secretKey
 	}
 
+	// Check all the sites before generating any secrets.
+	var sites []config.Site
 	for _, arg := range flag.Args() {
 		site, ok := cfg.Site(arg)
 		if !ok && doStrict {
 			fail("Site %q is not known", arg)
 		}
+		sites = append(sites, site)
+	}
 
+	for _, site := range sites {
 		// Check minimum length.
 		if site.Length < minLength {
 			fail("Password length must be ≥ %d", minLength)
