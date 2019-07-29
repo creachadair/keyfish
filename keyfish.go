@@ -212,7 +212,15 @@ func main() {
 	}
 }
 
+// The default configuration is a variable so it can be set by the linker.
+// Use -ldflags "-X main.defaultConfig=some/other/path" in go build.
 var defaultConfig = "$HOME/.keyfish"
+
+// To statically compile the configuration into the main package,
+// set the KEYFISH_STATIC variable to the path of the configuration file and
+// run "go generate" before building.
+//go:generate -command cs go run github.com/creachadair/staticfile/compiledata
+//go:generate cs -out static.go -set $HOME/.keyfish=$KEYFISH_STATIC
 
 func configFilePath() string {
 	if path, ok := os.LookupEnv("KEYFISH_CONFIG"); ok {
