@@ -216,11 +216,20 @@ func main() {
 // Use -ldflags "-X main.defaultConfig=some/other/path" in go build.
 var defaultConfig = "$HOME/.keyfish"
 
-// To statically compile the configuration into the main package,
-// set the KEYFISH_STATIC variable to the path of the configuration file and
-// run "go generate" before building.
+// To statically compile the configuration into the main package, set the
+// KEYFISH_CONFIG environment variable to the path of the configuration file
+// and run "go generate" before building:
+//
+//   git clone https://github.com/creachadair/keyfish
+//   cd keyfish
+//   env KEYFISH_CONFIG=$HOME/my-config.json go generate  # creates static.go
+//   go build
+//
+// You can then copy the keyfish binary where you like and it will use the
+// static configuration unless you override it at runtime with KEYFISH_CONFIG.
+
 //go:generate -command cs go run github.com/creachadair/staticfile/compiledata
-//go:generate cs -out static.go -set $HOME/.keyfish=$KEYFISH_STATIC
+//go:generate cs -out static.go -set $HOME/.keyfish=$KEYFISH_CONFIG
 
 func configFilePath() string {
 	if path, ok := os.LookupEnv("KEYFISH_CONFIG"); ok {
