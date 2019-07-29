@@ -164,19 +164,22 @@ func main() {
 		return
 	}
 
-	// Establish the secret key.
-	if secretKey == "" {
-		pw, err := getpass.Prompt("Secret key: ")
-		if err != nil {
-			fail("Error reading secret key: %v", err)
+	// Establish the secret key, on demand.
+	mustLoadKey := func() string {
+		if secretKey == "" {
+			pw, err := getpass.Prompt("Secret key: ")
+			if err != nil {
+				fail("Error reading secret key: %v", err)
+			}
+			secretKey = pw
+		} else if pc, ok := isPipeCommand(secretKey); ok {
+			pw, err := exec.Command(pc[0], pc[1:]...).Output()
+			if err != nil {
+				fail("Error reading secret key: %v", err)
+			}
+			secretKey = strings.TrimSuffix(string(pw), "\n")
 		}
-		secretKey = pw
-	} else if pc, ok := isPipeCommand(secretKey); ok {
-		pw, err := exec.Command(pc[0], pc[1:]...).Output()
-		if err != nil {
-			fail("Error reading secret key: %v", err)
-		}
-		secretKey = strings.TrimSuffix(string(pw), "\n")
+		return secretKey
 	}
 
 	for _, arg := range flag.Args() {
@@ -195,7 +198,7 @@ func main() {
 			log.Printf("Site: %v", site)
 		}
 
-		ctx := site.Context(secretKey)
+		ctx := site.Context(mustLoadKey())
 		var pw string
 		if fmt := site.Format; fmt != "" {
 			pw = ctx.Format(site.Host, fmt)
