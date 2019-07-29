@@ -25,6 +25,7 @@ type Config struct {
 	Flags struct {
 		Copy    bool `json:"copy,omitempty"`
 		Verbose bool `json:"verbose,omitempty"`
+		OTP     bool `json:"otp,omitempty"`
 	} `json:"flags,omitempty"`
 }
 
