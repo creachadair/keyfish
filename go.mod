@@ -6,8 +6,8 @@ require (
 	github.com/creachadair/getpass v0.1.0
 	github.com/creachadair/otp v0.1.0
 	github.com/creachadair/staticfile v0.1.3
-	github.com/google/go-cmp v0.4.0
-	golang.org/x/sys v0.0.0-20200120151820-655fe14d7479 // indirect
+	github.com/google/go-cmp v0.4.1
+	golang.org/x/sys v0.0.0-20200602225109-6fdc65e7d980 // indirect
 )
 
 go 1.13
