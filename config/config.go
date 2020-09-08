@@ -24,8 +24,9 @@ type Config struct {
 	// Default values for flags.
 	Flags struct {
 		Copy    bool `json:"copy,omitempty"`
-		Verbose bool `json:"verbose,omitempty"`
 		OTP     bool `json:"otp,omitempty"`
+		Strict  bool `json:"strict,omitempty"`
+		Verbose bool `json:"verbose,omitempty"`
 	} `json:"flags,omitempty"`
 }
 

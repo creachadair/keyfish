@@ -46,7 +46,6 @@ var (
 	doSites   bool // list known site configuations
 	doShow    bool // show the named configurations
 	doPrint   bool // print the result, overriding -copy
-	doStrict  bool // accept only sites listed in the config
 )
 
 func init() {
@@ -57,10 +56,10 @@ func init() {
 	flag.BoolVar(&doSites, "list", false, "List known sites and exit")
 	flag.BoolVar(&doShow, "show", false, "Print specified configurations and exit")
 	flag.BoolVar(&doPrint, "print", false, "Print the result rather than copying (overrides -copy)")
-	flag.BoolVar(&doStrict, "strict", true, "Report an error for sites not named in the config")
 	flag.BoolVar(&cfg.Flags.Verbose, "v", false, "Verbose logging (includes hints with -print)")
 	flag.BoolVar(&cfg.Flags.Copy, "copy", false, "Copy to clipboard instead of printing")
 	flag.BoolVar(&cfg.Flags.OTP, "otp", false, "Generate an OTP for the site (if configured)")
+	flag.BoolVar(&cfg.Flags.Strict, "strict", false, "Report an error for sites not named in the config")
 
 	flag.Usage = func() {
 		cf := configFilePath()
@@ -151,7 +150,7 @@ func main() {
 		}
 		for _, arg := range flag.Args() {
 			site, ok := cfg.Site(arg)
-			if !ok && doStrict {
+			if !ok && cfg.Flags.Strict {
 				fail("Site %q is not known", arg)
 			}
 			if !cfg.Flags.Verbose {
@@ -186,7 +185,7 @@ func main() {
 	var sites []config.Site
 	for _, arg := range flag.Args() {
 		site, ok := cfg.Site(arg)
-		if !ok && doStrict {
+		if !ok && cfg.Flags.Strict {
 			fail("Site %q is not known", arg)
 		}
 		sites = append(sites, site)
