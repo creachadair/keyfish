@@ -32,15 +32,15 @@ type Config struct {
 
 // A Site represents the non-secret configuration for a single site.
 type Site struct {
-	Host   string            `json:"host,omitempty"`
-	Format string            `json:"format,omitempty"`
-	Length int               `json:"length,omitempty"`
-	Punct  *bool             `json:"punct,omitempty"`
-	Salt   string            `json:"salt,omitempty"`
-	Login  string            `json:"login,omitempty"`
-	EMail  string            `json:"email,omitempty"`
-	OTP    *OTP              `json:"otp,omitempty"`
-	Hints  map[string]string `json:"hints,omitempty"`
+	Host   string                 `json:"host,omitempty"`
+	Format string                 `json:"format,omitempty"`
+	Length int                    `json:"length,omitempty"`
+	Punct  *bool                  `json:"punct,omitempty"`
+	Salt   string                 `json:"salt,omitempty"`
+	Login  string                 `json:"login,omitempty"`
+	EMail  string                 `json:"email,omitempty"`
+	OTP    *OTP                   `json:"otp,omitempty"`
+	Hints  map[string]interface{} `json:"hints,omitempty"`
 }
 
 // An OTP represents the settings for an OTP generator.
