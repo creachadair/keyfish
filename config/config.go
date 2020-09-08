@@ -32,15 +32,16 @@ type Config struct {
 
 // A Site represents the non-secret configuration for a single site.
 type Site struct {
-	Host   string                 `json:"host,omitempty"`
-	Format string                 `json:"format,omitempty"`
-	Length int                    `json:"length,omitempty"`
-	Punct  *bool                  `json:"punct,omitempty"`
-	Salt   string                 `json:"salt,omitempty"`
-	Login  string                 `json:"login,omitempty"`
-	EMail  string                 `json:"email,omitempty"`
-	OTP    *OTP                   `json:"otp,omitempty"`
-	Hints  map[string]interface{} `json:"hints,omitempty"`
+	Host    string                 `json:"host,omitempty"`
+	Format  string                 `json:"format,omitempty"`
+	Length  int                    `json:"length,omitempty"`
+	Punct   *bool                  `json:"punct,omitempty"`
+	Salt    string                 `json:"salt,omitempty"`
+	Login   string                 `json:"login,omitempty"`
+	EMail   string                 `json:"email,omitempty"`
+	OTP     *OTP                   `json:"otp,omitempty"`
+	Aliases []string               `json:"aliases,omitempty"`
+	Hints   map[string]interface{} `json:"hints,omitempty"`
 }
 
 // An OTP represents the settings for an OTP generator.
@@ -74,14 +75,31 @@ func (c *Config) Site(name string) (Site, bool) {
 	// Try to find a named configuration for the host.
 	site, ok := c.Sites[host]
 	if !ok {
+		var cands []Site
+
 		// If we didn't find one, see if there is a named config that has this as
-		// its host name.
+		// its host name or an alias.
 		for _, cfg := range c.Sites {
 			if cfg.Host == host {
 				site = cfg
 				ok = true
 				break
 			}
+
+			// Check for an alias match, but don't return immediately in case
+			// there is a host match on a later entry. We prefer a direct host
+			// match to an alias match.
+			for _, alias := range cfg.Aliases {
+				if alias == host {
+					cands = append(cands, cfg)
+				}
+			}
+		}
+
+		// If we did not find any host matches, fall back on an alias.
+		if !ok && len(cands) != 0 {
+			site = cands[0]
+			ok = true
 		}
 	}
 	if site.Host == "" {
