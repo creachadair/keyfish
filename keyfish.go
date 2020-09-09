@@ -33,6 +33,7 @@ import (
 	"bitbucket.org/creachadair/shell"
 	"bitbucket.org/creachadair/stringset"
 	"github.com/creachadair/getpass"
+	"github.com/creachadair/keyfish/clipboard"
 	"github.com/creachadair/keyfish/config"
 	"github.com/creachadair/keyfish/wordhash"
 	"github.com/creachadair/otp"
@@ -211,7 +212,7 @@ func main() {
 		}
 		if doPrint || !cfg.Flags.Copy {
 			fmt.Println(pw)
-		} else if err := toClipboard(pw); err != nil {
+		} else if err := clipboard.WriteString(pw); err != nil {
 			log.Printf("Error copying to clipboard: %v", err)
 		} else {
 			if u := site.Login; u != "" {
