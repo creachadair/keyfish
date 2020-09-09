@@ -32,17 +32,58 @@ type Config struct {
 
 // A Site represents the non-secret configuration for a single site.
 type Site struct {
-	Host     string                 `json:"host,omitempty"`
-	Alphabet string                 `json:"alphabet,omitempty"`
-	Format   string                 `json:"format,omitempty"`
-	Length   int                    `json:"length,omitempty"`
-	Punct    *bool                  `json:"punct,omitempty"`
-	Salt     string                 `json:"salt,omitempty"`
-	Login    string                 `json:"login,omitempty"`
-	EMail    string                 `json:"email,omitempty"`
-	OTP      *OTP                   `json:"otp,omitempty"`
-	Aliases  []string               `json:"aliases,omitempty"`
-	Hints    map[string]interface{} `json:"hints,omitempty"`
+	// The hostname that identifies this site (required).
+	// This can be any non-empty string, but conventionally is the domain name
+	// of the site, e.g. "dartmouth.edu".
+	Host string `json:"host"`
+
+	// If set, this defines the alphabet used for key generation on this site.
+	// This overrides the Punct setting. The characters of this string define
+	// which componets to include:
+	//
+	//    A..Z   : uppercase letters
+	//    a..z   : lowercase letters
+	//    0..9   : decimal digits
+	//
+	// Other characters are taken verbatim. Order is significant.
+	// For example, the string "Aa1" corresponds to alphabet.NoPunct.
+	Alphabet string `json:"alphabet,omitempty"`
+
+	// If set, this defines the exact layout of the password.
+	// See the Format method of password.Context for details.
+	Format string `json:"format,omitempty"`
+
+	// If set, generate passwords with this many characters.
+	// If zero, uses the default.
+	Length int `json:"length,omitempty"`
+
+	// If true, include punctuation in the password alphabet.  This is ignored
+	// if Alphabet or Format is set.
+	Punct *bool `json:"punct,omitempty"`
+
+	// Use this string as a salt for password generation.  This can be used to
+	// rotate passwords.
+	Salt string `json:"salt,omitempty"`
+
+	// The fields below are not used for password generation.
+
+	// The login name to use for this site.
+	Login string `json:"login,omitempty"`
+
+	// The e-mail address associated with this login.
+	EMail string `json:"email,omitempty"`
+
+	// OTP configuration for this site (HOTP or TOTP).
+	OTP *OTP `json:"otp,omitempty"`
+
+	// Alternative hostnames that should be considered aliases for this site.
+	// This is useful for sites that use a different domain for authentication.
+	// Aliases are only examined if there is no primary host match.
+	Aliases []string `json:"aliases,omitempty"`
+
+	// User-defined password hints, security questions, and other metadata that
+	// do not affect the password but the user may need to log in.
+	Hints map[string]interface{} `json:"hints,omitempty"`
 }
 
 // An OTP represents the settings for an OTP generator.
