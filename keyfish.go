@@ -42,21 +42,34 @@ import (
 const minLength = 6 // Allow no passwords shorter than this
 
 var (
-	cfg       = &config.Config{Default: config.Site{Length: 18, Punct: new(bool)}}
+	cfg *config.Config // see init below
+
 	secretKey = os.Getenv("KEYFISH_SECRET")
 	doSites   bool // list known site configuations
 	doShow    bool // show the named configurations
 	doPrint   bool // print the result, overriding -copy
+	doPunct   bool // enable punctuation, overriding the default
 )
 
 func init() {
+	// Set up a default configuration to use if one is not loaded from a file.
+	usePunct := true
+	cfg = &config.Config{
+		Default: config.Site{
+			Length: 18, Punct: &usePunct,
+		},
+	}
+}
+
+func init() {
 	flag.IntVar(&cfg.Default.Length, "length", 18, "Password length")
-	flag.BoolVar(cfg.Default.Punct, "punct", false, "Use punctuation")
+
 	flag.StringVar(&cfg.Default.Format, "format", "", "Password format")
 	flag.StringVar(&cfg.Default.Salt, "salt", "", "Salt to hash with the site name")
 	flag.BoolVar(&doSites, "list", false, "List known sites and exit")
 	flag.BoolVar(&doShow, "show", false, "Print specified configurations and exit")
 	flag.BoolVar(&doPrint, "print", false, "Print the result rather than copying (overrides -copy)")
+	flag.BoolVar(&doPunct, "punct", false, "Use punctuation, overriding the default")
 	flag.BoolVar(&cfg.Flags.Verbose, "v", false, "Verbose logging (includes hints with -print)")
 	flag.BoolVar(&cfg.Flags.Copy, "copy", false, "Copy to clipboard instead of printing")
 	flag.BoolVar(&cfg.Flags.OTP, "otp", false, "Generate an OTP for the site (if configured)")
@@ -198,6 +211,10 @@ func main() {
 			fail("Password length must be ≥ %d", minLength)
 		} else if site.Format != "" && len(site.Format) < minLength {
 			fail("Format length must be ≥ %d", minLength)
+		}
+
+		if doPunct {
+			site.Punct = &doPunct // override whatever was there
 		}
 		if cfg.Flags.Verbose {
 			log.Printf("Site: %v", site)
