@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/creachadair/keyfish/alphabet"
@@ -38,16 +39,21 @@ type Site struct {
 	Host string `json:"host"`
 
 	// If set, this defines the alphabet used for key generation on this site.
-	// This overrides the Punct setting. The characters of this string define
-	// which componets to include:
+	// This overrides the Punct setting. The entries in the slice define which
+	// components to include:
 	//
-	//    A..Z   : uppercase letters
-	//    a..z   : lowercase letters
-	//    0..9   : decimal digits
+	//    "upper"     : uppercase letters (A..Z)
+	//    "lower"     : lowercase letters (a..z)
+	//    "letter"    : upper + lower
+	//    "digit"     : decimal digits (0..9)
+	//    "nopunct"   : upper + lower + digit
+	//    "punct"     : punctuation (the built-in set)
+	//    "all"       : upper + lower + digit + punct
+	//    "chars:..." : the literal characters ... (order matters)
 	//
-	// Other characters are taken verbatim. Order is significant.
-	// For example, the string "Aa1" corresponds to alphabet.NoPunct.
-	Alphabet string `json:"alphabet,omitempty"`
+	// Order is significant: For example ["digit", "chars:x"] means
+	// "0123456789x"; whereas ["chars:x", "digit"] means "x0123456789".
+	Alphabet []string `json:"alphabet,omitempty"`
 
 	// If set, this defines the exact layout of the password.
 	// See the Format method of password.Context for details.
@@ -163,18 +169,32 @@ func (s Site) Context(secret string) password.Context {
 }
 
 func (s Site) alphabet() alphabet.Alphabet {
-	if s.Alphabet != "" {
+	if len(s.Alphabet) != 0 {
 		var a alphabet.Alphabet
-		for i := 0; i < len(s.Alphabet); i++ {
-			switch ch := s.Alphabet[i]; {
-			case 'A' <= ch && ch <= 'Z':
+
+		for _, elt := range s.Alphabet {
+			switch elt {
+			case "upper":
 				a += alphabet.Uppercase
-			case 'a' <= ch && ch <= 'z':
+			case "lower":
 				a += alphabet.Lowercase
-			case '0' <= ch && ch <= '9':
+			case "letter":
+				a += alphabet.Letters
+			case "digit":
 				a += alphabet.Digits
+			case "nopunct":
+				a += alphabet.NoPunct
+			case "punct":
+				a += alphabet.Puncts
+			case "all":
+				a += alphabet.All
 			default:
-				a += alphabet.Alphabet(ch)
+				trim := strings.TrimPrefix(elt, "chars:")
+				if trim != elt {
+					a += alphabet.Alphabet(trim)
+				} else {
+					log.Printf("Warning: Unknown alphabet spec %q (ignored)", elt)
+				}
 			}
 		}
 		return a
@@ -190,7 +210,7 @@ func (s Site) merge(c Site) Site {
 	if s.Host == "" {
 		s.Host = c.Host
 	}
-	if s.Alphabet == "" {
+	if len(s.Alphabet) == 0 {
 		s.Alphabet = c.Alphabet
 	}
 	if s.Format == "" {

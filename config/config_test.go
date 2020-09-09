@@ -16,6 +16,7 @@ var testConfig = &Config{
 		"bravo": {Host: "bravo", Format: "******1", Login: "sam"},
 		"tango": {Host: "tangy.com", Length: 45, Salt: "K2Cr2O7"},
 		"oscar": {Host: "zesty.org", Length: 11, OTP: &OTP{Key: []byte("foobar")}},
+		"romeo": {Host: "giant.edu", Alphabet: []string{"digit", "chars:AEIOU"}, Length: 99},
 	},
 	Default: Site{
 		Host:  "mos.def",
@@ -74,6 +75,7 @@ func TestContext(t *testing.T) {
 		{"alpha", "baz", pctx(alphabet.All, "NaCl", "baz")},
 		{"xyz@alpha", "frob", pctx(alphabet.All, "xyz", "frob")},
 		{"bravo", "quux", pctx(alphabet.NoPunct, "", "quux")},
+		{"romeo", "nut", pctx(alphabet.Digits+"AEIOU", "", "nut")},
 	}
 	for _, test := range tests {
 		site, _ := testConfig.Site(test.site)
