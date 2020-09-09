@@ -32,16 +32,17 @@ type Config struct {
 
 // A Site represents the non-secret configuration for a single site.
 type Site struct {
-	Host    string                 `json:"host,omitempty"`
-	Format  string                 `json:"format,omitempty"`
-	Length  int                    `json:"length,omitempty"`
-	Punct   *bool                  `json:"punct,omitempty"`
-	Salt    string                 `json:"salt,omitempty"`
-	Login   string                 `json:"login,omitempty"`
-	EMail   string                 `json:"email,omitempty"`
-	OTP     *OTP                   `json:"otp,omitempty"`
-	Aliases []string               `json:"aliases,omitempty"`
-	Hints   map[string]interface{} `json:"hints,omitempty"`
+	Host     string                 `json:"host,omitempty"`
+	Alphabet string                 `json:"alphabet,omitempty"`
+	Format   string                 `json:"format,omitempty"`
+	Length   int                    `json:"length,omitempty"`
+	Punct    *bool                  `json:"punct,omitempty"`
+	Salt     string                 `json:"salt,omitempty"`
+	Login    string                 `json:"login,omitempty"`
+	EMail    string                 `json:"email,omitempty"`
+	OTP      *OTP                   `json:"otp,omitempty"`
+	Aliases  []string               `json:"aliases,omitempty"`
+	Hints    map[string]interface{} `json:"hints,omitempty"`
 }
 
 // An OTP represents the settings for an OTP generator.
@@ -113,15 +114,33 @@ func (c *Config) Site(name string) (Site, bool) {
 
 // Context returns a password generation context from s.
 func (s Site) Context(secret string) password.Context {
-	a := alphabet.NoPunct
-	if s.usePunct() {
-		a = alphabet.All
-	}
 	return password.Context{
-		Alphabet: a,
+		Alphabet: s.alphabet(),
 		Salt:     s.Salt,
 		Secret:   secret,
 	}
+}
+
+func (s Site) alphabet() alphabet.Alphabet {
+	if s.Alphabet != "" {
+		var a alphabet.Alphabet
+		for i := 0; i < len(s.Alphabet); i++ {
+			switch ch := s.Alphabet[i]; {
+			case 'A' <= ch && ch <= 'Z':
+				a += alphabet.Uppercase
+			case 'a' <= ch && ch <= 'z':
+				a += alphabet.Lowercase
+			case '0' <= ch && ch <= '9':
+				a += alphabet.Digits
+			default:
+				a += alphabet.Alphabet(ch)
+			}
+		}
+		return a
+	} else if s.usePunct() {
+		return alphabet.All
+	}
+	return alphabet.NoPunct
 }
 
 // merge returns a copy of s in which non-empty fields of c are used to fill
@@ -129,6 +148,9 @@ func (s Site) Context(secret string) password.Context {
 func (s Site) merge(c Site) Site {
 	if s.Host == "" {
 		s.Host = c.Host
+	}
+	if s.Alphabet == "" {
+		s.Alphabet = c.Alphabet
 	}
 	if s.Format == "" {
 		s.Format = c.Format
