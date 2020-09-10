@@ -4,6 +4,7 @@ package config
 
 import (
 	"bytes"
+	"encoding/base32"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -11,6 +12,7 @@ import (
 
 	"github.com/creachadair/keyfish/alphabet"
 	"github.com/creachadair/keyfish/password"
+	"github.com/creachadair/otp"
 	"github.com/creachadair/staticfile"
 )
 
@@ -94,8 +96,31 @@ type Site struct {
 
 // An OTP represents the settings for an OTP generator.
 type OTP struct {
-	Key    []byte `json:"key"`
+	Key    OTPKey `json:"key"`
 	Digits int    `json:"digits,omitempty"`
+}
+
+// OTPKey is the JSON encoding of an OTP secret.
+type OTPKey []byte
+
+// UnmarshalJSON decodes an OTPKey from a base32 string.
+func (o *OTPKey) UnmarshalJSON(data []byte) error {
+	var s string
+	if err := json.Unmarshal(data, &s); err != nil {
+		return err
+	}
+	key, err := otp.ParseKey(s)
+	if err != nil {
+		return err
+	}
+	*o = key
+	return nil
+}
+
+// MarshalJSON encodes an OTPKey to a base32 string.
+func (o OTPKey) MarshalJSON() ([]byte, error) {
+	key := strings.TrimRight(base32.StdEncoding.EncodeToString(o), "=")
+	return json.Marshal(key)
 }
 
 // Load loads the contents of the specified path into c.  If path does not
