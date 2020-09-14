@@ -68,7 +68,7 @@ func (h HostFilter) CheckAllow(req *http.Request) error {
 
 // Config carries the settings for a keyserver. It implments http.Handler.
 type Config struct {
-	// The path of the keyfish configufation file.
+	// The path of the keyfish configuration file.
 	KeyConfigPath string
 
 	keyConfig *config.Config
