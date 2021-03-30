@@ -7,7 +7,7 @@ require (
 	github.com/creachadair/otp v0.2.4
 	github.com/creachadair/staticfile v0.1.3
 	github.com/google/go-cmp v0.4.1
-	golang.org/x/sys v0.0.0-20210124154548-22da62e12c0c // indirect
+	golang.org/x/sys v0.0.0-20210326220804-49726bf1d181 // indirect
 )
 
 go 1.13
