@@ -5,8 +5,8 @@ bitbucket.org/creachadair/stringset v0.0.9/go.mod h1:t+4WcQ4+PXTa8aQdNKe40ZP6iwe
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/creachadair/getpass v0.1.1 h1:NBy01Vx3sEG75JbSgjsObwe06ISDJL9WS88pFNnVSpg=
 github.com/creachadair/getpass v0.1.1/go.mod h1:amWqqvJdxnT/Tk6PPgpFWX5Ik2RH4dnvfXequlcSXSc=
-github.com/creachadair/otp v0.2.4 h1:Hv8JEpqPmjk/S5xkyxVAkCqXc779TVPVsejU0GPiE/M=
-github.com/creachadair/otp v0.2.4/go.mod h1:vPuEqgSogZ1vtpF8OeUg28ke/PK2FIo85GZHJz74d0M=
+github.com/creachadair/otp v0.2.5 h1:ZzzKMwQOFJqJbzscdI5UGvy8tSdIngC9BlRVKAl4Z1I=
+github.com/creachadair/otp v0.2.5/go.mod h1:vPuEqgSogZ1vtpF8OeUg28ke/PK2FIo85GZHJz74d0M=
 github.com/creachadair/staticfile v0.1.3 h1:RhyrMgi7IQn3GejgmGtFuCec58vboEMt5CH6N3ulRJk=
 github.com/creachadair/staticfile v0.1.3/go.mod h1:a3qySzCIXEprDGxk6tSxSI+dBBdLzqeBOMhZ+o2d3pM=
 github.com/google/go-cmp v0.4.1 h1:/exdXoGamhu5ONeUJH0deniYLWYvQwW66yvlfiiKTu0=
