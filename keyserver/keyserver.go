@@ -6,14 +6,13 @@ import (
 	"flag"
 	"log"
 	"net/http"
-	"strconv"
 	"strings"
 
 	"github.com/creachadair/keyfish/service"
 )
 
 var (
-	port = flag.Int("port", 8080, "Service port")
+	listenAddr = flag.String("listen", ":8080", "Server listen address")
 
 	allowFrom = flag.String("allow", "",
 		"CIDR blocks to allow connections from (CSV; empty to allow all)")
@@ -29,8 +28,7 @@ func main() {
 		CheckAllow:    mustHostFilter(*allowFrom),
 	}
 
-	addr := "0.0.0.0:" + strconv.Itoa(*port)
-	if err := http.ListenAndServe(addr, cfg); err != nil {
+	if err := http.ListenAndServe(*listenAddr, cfg); err != nil {
 		log.Fatalf("ListenAndServe: %v", err)
 	}
 }
