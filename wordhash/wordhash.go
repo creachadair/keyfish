@@ -33,7 +33,7 @@ var words = wordmap{
 	// test cases too.
 	"abbot", "adder", "anode", "apple", "argon", "ashes", "aster", "attic", // 0
 	"axiom", "azure", "baker", "banjo", "baron", "birch", "black", "blame",
-	"boron", "botch", "brief", "brine", "burro", "bylaw", "cabin", "cable", // 1
+	"bonus", "botch", "brief", "brine", "burro", "bylaw", "cabin", "cable", // 1
 	"calyx", "camel", "cedar", "child", "clank", "cobra", "coral", "cross",
 	"cumin", "cubic", "daily", "dance", "decal", "delta", "demon", "diary", // 2
 	"dodge", "dogma", "dolor", "dough", "drape", "dryad", "eagle", "edict",

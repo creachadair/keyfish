@@ -20,7 +20,7 @@ func TestString(t *testing.T) {
 		{"a", "friar-ridge-quill-vixen"},
 		{"b", "yeast-whale-ridge-joker"},
 		{"aa", "twist-camel-mango-attic"},
-		{"correct horse battery staple", "boron-jenny-koala-spade"},
+		{"correct horse battery staple", "bonus-jenny-koala-spade"},
 		{"0123456789abcdef!@#$%^&;", "hover-black-monad-jenny"},
 	}
 	for _, test := range tests {
