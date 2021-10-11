@@ -16,6 +16,19 @@
 // Passwords may contain letters, digits, and punctuation; by default, letters
 // and digits are used, but no punctuation.  Use -punct to enable punctuation
 // and -format to override the password format explicitly.
+//
+// To statically compile the configuration into the main package, set the
+// KEYFISH_CONFIG environment variable to the path of the configuration file
+// and run "go generate ./config" before building:
+//
+//   git clone https://github.com/creachadair/keyfish
+//   cd keyfish
+//   env KEYFISH_CONFIG=$HOME/my-config.json go generate ./config
+//   go build
+//
+// You can then copy the keyfish binary where you like and it will use the
+// static configuration unless you override it at runtime with KEYFISH_CONFIG.
+
 package main
 
 import (
@@ -76,7 +89,7 @@ func init() {
 	flag.BoolVar(&cfg.Flags.Strict, "strict", false, "Report an error for sites not named in the config")
 
 	flag.Usage = func() {
-		cf := configFilePath()
+		cf := config.FilePath()
 		if t := strings.TrimPrefix(cf, os.Getenv("HOME")); t != cf {
 			cf = "~" + t
 		}
@@ -106,8 +119,7 @@ A site name has the form "host.org" or "salt@host.org". If the site matches one
 of the sites named in the user's config file, the corresponding settings are used.
 
 By default, configuration is read from %[2]s.
-If KEYFISH_CONFIG is set to a non-empty path, that path is used instead.
-If KEYFISH_CONFIG is set empty, no config file is loaded.
+If KEYFISH_CONFIG is set, that path is used instead.
 
 Flags:`+"\n", filepath.Base(os.Args[0]), cf)
 		flag.PrintDefaults()
@@ -144,7 +156,7 @@ func listSites(w io.Writer, sites stringset.Set) {
 func main() {
 	// Load configuration settings from the user's file, if it exists.
 	// Do this prior to flag parsing so that flags can override defaults.
-	if err := cfg.Load(configFilePath()); err != nil && !os.IsNotExist(err) {
+	if err := cfg.Load(config.FilePath()); err != nil && !os.IsNotExist(err) {
 		fail("Error loading configuration: %v", err)
 	}
 
@@ -242,32 +254,6 @@ func main() {
 			fmt.Println()
 		}
 	}
-}
-
-// The default configuration is a variable so it can be set by the linker.
-// Use -ldflags "-X main.defaultConfig=some/other/path" in go build.
-var defaultConfig = "$HOME/.keyfish"
-
-// To statically compile the configuration into the main package, set the
-// KEYFISH_CONFIG environment variable to the path of the configuration file
-// and run "go generate" before building:
-//
-//   git clone https://github.com/creachadair/keyfish
-//   cd keyfish
-//   env KEYFISH_CONFIG=$HOME/my-config.json go generate  # creates static.go
-//   go build
-//
-// You can then copy the keyfish binary where you like and it will use the
-// static configuration unless you override it at runtime with KEYFISH_CONFIG.
-
-//go:generate -command cs go run github.com/creachadair/staticfile/compiledata
-//go:generate cs -out static.go -set $HOME/.keyfish=$KEYFISH_CONFIG
-
-func configFilePath() string {
-	if path, ok := os.LookupEnv("KEYFISH_CONFIG"); ok {
-		return path
-	}
-	return os.ExpandEnv(defaultConfig)
 }
 
 func isPipeCommand(key string) ([]string, bool) {
