@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net"
 	"net/http"
 	"net/url"
@@ -124,7 +124,7 @@ func (c *Config) printfError(w http.ResponseWriter, status int, msg string, args
 // unmarshalBody fully reads and closes the body of req, and decodes it as JSON
 // into v. The body is fully read even if decoding fails.
 func (c *Config) unmarshalBody(req *http.Request, v interface{}) error {
-	data, err := ioutil.ReadAll(req.Body)
+	data, err := io.ReadAll(req.Body)
 	req.Body.Close()
 	if err != nil {
 		return err
