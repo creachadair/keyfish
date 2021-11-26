@@ -8,6 +8,6 @@ require (
 	github.com/google/go-cmp v0.5.6
 )
 
-require golang.org/x/sys v0.0.0-20211117180635-dee7805ff2e1 // indirect
+require golang.org/x/sys v0.0.0-20211124211545-fe61309f8881 // indirect
 
 go 1.17
