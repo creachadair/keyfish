@@ -248,8 +248,14 @@ func main() {
 				fmt.Print(u, "@")
 			}
 			fmt.Print(site.Host, "\t", wordhash.String(pw))
-			if cfg.Flags.OTP && site.OTP != nil {
-				fmt.Print("\t", otp.Config{Key: string(site.OTP.Key)}.TOTP())
+			if cfg.Flags.OTP {
+				otpc := site.OTP
+				if site.Salt != "" && site.SaltOTP[site.Salt] != nil {
+					otpc = site.SaltOTP[site.Salt]
+				}
+				if otpc != nil {
+					fmt.Print("\t", otp.Config{Key: string(otpc.Key)}.TOTP())
+				}
 			}
 			fmt.Println()
 		}
