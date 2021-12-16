@@ -33,3 +33,17 @@ func userText(prompt, defaultValue string, hidden bool) (string, error) {
 	}
 	return "", errors.New("missing user input")
 }
+
+// insertText inserts text at the cursor location.
+func insertText(text string) error {
+	cmd := exec.Command("osascript", "-s", "ho")
+	cmd.Stdin = strings.NewReader(fmt.Sprintf(`tell application "System Events"
+  keystroke %q
+end tell`, text))
+	raw, err := cmd.Output()
+	out := strings.TrimSpace(string(raw))
+	if err != nil {
+		return fmt.Errorf("insert failed: %s", out)
+	}
+	return nil
+}

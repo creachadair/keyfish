@@ -3,10 +3,8 @@
 package service
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"net"
 	"net/http"
 	"net/url"
@@ -17,7 +15,6 @@ import (
 
 	"github.com/creachadair/keyfish/clipboard"
 	"github.com/creachadair/keyfish/config"
-	"github.com/creachadair/keyfish/wordhash"
 	"github.com/creachadair/otp"
 )
 
@@ -110,160 +107,145 @@ func isModifiedSince(path string, since time.Time) bool {
 	return err != nil || fi.ModTime().After(since)
 }
 
-// printErrorf reports the given HTTP status with a formatted text message in
-// the body. A newline is appended if the format does not already contain one.
-func (c *Config) printfError(w http.ResponseWriter, status int, msg string, args ...interface{}) {
-	w.Header().Set("Content-Type", "text/plain")
-	w.WriteHeader(status)
-	if !strings.HasSuffix(msg, "\n") {
-		msg += "\n"
-	}
-	fmt.Fprintf(w, msg, args...)
-}
-
-// unmarshalBody fully reads and closes the body of req, and decodes it as JSON
-// into v. The body is fully read even if decoding fails.
-func (c *Config) unmarshalBody(req *http.Request, v interface{}) error {
-	data, err := io.ReadAll(req.Body)
-	req.Body.Close()
-	if err != nil {
-		return err
-	}
-	return json.Unmarshal(data, v)
-}
-
-// marshalBody marshals v as JSON into the response body of w.  In case of
-// error, it generates an internal server error (500).
-func (c *Config) marshalBody(w http.ResponseWriter, v interface{}) {
-	data, err := json.Marshal(v)
-	if err != nil {
-		c.printfError(w, http.StatusInternalServerError, "encoding output: %v", err)
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(data)
-	w.Write([]byte("\n"))
-}
-
 // ServeHTTP implements http.Handler for the key generator service.
 func (c *Config) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	if err := c.checkAllow(req); err != nil {
-		c.printfError(w, http.StatusForbidden, "Request fobidden: %v", err)
+	if code, err := c.serveInternal(w, req); err != nil {
+		if code == 0 {
+			code = http.StatusInternalServerError
+		}
+		w.WriteHeader(code)
+		w.Header().Set("Content-Type", "text/plain")
+		fmt.Fprintln(w, err.Error())
 		return
-	}
-	switch req.URL.Path {
-	case "/key":
-		c.HandleKey(w, req)
-	default:
-		c.printfError(w, http.StatusNotFound, "Endpoint not found: %q", req.URL.Path)
 	}
 }
 
-// HandleKey handles a key-generation request.
-func (c *Config) HandleKey(w http.ResponseWriter, req *http.Request) {
-	var kreq KeyRequest
-	switch req.Method {
-	case "GET":
-		if err := req.ParseForm(); err != nil {
-			c.printfError(w, http.StatusBadRequest, "Invalid request parameters: %v", err)
-			return
-		}
-		kreq = KeyRequest{
-			URL:  req.Form.Get("url"),
-			Salt: req.Form.Get("salt"),
-		}
-		if v, err := strconv.ParseBool(req.Form.Get("punct")); err == nil {
-			kreq.Punct = v
-		}
-		if v, err := strconv.ParseBool(req.Form.Get("strict")); err == nil {
-			kreq.Strict = v
-		}
-	case "POST":
-		if err := c.unmarshalBody(req, &kreq); err != nil {
-			c.printfError(w, http.StatusBadRequest, "Invalid request body: %v", err)
-			return
-		}
-	default:
-		c.printfError(w, http.StatusMethodNotAllowed, "Unsupported method: %q", req.Method)
-		return
+func (c *Config) serveInternal(w http.ResponseWriter, req *http.Request) (int, error) {
+	if err := c.checkAllow(req); err != nil {
+		return http.StatusForbidden, fmt.Errorf("request forbidden: %w", err)
+	} else if req.Method != "GET" {
+		return http.StatusMethodNotAllowed, fmt.Errorf("unsupported method %q", req.Method)
 	}
 
-	host := kreq.URL
-	if u, err := url.Parse(host); err == nil {
-		if u.Host != "" {
-			host = u.Host
-			if ps := strings.Split(host, "."); len(ps) > 2 {
-				host = strings.Join(ps[1:], ".")
-			}
-		} else if u.Path != "" {
-			host = u.Path
-		}
+	sel, key, err := pathSelector(req.URL.Path)
+	if err != nil {
+		return http.StatusBadRequest, err
 	}
-	if host == "" {
-		c.marshalBody(w, &Response{Error: "no hostname specified"})
-		return
+	if err := req.ParseForm(); err != nil {
+		return http.StatusBadRequest, err
 	}
+
 	kc, err := c.loadKeyConfig()
 	if err != nil {
-		c.printfError(w, http.StatusInternalServerError, "Key configuration: %v", err)
-		return
-	}
-	site, ok := kc.Site(host)
-	if kreq.Strict && !ok {
-		c.marshalBody(w, &Response{Error: fmt.Sprintf("unknown site %q", host)})
-		return
-	}
-	if kreq.Salt != "" {
-		site.Salt = kreq.Salt
+		return 0, err
 	}
 
-	prompt := fmt.Sprintf("Passphrase for %q", site.Host)
-	passphrase, err := userText(prompt, "", true)
-	if err != nil {
-		c.marshalBody(w, &Response{Error: fmt.Sprintf("reading passphrase: %v", err)})
-		return
+	kreq := parseRequest(key, req.Form)
+	site, ok := kc.Site(kreq.label)
+	if !ok && kreq.base != "" {
+		site, ok = kc.Site(kreq.base)
 	}
-	ctx := site.Context(passphrase)
-	var pw string
-	if fmt := site.Format; fmt != "" {
-		pw = ctx.Format(site.Host, fmt)
+	if !ok && kreq.strict {
+		return http.StatusNotFound, fmt.Errorf("unknown site %q", kreq.label)
+	}
+	if kreq.salt != "" {
+		site.Salt = kreq.salt
+	}
+
+	var copy, insert bool
+	var result string
+
+	switch sel {
+	case "otp":
+		if site.OTP == nil {
+			return http.StatusNotFound, fmt.Errorf("no OTP key for %q", kreq.label)
+		}
+		result = otp.Config{Key: string(site.OTP.Key)}.TOTP()
+
+	case "key", "copy", "insert":
+		prompt := fmt.Sprintf("Passphrase for %q", site.Host)
+		passphrase, err := userText(prompt, "", true)
+		if err != nil {
+			return 0, fmt.Errorf("reading passphrase: %w", err)
+		}
+
+		ctx := site.Context(passphrase)
+		if fmt := site.Format; fmt != "" {
+			result = ctx.Format(site.Host, fmt)
+		} else {
+			result = ctx.Password(site.Host, site.Length)
+		}
+		copy = sel == "copy"
+		insert = sel == "insert"
+
+	default:
+		return http.StatusNotFound, fmt.Errorf("unknown operator %q", sel)
+	}
+
+	if copy {
+		clipboard.WriteString(result)
+	} else if insert {
+		if err := insertText(result); err != nil {
+			return 0, err
+		}
 	} else {
-		pw = ctx.Password(site.Host, site.Length)
+		w.Header().Set("Content-Type", "text/plain")
+		fmt.Fprintln(w, result)
 	}
-	var auth string
-	if site.OTP != nil {
-		auth = otp.Config{
-			Key: string(site.OTP.Key),
-		}.TOTP()
-		clipboard.WriteString(auth)
+	return 0, nil
+}
+
+func pathSelector(s string) (sel, rest string, err error) {
+	ps := strings.SplitN(s, "/", 3)
+	if len(ps) != 3 || ps[0] != "" {
+		return "", "", fmt.Errorf("invalid request path: %q", s)
+	} else if ps[1] == "" {
+		return "", "", errors.New("invalid operation")
+	} else if ps[2] == "" {
+		return "", "", errors.New("empty key selector")
 	}
-	c.marshalBody(w, &Response{
-		Result: KeyResponse{
-			Key:  pw,
-			OTP:  auth,
-			Hash: wordhash.String(pw),
-		},
-	})
+	return ps[1], ps[2], nil
 }
 
-// KeyRequest describes a key generation request.
-type KeyRequest struct {
-	URL    string `json:"url"`
-	Salt   string `json:"salt"`
-	Punct  bool   `json:"punct"`
-	Strict bool   `json:"strict"`
+func parseRequest(key string, form url.Values) *keyRequest {
+	kreq := &keyRequest{
+		label:  key,
+		strict: true,
+	}
+
+	// Check for salt@host form.
+	if ps := strings.SplitN(key, "@", 2); len(ps) == 2 {
+		kreq.salt = ps[0]
+		kreq.label = ps[1]
+	}
+
+	// Trim subdomains: a.x.dom ⇒ x.dom, a.b.x.dom ⇒ b.x.dom
+	if ps := strings.Split(kreq.label, "."); len(ps) > 2 {
+		kreq.base = strings.Join(ps[1:], ".")
+	}
+
+	// Check for an optional strictness parameter.
+	if sp := parseBool(form.Get("strict")); sp != nil {
+		kreq.strict = *sp
+	}
+
+	return kreq
 }
 
-// KeyResponse describes the content of a successful key generation response.
-type KeyResponse struct {
-	Key  string `json:"key,omitempty"`
-	Hash string `json:"hash,omitempty"`
-	OTP  string `json:"otp,omitempty"`
+func parseBool(s string) *bool {
+	if s != "" {
+		v, err := strconv.ParseBool(s)
+		if err == nil {
+			return &v
+		}
+	}
+	return nil
 }
 
-// Response is the top-level response wrapper.
-type Response struct {
-	Result interface{} `json:"result,omitempty"`
-	Error  string      `json:"error,omitempty"`
+type keyRequest struct {
+	label  string
+	base   string
+	salt   string
+	strict bool
 }
