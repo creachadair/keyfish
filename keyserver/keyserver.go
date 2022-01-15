@@ -16,7 +16,7 @@ var (
 
 	allowFrom = flag.String("allow", "",
 		"CIDR blocks to allow connections from (CSV; empty to allow all)")
-	configFile = flag.String("key-config", "",
+	configFile = flag.String("config", "",
 		"Keyfish configuration file path")
 )
 

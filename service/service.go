@@ -127,6 +127,25 @@ func (c *Config) serveInternal(w http.ResponseWriter, req *http.Request) (int, e
 	} else if req.Method != "GET" {
 		return http.StatusMethodNotAllowed, fmt.Errorf("unsupported method %q", req.Method)
 	}
+	if req.URL.Path == "/" {
+		w.Header().Set("Content-Type", "text/plain")
+		fmt.Fprint(w, `Routes:
+  /key/:site    -- return the key for site
+  /copy/:site   -- copy the key for site to the clipboard
+  /insert/:site -- insert the key for site as keystrokes
+  /otp/:site    -- return an OTP code for site
+
+Site format:
+  tag           -- a named site in the config
+  salt@tag      -- a named site with a specific key salt
+  host.com      -- a hostname
+  salt@host.com -- a hostname with a specific key salt
+
+Parameters:
+  strict=false  -- allow arbitrary host names
+`)
+		return 0, nil
+	}
 
 	sel, key, err := pathSelector(req.URL.Path)
 	if err != nil {
