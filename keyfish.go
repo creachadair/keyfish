@@ -131,24 +131,45 @@ func fail(msg string, args ...interface{}) { log.Fatalf(msg, args...) }
 
 // listSites renders a nicely-formatted listing of sites to w.
 func listSites(w io.Writer, sites stringset.Set) {
-	fmt.Fprintln(w, "▷ Known sites:")
-	const padding = 2
-	const fieldWidth = 12 + padding
 	const lineWidth = 80
-	tw := tabwriter.NewWriter(w, fieldWidth, 0, padding, ' ', tabwriter.TabIndent)
-	nc := 0
-	for _, site := range sites.Elements() {
-		fmt.Fprint(tw, site)
-		nc += fieldWidth
-		if nc > lineWidth {
-			fmt.Fprintln(tw)
-			nc = 0
-		} else {
-			fmt.Fprint(tw, "\t")
+	const padding = 2
+
+	// Find the maximum-width site label and use it to compute the number of
+	// columns that will fit into the designated line width.
+	var maxWidth int
+	for site := range sites {
+		if len(site) > maxWidth {
+			maxWidth = len(site)
 		}
 	}
-	if nc != 0 {
-		fmt.Fprintln(tw)
+	fieldWidth := maxWidth + padding
+	numCols := (lineWidth + fieldWidth - 1) / fieldWidth
+	numRows := sites.Len() / numCols
+
+	// Fill columns before rows, so that the reader can scan down a column in
+	// lexicographic order rather than reading across rows.
+	var cols [][]string
+	elts := sites.Elements() // sorted
+	for i := 0; i < len(elts); {
+		n := i + numRows
+		if n > len(elts) {
+			n = len(elts)
+		}
+		cols = append(cols, elts[i:n])
+		i = n
+	}
+
+	fmt.Fprintln(w, "▷ Known sites:")
+	tw := tabwriter.NewWriter(w, maxWidth, 0, padding, ' ', 0)
+	for r := 0; r < numRows; r++ {
+		var row []string
+		for _, col := range cols {
+			if r >= len(col) {
+				break
+			}
+			row = append(row, col[r])
+		}
+		fmt.Fprintln(tw, strings.Join(row, "\t"))
 	}
 	tw.Flush()
 }
