@@ -14,6 +14,10 @@ func userText(prompt, defaultValue string, hidden bool) (string, error) {
 	}
 
 	// Ask osascript to send error text to stdout to simplify error plumbing.
+	//
+	// N.B. The shenanigans with frontmost application are to ensure the dialog
+	// comes to the foreground. Without that, the user will have to click on the
+	// window before they can start typing into it.
 	cmd := exec.Command("osascript", "-s", "ho")
 	cmd.Stdin = strings.NewReader(fmt.Sprintf(`
 set target to (path to frontmost application as Unicode text)
