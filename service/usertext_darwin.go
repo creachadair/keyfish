@@ -15,7 +15,11 @@ func userText(prompt, defaultValue string, hidden bool) (string, error) {
 
 	// Ask osascript to send error text to stdout to simplify error plumbing.
 	cmd := exec.Command("osascript", "-s", "ho")
-	cmd.Stdin = strings.NewReader(fmt.Sprintf(`display dialog %q default answer %q hidden answer %v`,
+	cmd.Stdin = strings.NewReader(fmt.Sprintf(`
+set target to (path to frontmost application as Unicode text)
+tell application target
+  display dialog %q default answer %q hidden answer %v
+end tell`,
 		prompt, defaultValue, hidden))
 	raw, err := cmd.Output()
 	out := strings.TrimRight(string(raw), "\n")
