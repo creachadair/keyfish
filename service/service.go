@@ -134,6 +134,7 @@ func (c *Config) serveInternal(w http.ResponseWriter, req *http.Request) (int, e
   /copy/:site   -- copy the key for site to the clipboard
   /insert/:site -- insert the key for site as keystrokes
   /otp/:site    -- return an OTP code for site
+  /login/:site  -- return the login name for site
 
 Site format:
   tag           -- a named site in the config
@@ -172,9 +173,7 @@ Parameters:
 		site.Salt = kreq.salt
 	}
 
-	var copy, insert bool
 	var result string
-
 	switch sel {
 	case "otp":
 		if site.OTP == nil {
@@ -182,7 +181,7 @@ Parameters:
 		}
 		result = otp.Config{Key: string(site.OTP.Key)}.TOTP()
 
-	case "key", "copy", "insert":
+	case "key":
 		prompt := fmt.Sprintf("Passphrase for %q", site.Host)
 		passphrase, err := userText(prompt, "", true)
 		if err != nil {
@@ -195,16 +194,17 @@ Parameters:
 		} else {
 			result = ctx.Password(site.Host, site.Length)
 		}
-		copy = sel == "copy"
-		insert = sel == "insert"
+
+	case "login":
+		result = site.Login
 
 	default:
 		return http.StatusNotFound, fmt.Errorf("unknown operator %q", sel)
 	}
 
-	if copy {
+	if kreq.copy {
 		clipboard.WriteString(result)
-	} else if insert {
+	} else if kreq.insert {
 		if err := insertText(result); err != nil {
 			return 0, err
 		}
@@ -248,6 +248,12 @@ func parseRequest(key string, form url.Values) *keyRequest {
 	if sp := parseBool(form.Get("strict")); sp != nil {
 		kreq.strict = *sp
 	}
+	if cp := parseBool(form.Get("copy")); cp != nil {
+		kreq.copy = *cp
+	}
+	if ins := parseBool(form.Get("insert")); ins != nil {
+		kreq.insert = *ins
+	}
 
 	return kreq
 }
@@ -267,4 +273,6 @@ type keyRequest struct {
 	base   string
 	salt   string
 	strict bool
+	copy   bool
+	insert bool
 }
