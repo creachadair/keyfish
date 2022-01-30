@@ -4,7 +4,15 @@ import "html/template"
 
 const sitesListText = `<html>
 <head><title>Known Sites</title></head><body>
-
+<style type="text/css">
+body {
+  column-count: 4;
+  column-width: auto;
+  font-family: sans-serif;
+}
+@media (max-width: 1000px) { body { column-count: 1; } }
+td.host { font-size: 80%; }
+</style>
 <h1>Known sites:</h1>
 
 <table>
@@ -14,8 +22,8 @@ const sitesListText = `<html>
   <th>Link</th>
 </tr>
 {{range $tag, $site := .Sites}}<tr>
-  <td>{{$tag}}</td>
-  <td><tt>{{$site.Host}}</tt></td>
+  <td><tt>{{$tag}}</tt></td>
+  <td class=host>{{$site.Host}}</td>
   <td><button class=copy type=button value="{{$tag}}">copy</button></td>
 </tr>{{end}}
 </table>
