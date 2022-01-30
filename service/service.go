@@ -128,24 +128,15 @@ func (c *Config) serveInternal(w http.ResponseWriter, req *http.Request) (int, e
 		return http.StatusMethodNotAllowed, fmt.Errorf("unsupported method %q", req.Method)
 	}
 	if req.URL.Path == "/" {
-		w.Header().Set("Content-Type", "text/plain")
-		fmt.Fprint(w, `Routes:
-  /key/:site    -- return the key for site
-  /copy/:site   -- copy the key for site to the clipboard
-  /insert/:site -- insert the key for site as keystrokes
-  /otp/:site    -- return an OTP code for site
-  /login/:site  -- return the login name for site
+		return c.serveMenu(w)
+	}
 
-Site format:
-  tag           -- a named site in the config
-  salt@tag      -- a named site with a specific key salt
-  host.com      -- a hostname
-  salt@host.com -- a hostname with a specific key salt
-
-Parameters:
-  strict=false  -- allow arbitrary host names
-`)
-		return 0, nil
+	kc, err := c.loadKeyConfig()
+	if err != nil {
+		return 0, err
+	}
+	if req.URL.Path == "/sites" {
+		return c.serveSites(w, kc)
 	}
 
 	sel, key, err := pathSelector(req.URL.Path)
@@ -154,11 +145,6 @@ Parameters:
 	}
 	if err := req.ParseForm(); err != nil {
 		return http.StatusBadRequest, err
-	}
-
-	kc, err := c.loadKeyConfig()
-	if err != nil {
-		return 0, err
 	}
 
 	kreq := parseRequest(key, req.Form)
@@ -213,6 +199,32 @@ Parameters:
 		fmt.Fprintln(w, result)
 	}
 	return 0, nil
+}
+
+func (c *Config) serveMenu(w http.ResponseWriter) (int, error) {
+	w.Header().Set("Content-Type", "text/plain")
+	fmt.Fprint(w, `Routes:
+  /key/:site    -- return the key for site
+  /copy/:site   -- copy the key for site to the clipboard
+  /insert/:site -- insert the key for site as keystrokes
+  /otp/:site    -- return an OTP code for site
+  /login/:site  -- return the login name for site
+
+Site format:
+  tag           -- a named site in the config
+  salt@tag      -- a named site with a specific key salt
+  host.com      -- a hostname
+  salt@host.com -- a hostname with a specific key salt
+
+Parameters:
+  strict=false  -- allow arbitrary host names
+`)
+	return 0, nil
+}
+
+func (c *Config) serveSites(w http.ResponseWriter, kc *config.Config) (int, error) {
+	w.Header().Set("Content-Type", "text/html")
+	return 0, sitesList.Execute(w, kc)
 }
 
 func pathSelector(s string) (sel, rest string, err error) {
