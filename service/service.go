@@ -209,6 +209,7 @@ func (c *Config) serveMenu(w http.ResponseWriter) (int, error) {
   /insert/:site -- insert the key for site as keystrokes
   /otp/:site    -- return an OTP code for site
   /login/:site  -- return the login name for site
+  /sites        -- a list of all known sites
 
 Site format:
   tag           -- a named site in the config
@@ -224,7 +225,10 @@ Parameters:
 
 func (c *Config) serveSites(w http.ResponseWriter, kc *config.Config) (int, error) {
 	w.Header().Set("Content-Type", "text/html")
-	return 0, sitesList.Execute(w, kc)
+	return 0, sitesList.Execute(w, map[string]interface{}{
+		"Sites": kc.Sites,
+		"Code":  minifiedCode,
+	})
 }
 
 func pathSelector(s string) (sel, rest string, err error) {
