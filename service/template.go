@@ -32,7 +32,7 @@ td.host { font-size: 80%; }
 </table>
 <script>
 void((()=>{
-{{/* Issue an HTTP GET request to the key server for the given tag. */-}}
+{{/* Issue an HTTP GET request to the key server for the given tag. */ -}}
 function copyKey(tag) {
   return function() {
     var req = new XMLHttpRequest();
@@ -41,7 +41,7 @@ function copyKey(tag) {
   }
 }
 
-{{/* Attach event listeners to all the buttons. */-}}
+{{/* Attach event listeners to all the buttons. */ -}}
 for (const btn of document.getElementsByTagName('button')) {
   btn.addEventListener('click', copyKey(btn.value));
 }
@@ -52,7 +52,7 @@ const filter = document.getElementById('filter');
 
 {{/* Filter visible elements by containing a substring of the filter.
      Use 'display' rather than 'hidden' so that the hidden items collapse.
-     Reduce the number of columns so the results are a little easier to read. */-}}
+     Reduce the number of columns so the results are a little easier to read. */ -}}
 filter.addEventListener('input', function(e) {
    var text = e.target.value;
    var numVis = 0;
