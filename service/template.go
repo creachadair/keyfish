@@ -76,6 +76,7 @@ body {
   column-fill: auto;
   font-family: sans-serif;
 }
+th { text-align: left; }
 @media (max-width: 1000px) { body { column-count: 1; } }
 td.host { font-size: 80%; }
 </style>
