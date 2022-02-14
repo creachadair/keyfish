@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"html/template"
 	"log"
+	"path"
 	"strings"
 
 	"github.com/tdewolff/minify/v2"
@@ -11,7 +12,11 @@ import (
 )
 
 var (
-	sitesList    = template.Must(template.New("sites").Parse(sitesListText))
+	sitesList = template.Must(template.New("sites").Funcs(map[string]interface{}{
+		"trimExt": func(s string) string {
+			return strings.TrimSuffix(s, path.Ext(s))
+		},
+	}).Parse(sitesListText))
 	minifiedCode template.JS // populated from rawCode, see below.
 )
 
@@ -56,7 +61,7 @@ filter.addEventListener('input', function(e) {
    var text = e.target.value;
    var numVis = 0;
    for (const row of document.getElementsByClassName('siterow')) {
-      var vis = filter.value == "" || row.dataset.tag.includes(text);
+      var vis = filter.value == "" || row.dataset.tag.includes(text) || row.dataset.host.includes(text);
       if (vis) { numVis += 1; }
       row.style.display = vis ? '' : 'none';
    }
@@ -90,7 +95,7 @@ td.host { font-size: 80%; }
   <th>Host</th>
   <th>Link</th>
 </tr>
-{{range $tag, $site := .Sites}}<tr class=siterow data-tag="{{$tag}}">
+{{range $tag, $site := .Sites}}<tr class=siterow data-tag="{{$tag}}" data-host="{{trimExt $site.Host}}">
   <td><tt>{{$tag}}</tt></td>
   <td class=host>{{$site.Host}}</td>
   <td><button class=copy type=button value="{{$tag}}">copy</button></td>
