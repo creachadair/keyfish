@@ -3,6 +3,7 @@
 package service
 
 import (
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"net"
@@ -168,8 +169,7 @@ func (c *Config) serveInternal(w http.ResponseWriter, req *http.Request) (int, e
 		result = otp.Config{Key: string(site.OTP.Key)}.TOTP()
 
 	case "key":
-		prompt := fmt.Sprintf("Passphrase for %q", site.Host)
-		passphrase, err := userText(prompt, "", true)
+		passphrase, err := getPassphrase(req, site)
 		if err != nil {
 			return 0, fmt.Errorf("reading passphrase: %w", err)
 		}
@@ -201,12 +201,32 @@ func (c *Config) serveInternal(w http.ResponseWriter, req *http.Request) (int, e
 	return 0, nil
 }
 
+func getPassphrase(req *http.Request, site config.Site) (string, error) {
+	auth := req.Header.Get("Authorization")
+	if auth != "" {
+		parts := strings.Fields(auth)
+		if len(parts) != 2 || parts[0] != "Phrase" {
+			return "", errors.New("invalid authorization header")
+		}
+		pp, err := base64.StdEncoding.DecodeString(parts[1])
+		if err != nil {
+			return "", errors.New("invalid authorization phrase")
+		}
+		return string(pp), nil
+	}
+
+	prompt := fmt.Sprintf("Passphrase for %q", site.Host)
+	pp, err := userText(prompt, "", true)
+	if err != nil {
+		return "", fmt.Errorf("reading passphrase: %w", err)
+	}
+	return pp, nil
+}
+
 func (c *Config) serveMenu(w http.ResponseWriter) (int, error) {
 	w.Header().Set("Content-Type", "text/plain")
 	fmt.Fprint(w, `Routes:
   /key/:site    -- return the key for site
-  /copy/:site   -- copy the key for site to the clipboard
-  /insert/:site -- insert the key for site as keystrokes
   /otp/:site    -- return an OTP code for site
   /login/:site  -- return the login name for site
   /sites        -- a list of all known sites
@@ -219,6 +239,8 @@ Site format:
 
 Parameters:
   strict=false  -- allow arbitrary host names
+  copy=true     -- copy the key to the clipboard
+  insert=true   -- insert the key as keystrokes
 `)
 	return 0, nil
 }
