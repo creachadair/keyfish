@@ -39,10 +39,20 @@ void((()=>{
 // Issue an HTTP GET request to the key server for the given tag.
 function copyKey(tag) {
   return function() {
+    const auth = localStorage.getItem(authKey);
     var req = new XMLHttpRequest();
     req.open('GET', '/key/'+tag+'?copy=1', true);
+    if (auth) {
+        req.setRequestHeader('Authorization', 'Phrase '+auth);
+    }
     req.send();
   }
+}
+
+// Update the auth key indicator.
+function updateKeyTag() {
+   const indicator = document.getElementById('keyflag');
+   indicator.innerText = localStorage.getItem(authKey) ? '\u2705' : '';
 }
 
 // Attach event listeners to all the buttons.
@@ -50,6 +60,7 @@ for (const btn of document.getElementsByTagName('button')) {
   btn.addEventListener('click', copyKey(btn.value));
 }
 
+const authKey = 'passphrase';
 const maxColumns = 4;
 const columnHeight = 30;
 const filter = document.getElementById('filter');
@@ -68,6 +79,18 @@ filter.addEventListener('input', function(e) {
    var cols = Math.floor((numVis + columnHeight - 1) / columnHeight);
    document.getElementById('main').style.columnCount = Math.min(cols, maxColumns);
 })
+
+document.getElementById('auth').addEventListener('click', function() {
+   const input = prompt('Enter passphrase (empty to clear)');
+   if (input === '') {
+      localStorage.removeItem(authKey);
+   } else if (input) {
+      localStorage.setItem(authKey, btoa(input));
+   }
+   updateKeyTag();
+})
+
+updateKeyTag();
 })())
 `
 
@@ -89,6 +112,8 @@ td.host { font-size: 80%; }
 <h1>Known sites:</h1>
 
 <p>Filter: <input type=text id=filter size=25 autofocus /></p>
+<p><button id=auth>auth</button> <span id=keyflag></span></p>
+
 <table>
 <tr>
   <th>Tag</th>
