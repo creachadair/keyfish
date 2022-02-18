@@ -40,10 +40,19 @@ void((()=>{
 function copyKey(tag) {
   return function() {
     const auth = localStorage.getItem(authKey);
+    const copy = document.getElementById('authsend').value == "sites";
     var req = new XMLHttpRequest();
-    req.open('GET', '/key/'+tag+'?copy=1', true);
+    req.open('GET', '/key/'+tag+'?copy='+copy, true);
     if (auth) {
         req.setRequestHeader('Authorization', 'Phrase '+auth);
+    }
+    if (!copy) {
+       req.addEventListener('readystatechange', function() {
+           if (req.readyState != XMLHttpRequest.DONE) { return; }
+           if (req.status == 200) {
+              prompt("Key", req.responseText);
+           }
+       })
     }
     req.send();
   }
@@ -111,8 +120,9 @@ td.host { font-size: 80%; }
 </head><body id=main>
 <h1>Known sites:</h1>
 
-<p>Filter: <input type=text id=filter size=25 autofocus /></p>
-<p><button id=auth>auth</button> <span id=keyflag></span></p>
+<p>Filter: <input type=text inputmode=email id=filter size=25 autofocus /></p>
+<p><button id=auth tabindex="-1">auth</button> <span id=keyflag></span></p>
+<input id=authsend type=hidden value={{.Label}} />
 
 <table>
 <tr>

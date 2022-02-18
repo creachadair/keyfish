@@ -136,8 +136,8 @@ func (c *Config) serveInternal(w http.ResponseWriter, req *http.Request) (int, e
 	if err != nil {
 		return 0, err
 	}
-	if req.URL.Path == "/sites" {
-		return c.serveSites(w, kc)
+	if req.URL.Path == "/sites" || req.URL.Path == "/remote" {
+		return c.serveSites(w, kc, strings.TrimPrefix(req.URL.Path, "/"))
 	}
 
 	sel, key, err := pathSelector(req.URL.Path)
@@ -245,11 +245,12 @@ Parameters:
 	return 0, nil
 }
 
-func (c *Config) serveSites(w http.ResponseWriter, kc *config.Config) (int, error) {
+func (c *Config) serveSites(w http.ResponseWriter, kc *config.Config, label string) (int, error) {
 	w.Header().Set("Content-Type", "text/html")
 	return 0, sitesList.Execute(w, map[string]interface{}{
 		"Sites": kc.Sites,
 		"Code":  minifiedCode,
+		"Label": label,
 	})
 }
 
