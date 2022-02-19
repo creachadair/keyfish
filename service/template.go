@@ -16,6 +16,10 @@ var (
 		"trimExt": func(s string) string {
 			return strings.TrimSuffix(s, path.Ext(s))
 		},
+		"hasExt": func(s string) bool {
+			ext := path.Ext(s)
+			return ext != "" && len(ext) < 6
+		},
 	}).Parse(sitesListText))
 	minifiedCode template.JS // populated from rawCode, see below.
 )
@@ -132,7 +136,7 @@ td.host { font-size: 80%; }
 </tr>
 {{range $tag, $site := .Sites}}<tr class=siterow data-tag="{{$tag}}" data-host="{{trimExt $site.Host}}">
   <td><tt>{{$tag}}</tt></td>
-  <td class=host>{{$site.Host}}</td>
+  <td class=host>{{if hasExt $site.Host}}<a href="https://{{$site.Host}}" target=_blank>{{$site.Host}}</a>{{else}}{{$site.Host}}{{end}}</td>
   <td><button class=copy type=button value="{{$tag}}">copy</button></td>
 </tr>{{end}}
 </table>
