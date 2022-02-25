@@ -82,7 +82,7 @@ const filter = document.getElementById('filter');
 // Use 'display' rather than 'hidden' so that the hidden items collapse.
 // Reduce the number of columns so the results are a little easier to read.
 filter.addEventListener('input', function(e) {
-   var text = e.target.value;
+   var text = e.target.value.toLowerCase();
    var numVis = 0;
    for (const row of document.getElementsByClassName('siterow')) {
       var vis = filter.value == "" || row.dataset.tag.includes(text) || row.dataset.host.includes(text);
