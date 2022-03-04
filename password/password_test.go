@@ -21,8 +21,8 @@ func TestKnownValues(t *testing.T) {
 		{alphabet.All, 10, "cabezon", "", "Hf*w_Tv/nZ"},
 		{alphabet.All, 32, "cabezon", "", "Hf*w_Tv/nZRWDVJf#=9u$Yhu@DnKl@ez"},
 		{alphabet.All, 32, "cabezon", "foo", "B,&?!nPrd/Y&CbE%CYxz&bwOL!Ym16P:"},
-		{alphabet.All, 50, "cabezon", "foo", "B,&?!nPrd/Y&CbE%CYxz&bwOL!Ym16P:H^mtkRNv^^Wlw$6^i?"},
-		{alphabet.All, 50, "cabezon", "bar", "l!?9F+hJq8F^ewy%5l:YEt!H?73/bCWAZk=77RZ#d95,e0d:!="},
+		{alphabet.All, 50, "cabezon", "foo", "B,&?!nPrd/Y&CbE%CYxz&bwOL!Ym16P:IM$a-a$C,DQOSj-Mdm"},
+		{alphabet.All, 50, "cabezon", "bar", "l!?9F+hJq8F^ewy%5l:YEt!H?73/bCWAj#GD2jI1jzu^-tC20F"},
 		{alphabet.NoPunct, 32, "bloodfish", "", "jq77585eZJxN2uyD5IUEKcNxll2jWQys"},
 		{alphabet.NoPunct, 32, "bloodfish", "foo", "ZenZA1Ht88eewraGuFLkXIu92NQlV3rk"},
 		{alphabet.Lowercase + alphabet.Digits, 32, "cabezon", "foo", "a8592shtn9k5amb4blwx5mwgf2kry0h8"},
@@ -78,16 +78,16 @@ func TestFormat(t *testing.T) {
 		{"foo", "_####____#", "a9897nfoj9"},
 
 		// Length and salt.
-		{"", "?????????????????? ??????????????????????", "@&/=/%=?-^$%!%#&./ =:^*_.!-#-.&+%!%-$:!/:"},
-		{"", "__________________ ______________________", "ckwpxgpzmifhbhdkvx pvhlpubmdmujqgagmfvayv"},
-		{"", "^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^^^^^^^^^^^^^", "CKWPXGPZMIFHBHDKVX PVHLPUBMDMUJQGAGMFVAYV"},
-		{"", "****************** **********************", "EUtfuMfzZQLPCOGUqv eqPWepCZGYpThMAMZLqBwr"},
-		{"", "################## ######################", "048692594322021489 5834580414836202428098"},
-		{"q", "????????????????????????????????????????", ",@?_$^!$*,/,*/-=$!^?:,-&:+$&..-?&^,_*_$+"},
-		{"r", "________________________________________", "cxrmjefrfpovbxfikkaxrmmzzljqrqoogpkocpke"},
-		{"s", "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^", "IABGPSJYGWECVOLVJTTJBYVISEJDHLCAHQYIERFL"},
-		{"t", "****************************************", "aoUqoKKrLyxHBtcypBMzPukXNcTbOJpBayrQHCst"},
-		{"u", "########################################", "8364621019243126110487340041013976073505"},
+		{"", "?????????????????? ??????????????????????", "@&/=/%=?-^$%!%#&./ =:^*_.!-#-.&+:#/+.!*?,"},
+		{"", "__________________ ______________________", "ckwpxgpzmifhbhdkvx pvhlpubmdmujqveyrvblzs"},
+		{"", "^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^^^^^^^^^^^^^", "CKWPXGPZMIFHBHDKVX PVHLPUBMDMUJQVEYRVBLZS"},
+		{"", "****************** **********************", "EUtfuMfzZQLPCOGUqv eqPWepCZGYpThrJwiqCXzk"},
+		{"", "################## ######################", "048692594322021489 5834580414836819680497"},
+		{"q", "????????????????????????????????????????", ",@?_$^!$*,/,*/-=$!^?:,-&:+$&..-?##@#=@^/"},
+		{"r", "________________________________________", "cxrmjefrfpovbxfikkaxrmmzzljqrqoomeyqsqsw"},
+		{"s", "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^", "IABGPSJYGWECVOLVJTTJBYVISEJDHLCAFANMWRGY"},
+		{"t", "****************************************", "aoUqoKKrLyxHBtcypBMzPukXNcTbOJpBBrMVxqoq"},
+		{"u", "########################################", "8364621019243126110487340041013933601615"},
 	}
 	for _, test := range tests {
 		c.Salt = test.salt
