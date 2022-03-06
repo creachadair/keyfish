@@ -40,23 +40,36 @@ func init() {
 // final output during program initialization.
 const rawCode = `
 void((()=>{
+const doCopy = document.getElementById('authsend').value == 'sites';
+
 // Issue an HTTP GET request to the key server for the given tag.
 function copyKey(tag) {
   return function() {
     const auth = localStorage.getItem(authKey);
-    const copy = document.getElementById('authsend').value == "sites";
     var req = new XMLHttpRequest();
-    req.open('GET', '/key/'+tag+'?copy='+copy, true);
+    req.open('GET', '/key/'+tag+'?copy='+doCopy, true);
     if (auth) {
         req.setRequestHeader('Authorization', 'Phrase '+auth);
     }
-    if (!copy) {
+    if (!doCopy) {
        req.addEventListener('readystatechange', function() {
-           if (req.readyState != XMLHttpRequest.DONE) { return; }
-           if (req.status == 200) {
-              prompt("Key", req.responseText);
-           }
+         if (req.readyState != XMLHttpRequest.DONE) { return; }
+         if (req.status == 200) { prompt("Key", req.responseText.trim()); }
        })
+    }
+    req.send();
+  }
+}
+
+function copyOTP(tag) {
+  return function() {
+    var req = new XMLHttpRequest();
+    req.open('GET', '/otp/'+tag+'?copy='+doCopy, true);
+    if (!doCopy) {
+      req.addEventListener('readystatechange', function() {
+        if (req.readyState != XMLHttpRequest.DONE) { return; }
+        if (req.status == 200) { prompt("OTP", req.responseText.trim()); }
+      })
     }
     req.send();
   }
@@ -70,7 +83,11 @@ function updateKeyTag() {
 
 // Attach event listeners to all the buttons.
 for (const btn of document.getElementsByTagName('button')) {
-  btn.addEventListener('click', copyKey(btn.value));
+  if (btn.className == "copy") {
+    btn.addEventListener('click', copyKey(btn.value));
+  } else if (btn.className == "otp") {
+    btn.addEventListener('click', copyOTP(btn.value));
+  }
 }
 
 const authKey = 'passphrase';
@@ -137,6 +154,7 @@ td.host { font-size: 80%; }
 {{range $tag, $site := .Sites}}<tr class=siterow data-tag="{{$tag}}" data-host="{{trimExt $site.Host}}">
   <td><tt>{{$tag}}</tt></td>
   <td><button class=copy type=button value="{{$tag}}">copy</button></td>
+  <td>{{if $site.OTP}}<button class=otp type=button value="{{$tag}}">otp</button>{{end}}</td>
   <td class=host>{{if hasExt $site.Host}}<a href="https://{{$site.Host}}" target=_blank>{{$site.Host}}</a>{{else}}{{$site.Host}}{{end}}</td>
 </tr>{{end}}
 </table>
