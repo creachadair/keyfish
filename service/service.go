@@ -278,9 +278,9 @@ func parseRequest(key string, form url.Values) *keyRequest {
 		kreq.label = ps[1]
 	}
 
-	// Trim subdomains: a.x.dom ⇒ x.dom, a.b.x.dom ⇒ b.x.dom
+	// Trim subdomains: a.x.dom ⇒ x.dom, a.b.x.dom ⇒ x.dom
 	if ps := strings.Split(kreq.label, "."); len(ps) > 2 {
-		kreq.base = strings.Join(ps[1:], ".")
+		kreq.base = strings.Join(ps[len(ps)-2:], ".")
 	}
 
 	// Check for an optional strictness parameter.
