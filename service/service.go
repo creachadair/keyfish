@@ -149,22 +149,23 @@ func (c *Config) serveInternal(w http.ResponseWriter, req *http.Request) (int, e
 	}
 
 	kreq := parseRequest(key, req.Form)
-	site, ok := kc.Site(kreq.label)
-	if !ok && kreq.base != "" {
-		site, ok = kc.Site(kreq.base)
+	var site config.Site
+	var ok bool
+	for _, c := range config.SiteCandidates(kreq.base) {
+		site, ok = kc.Site(c)
+		if ok {
+			break
+		}
 	}
 	if !ok && kreq.strict {
-		return http.StatusNotFound, fmt.Errorf("unknown site %q", kreq.label)
-	}
-	if kreq.salt != "" {
-		site.Salt = kreq.salt
+		return http.StatusNotFound, fmt.Errorf("unknown site %q", kreq.label())
 	}
 
 	var result string
 	switch sel {
 	case "otp":
 		if site.OTP == nil {
-			return http.StatusNotFound, fmt.Errorf("no OTP key for %q", kreq.label)
+			return http.StatusNotFound, fmt.Errorf("no OTP key for %q", kreq.label())
 		}
 		result = otp.Config{Key: string(site.OTP.Key)}.TOTP()
 
@@ -268,19 +269,8 @@ func pathSelector(s string) (sel, rest string, err error) {
 
 func parseRequest(key string, form url.Values) *keyRequest {
 	kreq := &keyRequest{
-		label:  key,
+		base:   key,
 		strict: true,
-	}
-
-	// Check for salt@host form.
-	if ps := strings.SplitN(key, "@", 2); len(ps) == 2 {
-		kreq.salt = ps[0]
-		kreq.label = ps[1]
-	}
-
-	// Trim subdomains: a.x.dom ⇒ x.dom, a.b.x.dom ⇒ x.dom
-	if ps := strings.Split(kreq.label, "."); len(ps) > 2 {
-		kreq.base = strings.Join(ps[len(ps)-2:], ".")
 	}
 
 	// Check for an optional strictness parameter.
@@ -308,10 +298,16 @@ func parseBool(s string) *bool {
 }
 
 type keyRequest struct {
-	label  string
 	base   string
-	salt   string
 	strict bool
 	copy   bool
 	insert bool
+}
+
+func (r *keyRequest) label() string {
+	ps := strings.SplitN(r.base, "@", 2)
+	if len(ps) == 2 {
+		return ps[1]
+	}
+	return ps[0]
 }

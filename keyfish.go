@@ -196,7 +196,15 @@ func main() {
 			out.SetIndent("", "  ")
 		}
 		for _, arg := range flag.Args() {
-			site, ok := cfg.Site(arg)
+			var site config.Site
+			var ok bool
+
+			for _, c := range config.SiteCandidates(arg) {
+				site, ok = cfg.Site(c)
+				if ok {
+					break
+				}
+			}
 			if !ok && cfg.Flags.Strict {
 				fail("Site %q is not known", arg)
 			}
@@ -231,7 +239,15 @@ func main() {
 	// Check all the sites before generating any secrets.
 	var sites []config.Site
 	for _, arg := range flag.Args() {
-		site, ok := cfg.Site(arg)
+		var site config.Site
+		var ok bool
+
+		for _, c := range config.SiteCandidates(arg) {
+			site, ok = cfg.Site(c)
+			if ok {
+				break
+			}
+		}
 		if !ok && cfg.Flags.Strict {
 			fail("Site %q is not known", arg)
 		}
