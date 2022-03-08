@@ -324,3 +324,28 @@ func (s Site) String() string {
 	fmt.Fprintf(&buf, ", punct=%v, salt=%q", s.Punct, s.Salt)
 	return buf.String()
 }
+
+// SiteCandidates returns a slice of candidate site names from base.  If base
+// is structured like a host name, the candidates are the suffixes of the
+// hostname having length at least 2. For example, given "x.y.z" the candidates
+// are "x.y.z" and "x.y".  A salt prefix (salt@x.y) is preserved on each
+// candidate, so "s@x.y.z" yields "s@x.y.z" and "s@y.z" as candidates.
+//
+// If base does not look like a hostname, the slice contains it alone.
+func SiteCandidates(base string) []string {
+	if !strings.Contains(base, ".") {
+		return []string{base}
+	}
+
+	salt, label := "", base
+	if ps := strings.SplitN(base, "@", 2); len(ps) == 2 {
+		salt, label = ps[0]+"@", ps[1]
+	}
+
+	var cands []string
+	ps := strings.Split(label, ".")
+	for i := 0; i+2 <= len(ps); i++ {
+		cands = append(cands, salt+strings.Join(ps[i:], "."))
+	}
+	return cands
+}
