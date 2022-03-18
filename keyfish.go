@@ -262,7 +262,7 @@ func main() {
 			fail("Format length must be ≥ %d", minLength)
 		}
 
-		if doPunct {
+		if isFlagSet("punct") {
 			site.Punct = &doPunct // override whatever was there
 		}
 		if cfg.Flags.Verbose {
@@ -304,4 +304,14 @@ func isPipeCommand(key string) ([]string, bool) {
 		return shell.Split(t)
 	}
 	return nil, false
+}
+
+func isFlagSet(name string) bool {
+	var ok bool
+	flag.Visit(func(f *flag.Flag) {
+		if f.Name == name {
+			ok = true
+		}
+	})
+	return ok
 }
