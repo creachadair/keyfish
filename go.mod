@@ -6,12 +6,12 @@ require (
 	github.com/creachadair/getpass v0.1.1
 	github.com/creachadair/otp v0.2.5
 	github.com/google/go-cmp v0.5.6
-	github.com/tdewolff/minify/v2 v2.10.0
+	github.com/tdewolff/minify/v2 v2.11.1
 )
 
 require (
-	github.com/tdewolff/parse/v2 v2.5.27 // indirect
-	golang.org/x/sys v0.0.0-20220406163625-3f8b81556e12 // indirect
+	github.com/tdewolff/parse/v2 v2.5.29 // indirect
+	golang.org/x/sys v0.0.0-20220412211240-33da011f77ad // indirect
 )
 
 go 1.17
