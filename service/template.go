@@ -129,8 +129,8 @@ const sitesListText = `<html>
 <head><title>Known Sites</title>
 <style type="text/css">
 body {
-  column-count: 4;
-  column-width: auto;
+  column-count: auto;
+  column-width: 400px;
   column-fill: auto;
   font-family: sans-serif;
 }
