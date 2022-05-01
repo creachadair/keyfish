@@ -6,8 +6,8 @@ github.com/BurntSushi/toml v0.4.1/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbi
 github.com/cheekybits/is v0.0.0-20150225183255-68e9c0620927/go.mod h1:h/aW8ynjgkuj+NQRlZcDbAbM1ORAbXjXX77sX7T289U=
 github.com/creachadair/getpass v0.1.1 h1:NBy01Vx3sEG75JbSgjsObwe06ISDJL9WS88pFNnVSpg=
 github.com/creachadair/getpass v0.1.1/go.mod h1:amWqqvJdxnT/Tk6PPgpFWX5Ik2RH4dnvfXequlcSXSc=
-github.com/creachadair/otp v0.3.0 h1:ZvDkhz5xex4uN8ZrxuFAiZVeRr/R5rEg7W4HLD6/j24=
-github.com/creachadair/otp v0.3.0/go.mod h1:dGWv1nrgpK3nvw2Xtn3Fjg9mGv0PLvj3twUGFIgiEWg=
+github.com/creachadair/otp v0.3.2 h1:LBfZIqFEfmKCJ2hztdiT5cKHT743dfE73CWUioHJl78=
+github.com/creachadair/otp v0.3.2/go.mod h1:dGWv1nrgpK3nvw2Xtn3Fjg9mGv0PLvj3twUGFIgiEWg=
 github.com/djherbis/atime v1.1.0/go.mod h1:28OF6Y8s3NQWwacXc5eZTsEsiMzp7LF8MbXE+XJPdBE=
 github.com/dustin/go-humanize v1.0.0/go.mod h1:HtrtbFcZ19U5GC7JDqmcUSB87Iq5E25KnS6fMYU6eOk=
 github.com/fsnotify/fsnotify v1.5.3/go.mod h1:T3375wBYaZdLLcVNkcVbzGHY7f1l/uK5T5Ai1i3InKU=
