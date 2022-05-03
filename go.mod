@@ -11,7 +11,7 @@ require (
 
 require (
 	github.com/tdewolff/parse/v2 v2.5.29 // indirect
-	golang.org/x/sys v0.0.0-20220422013727-9388b58f7150 // indirect
+	golang.org/x/sys v0.0.0-20220503163025-988cb79eb6c6 // indirect
 )
 
 go 1.17
