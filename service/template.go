@@ -91,13 +91,10 @@ for (const btn of document.getElementsByTagName('button')) {
 }
 
 const authKey = 'passphrase';
-const maxColumns = 4;
-const columnHeight = 30;
 const filter = document.getElementById('filter');
 
 // Filter visible elements by containing a substring of the filter.
 // Use 'display' rather than 'hidden' so that the hidden items collapse.
-// Reduce the number of columns so the results are a little easier to read.
 filter.addEventListener('input', function(e) {
    var text = e.target.value.toLowerCase();
    var numVis = 0;
@@ -106,8 +103,6 @@ filter.addEventListener('input', function(e) {
       if (vis) { numVis += 1; }
       row.style.display = vis ? '' : 'none';
    }
-   var cols = Math.floor((numVis + columnHeight - 1) / columnHeight);
-   document.getElementById('main').style.columnCount = Math.min(cols, maxColumns);
 })
 
 document.getElementById('auth').addEventListener('click', function() {
@@ -129,14 +124,12 @@ const sitesListText = `<html>
 <head><title>Known Sites</title>
 <style type="text/css">
 body {
-  column-count: auto;
-  column-width: 400px;
-  column-fill: auto;
   font-family: sans-serif;
 }
-th { text-align: left; }
-@media (max-width: 1000px) { body { column-count: 1; } }
-td.host { font-size: 80%; }
+table.list { table-layout: auto; border-style: dotted; min-width: 50%; }
+th { text-align: left; background-color: #dddddd; }
+td.btn { width: auto; }
+td.host { font-size: 85%; }
 </style>
 </head><body id=main>
 <h1>Known sites:</h1>
@@ -145,7 +138,7 @@ td.host { font-size: 80%; }
 <p><button id=auth tabindex="-1">auth</button> <span id=keyflag></span></p>
 <input id=authsend type=hidden value={{.Label}} />
 
-<table>
+<table class=list>
 <tr>
   <th>Tag</th>
   <th>Link</th>
@@ -153,8 +146,8 @@ td.host { font-size: 80%; }
 </tr>
 {{range $tag, $site := .Sites}}<tr class=siterow data-tag="{{$tag}}" data-host="{{trimExt $site.Host}}">
   <td><tt>{{$tag}}</tt></td>
-  <td><button class=copy type=button value="{{$tag}}">copy</button></td>
-  <td>{{if $site.OTP}}<button class=otp type=button value="{{$tag}}">otp</button>{{end}}</td>
+  <td><button class=copy type=button value="{{$tag}}">copy</button>
+  {{- if $site.OTP}} <button class=otp type=button value="{{$tag}}">otp</button>{{end}}</td>
   <td class=host>{{if hasExt $site.Host}}<a href="https://{{$site.Host}}" target=_blank>{{$site.Host}}</a>{{else}}{{$site.Host}}{{end}}</td>
 </tr>{{end}}
 </table>
