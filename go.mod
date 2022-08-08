@@ -10,8 +10,8 @@ require (
 )
 
 require (
-	github.com/tdewolff/parse/v2 v2.6.1 // indirect
-	golang.org/x/sys v0.0.0-20220731174439-a90be440212d // indirect
+	github.com/tdewolff/parse/v2 v2.6.2 // indirect
+	golang.org/x/sys v0.0.0-20220808155132-1c4a2a72c664 // indirect
 )
 
 go 1.17
