@@ -15,7 +15,7 @@ var testConfig = &Config{
 		"alpha": {Host: "alpha", Punct: pbool(true), Length: 10, Salt: "NaCl"},
 		"bravo": {Host: "bravo", Format: "******1", Login: "sam"},
 		"tango": {Host: "tangy.com", Length: 45, Salt: "K2Cr2O7"},
-		"oscar": {Host: "zesty.org", Length: 11, OTP: &OTP{Key: []byte("foobar")}},
+		"oscar": {Host: "zesty.org", Length: 11, OTP: map[string]*OTP{"": {Key: []byte("foobar")}}},
 		"romeo": {Host: "giant.edu", Alphabet: []string{"digit", "chars:AEIOU"}, Length: 99},
 	},
 	Default: Site{

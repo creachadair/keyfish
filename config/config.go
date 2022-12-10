@@ -96,14 +96,9 @@ type Site struct {
 	// The e-mail address associated with this login.
 	EMail string `json:"email,omitempty"`
 
-	// Default OTP configuration for this site (HOTP or TOTP).
-	// These settings are used if the salt is empty, or if there is no per-salt
-	// OTP config in the SaltOTP map.
-	OTP *OTP `json:"otp,omitempty"`
-
-	// Per-salt OTP configurations for this site. These settings override the
-	// default OTP settings for the key salt.
-	SaltOTP map[string]*OTP `json:"saltOTP,omitempty"`
+	// OTP configurations for this site. The map key is the salt value for which
+	// each configuration applies. Use "" as the key for an unsalted host.
+	OTP map[string]*OTP `json:"otp,omitempty"`
 
 	// Alternative hostnames that should be considered aliases for this site.
 	// This is useful for sites that use a different domain for authentication.

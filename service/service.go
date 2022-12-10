@@ -164,10 +164,11 @@ func (c *Config) serveInternal(w http.ResponseWriter, req *http.Request) (int, e
 	var result string
 	switch sel {
 	case "otp":
-		if site.OTP == nil {
+		otpc, ok := site.OTP[site.Salt]
+		if !ok {
 			return http.StatusNotFound, fmt.Errorf("no OTP key for %q", kreq.label())
 		}
-		result = otp.Config{Key: string(site.OTP.Key)}.TOTP()
+		result = otp.Config{Key: string(otpc.Key)}.TOTP()
 
 	case "key":
 		passphrase, err := getPassphrase(req, site)

@@ -286,11 +286,8 @@ func main() {
 			}
 			fmt.Print(site.Host, "\t", wordhash.String(pw))
 			if cfg.Flags.OTP {
-				otpc := site.OTP
-				if site.Salt != "" && site.SaltOTP[site.Salt] != nil {
-					otpc = site.SaltOTP[site.Salt]
-				}
-				if otpc != nil {
+				otpc, ok := site.OTP[site.Salt]
+				if ok {
 					fmt.Print("\t", otp.Config{Key: string(otpc.Key)}.TOTP())
 				}
 			}
