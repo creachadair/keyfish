@@ -75,6 +75,20 @@ function copyOTP(tag) {
   }
 }
 
+function copyLogin(tag) {
+  return function() {
+    var req = new XMLHttpRequest();
+    req.open('GET', '/login/'+tag+'?copy='+doCopy, true);
+    if (!doCopy) {
+      req.addEventListener('readystatechange', function() {
+        if (req.readyState != XMLHttpRequest.DONE) { return; }
+        if (req.status == 200) { prompt("Login", req.responseText.trim()); }
+      })
+    }
+    req.send();
+  }
+}
+
 // Update the auth key indicator.
 function updateKeyTag() {
    const indicator = document.getElementById('keyflag');
@@ -87,6 +101,8 @@ for (const btn of document.getElementsByTagName('button')) {
     btn.addEventListener('click', copyKey(btn.value));
   } else if (btn.className == "otp") {
     btn.addEventListener('click', copyOTP(btn.value));
+  } else if (btn.className == "login") {
+    btn.addEventListener('click', copyLogin(btn.value));
   }
 }
 
@@ -146,8 +162,10 @@ td.host { font-size: 85%; }
 </tr>
 {{range $tag, $site := .Sites}}<tr class=siterow data-tag="{{$tag}}" data-host="{{trimExt $site.Host}}">
   <td><tt>{{$tag}}</tt></td>
-  <td><button class=copy type=button value="{{$tag}}">copy</button>
-  {{- if $site.OTP}} <button class=otp type=button value="{{$tag}}">otp</button>{{end}}</td>
+  <td>
+    <button class=login type=button value="{{$tag}}">login</button>
+    <button class=copy type=button value="{{$tag}}">copy</button>
+    {{- if $site.OTP}} <button class=otp type=button value="{{$tag}}">otp</button>{{end}}</td>
   <td class=host>{{if hasExt $site.Host}}<a href="https://{{$site.Host}}" target=_blank>{{$site.Host}}</a>{{else}}{{$site.Host}}{{end}}</td>
 </tr>{{end}}
 </table>
