@@ -5,7 +5,7 @@ require (
 	bitbucket.org/creachadair/stringset v0.0.10
 	github.com/creachadair/getpass v0.1.1
 	github.com/creachadair/otp v0.4.0
-	github.com/google/go-cmp v0.5.6
+	github.com/google/go-cmp v0.5.9
 	github.com/tdewolff/minify/v2 v2.12.4
 )
 
