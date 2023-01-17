@@ -3,7 +3,7 @@ module github.com/creachadair/keyfish
 require (
 	bitbucket.org/creachadair/shell v0.0.7
 	bitbucket.org/creachadair/stringset v0.0.10
-	github.com/creachadair/getpass v0.2.0
+	github.com/creachadair/getpass v0.2.1
 	github.com/creachadair/otp v0.4.0
 	github.com/google/go-cmp v0.5.9
 	github.com/tdewolff/minify/v2 v2.12.4
