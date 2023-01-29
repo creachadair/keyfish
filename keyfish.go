@@ -272,9 +272,9 @@ func main() {
 		ctx := site.Context(mustLoadKey())
 		var pw string
 		if fmt := site.Format; fmt != "" {
-			pw = ctx.Format(site.Host, fmt)
+			pw = ctx.Format(fmt)
 		} else {
-			pw = ctx.Password(site.Host, site.Length)
+			pw = ctx.Password(site.Length)
 		}
 		if doPrint || !cfg.Flags.Copy {
 			fmt.Println(pw)

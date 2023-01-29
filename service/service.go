@@ -178,9 +178,9 @@ func (c *Config) serveInternal(w http.ResponseWriter, req *http.Request) (int, e
 
 		ctx := site.Context(passphrase)
 		if fmt := site.Format; fmt != "" {
-			result = ctx.Format(site.Host, fmt)
+			result = ctx.Format(fmt)
 		} else {
-			result = ctx.Password(site.Host, site.Length)
+			result = ctx.Password(site.Length)
 		}
 
 	case "login":
