@@ -17,6 +17,7 @@ var testConfig = &Config{
 		"tango": {Host: "tangy.com", Length: 45, Salt: "K2Cr2O7"},
 		"oscar": {Host: "zesty.org", Length: 11, OTP: map[string]*OTP{"": {Key: []byte("foobar")}}},
 		"romeo": {Host: "giant.edu", Alphabet: []string{"digit", "chars:AEIOU"}, Length: 99},
+		"sigma": {Host: "far.gone", Key: "glargh"},
 	},
 	Default: Site{
 		Host:  "mos.def",
@@ -63,19 +64,20 @@ func TestSiteLookup(t *testing.T) {
 }
 
 func TestContext(t *testing.T) {
-	pctx := func(a alphabet.Alphabet, salt, secret string) password.Context {
-		return password.Context{Alphabet: a, Salt: salt, Secret: secret}
+	pctx := func(a alphabet.Alphabet, site, salt, secret string) password.Context {
+		return password.Context{Alphabet: a, Site: site, Salt: salt, Secret: secret}
 	}
 	tests := []struct {
 		site, secret string
 		want         password.Context
 	}{
-		{"nonesuch", "foo", pctx(alphabet.NoPunct, "", "foo")},
-		{"xyz@nonesuch", "bar", pctx(alphabet.NoPunct, "xyz", "bar")},
-		{"alpha", "baz", pctx(alphabet.All, "NaCl", "baz")},
-		{"xyz@alpha", "frob", pctx(alphabet.All, "xyz", "frob")},
-		{"bravo", "quux", pctx(alphabet.NoPunct, "", "quux")},
-		{"romeo", "nut", pctx(alphabet.Digits+"AEIOU", "", "nut")},
+		{"nonesuch", "foo", pctx(alphabet.NoPunct, "nonesuch", "", "foo")},
+		{"xyz@nonesuch", "bar", pctx(alphabet.NoPunct, "nonesuch", "xyz", "bar")},
+		{"alpha", "baz", pctx(alphabet.All, "alpha", "NaCl", "baz")},
+		{"xyz@alpha", "frob", pctx(alphabet.All, "alpha", "xyz", "frob")},
+		{"bravo", "quux", pctx(alphabet.NoPunct, "bravo", "", "quux")},
+		{"romeo", "nut", pctx(alphabet.Digits+"AEIOU", "giant.edu", "", "nut")},
+		{"sigma", "boozle", pctx(alphabet.NoPunct, "glargh", "", "boozle")},
 	}
 	for _, test := range tests {
 		site, _ := testConfig.Site(test.site)

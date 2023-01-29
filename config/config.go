@@ -55,6 +55,10 @@ type Site struct {
 	// of the site, e.g. "dartmouth.edu".
 	Host string `json:"host"`
 
+	// The hash key used to generate passwords for this site.  If empty, the
+	// hostname is used.
+	Key string `json:"key,omitempty"`
+
 	// If set, this defines the alphabet used for key generation on this site.
 	// This overrides the Punct setting. The entries in the slice define which
 	// components to include:
@@ -215,8 +219,13 @@ func (c *Config) Site(name string) (Site, bool) {
 
 // Context returns a password generation context from s.
 func (s Site) Context(secret string) password.Context {
+	siteKey := s.Key
+	if siteKey == "" {
+		siteKey = s.Host
+	}
 	return password.Context{
 		Alphabet: s.alphabet(),
+		Site:     siteKey,
 		Salt:     s.Salt,
 		Secret:   secret,
 	}
