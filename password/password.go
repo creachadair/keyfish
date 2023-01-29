@@ -33,26 +33,27 @@ import (
 // name of a site.
 type Context struct {
 	alphabet.Alphabet        // The alphabet from which passwords are drawn
+	Site              string // The site name or label (required)
 	Salt              string // A non-secret salt mixed in to the HMAC (optional)
-	Secret            string // The user's secret password
+	Secret            string // The user's secret password (required)
 }
 
-// Password returns a password of n bytes for the given site based on the
-// stored settings in the context. If n ≤ 0 a default length is chosen.
-func (c *Context) Password(site string, n int) string {
+// Password returns a password of n bytes based on the stored settings in the
+// context. If n ≤ 0 a default length is chosen.
+func (c Context) Password(n int) string {
 	if n <= 0 {
 		n = 8
 	}
 	buf := make([]byte, n)
-	c.makeHash(site, buf)
+	c.makeHash(c.Site, buf)
 	for i := 0; i < len(buf); i++ {
 		buf[i] = c.Pick(buf[i])
 	}
 	return string(buf)
 }
 
-// Format returns a password for the given site based on a template that
-// describes the desired output string.
+// Format returns a password based on a template that describes the desired
+// output string.
 //
 // The format string specifies the format of the resulting password: Each
 // character of the format chooses a single character of the password.
@@ -64,12 +65,12 @@ func (c *Context) Password(site string, n int) string {
 // A question mark ("?") is a wildcard for any punctuation character.
 // A tilde ("~") is a wildcard for any non-punctuation character.
 // All other characters are copied literally to the output.
-func (c *Context) Format(site, format string) string {
+func (c Context) Format(format string) string {
 	if format == "" {
 		return format
 	}
 	pw := make([]byte, len(format))
-	c.makeHash(site, pw)
+	c.makeHash(c.Site, pw)
 
 	for i := 0; i < len(pw); i++ {
 		switch rune(format[i]) {
@@ -94,7 +95,7 @@ func (c *Context) Format(site, format string) string {
 
 // Entropy returns an estimate of the bits of entropy for a password of the
 // given length generated with the current settings.  The result may be zero.
-func (c *Context) Entropy(length int) int {
+func (c Context) Entropy(length int) int {
 	if length < 0 || len(c.Alphabet) == 0 {
 		return 0
 	}
@@ -105,7 +106,7 @@ func (c *Context) Entropy(length int) int {
 // makeHash computes the HMAC/SHA256 of the site key using the salt from the
 // context and fills bits with the digest. If len(bits) exceeds the size of the
 // HMAC, the digest is updated as often as necessary to fill the whole buffer.
-func (c *Context) makeHash(site string, bits []byte) {
+func (c Context) makeHash(site string, bits []byte) {
 	siteKey := site
 	if s := c.Salt; s != "" {
 		siteKey += "/" + s

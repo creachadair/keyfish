@@ -28,12 +28,13 @@ func TestKnownValues(t *testing.T) {
 		{alphabet.Lowercase + alphabet.Digits, 32, "cabezon", "foo", "a8592shtn9k5amb4blwx5mwgf2kry0h8"},
 	}
 	for _, test := range tests {
-		c := &Context{
+		c := Context{
 			Secret:   test.secret,
 			Alphabet: test.alpha,
 			Salt:     test.salt,
+			Site:     site,
 		}
-		if got := c.Password(site, test.size); got != test.want {
+		if got := c.Password(test.size); got != test.want {
 			t.Errorf("Password %q [%q]: got %q, want %q", site, test.secret, got, test.want)
 		}
 	}
@@ -41,7 +42,7 @@ func TestKnownValues(t *testing.T) {
 
 // Verify that the Format function works as intended.
 func TestFormat(t *testing.T) {
-	c := &Context{Secret: "cabezon"}
+	c := Context{Secret: "cabezon"}
 
 	const site = "xyzzy"
 	// These examples were hand-checked.
@@ -91,7 +92,8 @@ func TestFormat(t *testing.T) {
 	}
 	for _, test := range tests {
 		c.Salt = test.salt
-		if s := c.Format(site, test.format); s != test.expect {
+		c.Site = site
+		if s := c.Format(test.format); s != test.expect {
 			t.Errorf("Format %q salt %q: got %q, want %q", test.format, test.salt, s, test.expect)
 		}
 	}
