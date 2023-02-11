@@ -3,7 +3,6 @@
 package service
 
 import (
-	"encoding/base64"
 	"errors"
 	"fmt"
 	"net"
@@ -204,17 +203,12 @@ func (c *Config) serveInternal(w http.ResponseWriter, req *http.Request) (int, e
 }
 
 func getPassphrase(req *http.Request, site config.Site) (string, error) {
-	auth := req.Header.Get("Authorization")
-	if auth != "" {
-		parts := strings.Fields(auth)
-		if len(parts) != 2 || parts[0] != "Phrase" {
-			return "", errors.New("invalid authorization header")
+	key, pass, ok := req.BasicAuth()
+	if ok {
+		if key == "" || pass != "" {
+			return "", errors.New("invalid authorization")
 		}
-		pp, err := base64.StdEncoding.DecodeString(parts[1])
-		if err != nil {
-			return "", errors.New("invalid authorization phrase")
-		}
-		return string(pp), nil
+		return key, nil
 	}
 
 	prompt := fmt.Sprintf("Passphrase for %q", site.Host)
