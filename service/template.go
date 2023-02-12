@@ -167,7 +167,7 @@ td.host { font-size: 85%; }
   <td>
     <button class=login type=button value="{{$tag}}">login</button>
     <button class=copy type=button value="{{$tag}}">copy</button>
-    {{- if $site.OTP}} <button class=otp type=button value="{{$tag}}">otp</button>{{end}}</td>
+    {{- if (index $site.OTP "")}} <button class=otp type=button value="{{$tag}}">otp</button>{{end}}</td>
   <td class=host>{{if hasExt $site.Host}}<a href="https://{{$site.Host}}" target=_blank>{{$site.Host}}</a>{{else}}{{$site.Host}}{{end}}</td>
 </tr>{{end}}
 </table>
