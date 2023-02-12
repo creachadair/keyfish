@@ -47,8 +47,9 @@ const doCopy = document.getElementById('authsend').value == 'local';
 function copyKey(tag) {
   return function() {
     const auth = localStorage.getItem(authKey);
+    const doPrompt = doCopy && !auth;
     var req = new XMLHttpRequest();
-    req.open('GET', '/key/'+tag+'?copy='+doCopy, true);
+    req.open('GET', '/key/'+tag+'?copy='+doCopy+'&prompt='+doPrompt, true);
     if (auth) {
         req.setRequestHeader('Authorization', 'Basic '+btoa(auth+':'));
     }
