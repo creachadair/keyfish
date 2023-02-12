@@ -135,8 +135,8 @@ func (c *Config) serveInternal(w http.ResponseWriter, req *http.Request) (int, e
 	if err != nil {
 		return 0, err
 	}
-	if req.URL.Path == "/sites" {
-		return c.serveSites(w, kc, sourceLabel(req.RemoteAddr))
+	if req.URL.Path == "/sites" || req.URL.Path == "/remote" {
+		return c.serveSites(w, kc, sourceLabel(req))
 	}
 
 	sel, key, err := pathSelector(req.URL.Path)
@@ -281,12 +281,13 @@ func parseBool(s string) *bool {
 	return nil
 }
 
-func sourceLabel(addr string) string {
-	host, _, err := net.SplitHostPort(addr)
-	if err == nil && (host == "127.0.0.1" || host == "::1") {
+func sourceLabel(req *http.Request) string {
+	switch req.URL.Path {
+	case "/sites":
 		return "local"
+	default:
+		return "remote"
 	}
-	return "remote"
 }
 
 type keyRequest struct {
