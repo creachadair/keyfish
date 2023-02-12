@@ -57,6 +57,7 @@ function copyKey(tag) {
        req.addEventListener('readystatechange', function() {
          if (req.readyState != XMLHttpRequest.DONE) { return; }
          if (req.status == 200) { prompt("Key", req.responseText.trim()); }
+         alert("Copy failed: "+req.responseText.trim());
        })
     }
     req.send();
