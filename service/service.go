@@ -136,7 +136,7 @@ func (c *Config) serveInternal(w http.ResponseWriter, req *http.Request) (int, e
 		return 0, err
 	}
 	if req.URL.Path == "/sites" {
-		return c.serveSites(w, kc, strings.TrimPrefix(req.URL.Path, "/"))
+		return c.serveSites(w, kc, sourceLabel(req.RemoteAddr))
 	}
 
 	sel, key, err := pathSelector(req.URL.Path)
@@ -226,25 +226,8 @@ func getPassphrase(req *http.Request, site config.Site) (string, error) {
 }
 
 func (c *Config) serveMenu(w http.ResponseWriter) (int, error) {
-	w.Header().Set("Content-Type", "text/plain")
-	fmt.Fprint(w, `Routes:
-  /key/:site    -- return the key for site
-  /otp/:site    -- return an OTP code for site
-  /login/:site  -- return the login name for site
-  /sites        -- a list of all known sites
-
-Site format:
-  tag           -- a named site in the config
-  salt@tag      -- a named site with a specific key salt
-  host.com      -- a hostname
-  salt@host.com -- a hostname with a specific key salt
-
-Parameters:
-  strict=false  -- allow arbitrary host names
-  copy=true     -- copy the key to the clipboard
-  insert=true   -- insert the key as keystrokes
-`)
-	return 0, nil
+	w.Header().Set("Content-Type", "text/html")
+	return 0, menuPage.Execute(w, nil)
 }
 
 func (c *Config) serveSites(w http.ResponseWriter, kc *config.Config, label string) (int, error) {
@@ -296,6 +279,14 @@ func parseBool(s string) *bool {
 		}
 	}
 	return nil
+}
+
+func sourceLabel(addr string) string {
+	host, _, err := net.SplitHostPort(addr)
+	if err == nil && (host == "127.0.0.1" || host == "::1") {
+		return "local"
+	}
+	return "remote"
 }
 
 type keyRequest struct {
