@@ -135,7 +135,7 @@ func (c *Config) serveInternal(w http.ResponseWriter, req *http.Request) (int, e
 	if err != nil {
 		return 0, err
 	}
-	if req.URL.Path == "/sites" || req.URL.Path == "/remote" {
+	if req.URL.Path == "/sites" {
 		return c.serveSites(w, kc, strings.TrimPrefix(req.URL.Path, "/"))
 	}
 
@@ -211,6 +211,12 @@ func getPassphrase(req *http.Request, site config.Site) (string, error) {
 		return key, nil
 	}
 
+	// Check whether we should prompt the user locally.
+	if pr := parseBool(req.URL.Query().Get("prompt")); pr == nil || !*pr {
+		return "", errors.New("missing authorization")
+	}
+
+	// Reaching here, we should attempt to prompt the local user.
 	prompt := fmt.Sprintf("Passphrase for %q", site.Host)
 	pp, err := userText(prompt, "", true)
 	if err != nil {
