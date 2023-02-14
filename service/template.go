@@ -51,7 +51,7 @@ function copyKey(tag) {
     var req = new XMLHttpRequest();
     req.open('GET', '/key/'+tag+'?copy='+doCopy+'&prompt='+doPrompt, true);
     if (auth) {
-        req.setRequestHeader('Authorization', 'Basic '+btoa(auth+':'));
+        req.setRequestHeader('Authorization', 'Basic '+btoa(atob(auth)+':'));
     }
     if (!doCopy) {
        req.addEventListener('readystatechange', function() {
