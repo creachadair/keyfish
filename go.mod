@@ -10,7 +10,7 @@ require (
 )
 
 require (
-	github.com/tdewolff/parse/v2 v2.6.5 // indirect
+	github.com/tdewolff/parse/v2 v2.6.6 // indirect
 	golang.org/x/sys v0.8.0 // indirect
 	golang.org/x/term v0.8.0 // indirect
 )
