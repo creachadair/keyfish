@@ -15,4 +15,4 @@ require (
 	golang.org/x/term v0.10.0 // indirect
 )
 
-go 1.19
+go 1.20
