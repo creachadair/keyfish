@@ -210,6 +210,7 @@ func main() {
 			}
 			if !cfg.Flags.Verbose {
 				site.Hints = nil
+				site.OTP = nil
 			}
 			if err := out.Encode(site); err != nil {
 				fail("Error encoding site %q: %v", arg, err)
