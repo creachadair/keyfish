@@ -76,7 +76,7 @@ type Site struct {
 	Alphabet []string `json:"alphabet,omitempty"`
 
 	// If set, this defines the exact layout of the password.
-	// See the Format method of password.Context for details.
+	// See the Format method of hashpass.Context for details.
 	Format string `json:"format,omitempty"`
 
 	// If set, generate passwords with this many characters.
