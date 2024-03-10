@@ -9,6 +9,8 @@ import (
 	"github.com/creachadair/command"
 	"github.com/creachadair/keyfish/kfdb"
 	"github.com/creachadair/keyfish/kflib"
+
+	"github.com/creachadair/keyfish/cmd/kf/internal/cmdconvert"
 )
 
 var Command = &command.C{
@@ -46,7 +48,9 @@ var Command = &command.C{
 		Usage: "<db-path>",
 		Help:  "Change the access key on the specified database.",
 		Run:   command.Adapt(runDebugChangeKey),
-	}},
+	},
+		cmdconvert.Command,
+	},
 }
 
 // runDebugShowRecord implements the "debug show-record" subcommand.
