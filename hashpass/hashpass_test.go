@@ -1,34 +1,34 @@
-// Unit tests for package keyfish/password
+// Unit tests for package keyfish/hashpass
 // Author: M. J. Fromberger <michael.j.fromberger@gmail.com>
 
-package password
+package hashpass_test
 
 import (
 	"testing"
 
-	"github.com/creachadair/keyfish/alphabet"
+	"github.com/creachadair/keyfish/hashpass"
 )
 
 // Check test vectors confirmed against the Chrome extension.
 func TestKnownValues(t *testing.T) {
 	const site = "xyzzy"
 	tests := []struct {
-		alpha        alphabet.Alphabet
+		alpha        hashpass.Alphabet
 		size         int
 		secret, salt string
 		want         string
 	}{
-		{alphabet.All, 10, "cabezon", "", "Hf*w_Tv/nZ"},
-		{alphabet.All, 32, "cabezon", "", "Hf*w_Tv/nZRWDVJf#=9u$Yhu@DnKl@ez"},
-		{alphabet.All, 32, "cabezon", "foo", "B,&?!nPrd/Y&CbE%CYxz&bwOL!Ym16P:"},
-		{alphabet.All, 50, "cabezon", "foo", "B,&?!nPrd/Y&CbE%CYxz&bwOL!Ym16P:IM$a-a$C,DQOSj-Mdm"},
-		{alphabet.All, 50, "cabezon", "bar", "l!?9F+hJq8F^ewy%5l:YEt!H?73/bCWAj#GD2jI1jzu^-tC20F"},
-		{alphabet.NoPunct, 32, "bloodfish", "", "jq77585eZJxN2uyD5IUEKcNxll2jWQys"},
-		{alphabet.NoPunct, 32, "bloodfish", "foo", "ZenZA1Ht88eewraGuFLkXIu92NQlV3rk"},
-		{alphabet.Lowercase + alphabet.Digits, 32, "cabezon", "foo", "a8592shtn9k5amb4blwx5mwgf2kry0h8"},
+		{hashpass.All, 10, "cabezon", "", "Hf*w_Tv/nZ"},
+		{hashpass.All, 32, "cabezon", "", "Hf*w_Tv/nZRWDVJf#=9u$Yhu@DnKl@ez"},
+		{hashpass.All, 32, "cabezon", "foo", "B,&?!nPrd/Y&CbE%CYxz&bwOL!Ym16P:"},
+		{hashpass.All, 50, "cabezon", "foo", "B,&?!nPrd/Y&CbE%CYxz&bwOL!Ym16P:IM$a-a$C,DQOSj-Mdm"},
+		{hashpass.All, 50, "cabezon", "bar", "l!?9F+hJq8F^ewy%5l:YEt!H?73/bCWAj#GD2jI1jzu^-tC20F"},
+		{hashpass.NoPunct, 32, "bloodfish", "", "jq77585eZJxN2uyD5IUEKcNxll2jWQys"},
+		{hashpass.NoPunct, 32, "bloodfish", "foo", "ZenZA1Ht88eewraGuFLkXIu92NQlV3rk"},
+		{hashpass.Lowercase + hashpass.Digits, 32, "cabezon", "foo", "a8592shtn9k5amb4blwx5mwgf2kry0h8"},
 	}
 	for _, test := range tests {
-		c := Context{
+		c := hashpass.Context{
 			Secret:   test.secret,
 			Alphabet: test.alpha,
 			Salt:     test.salt,
@@ -42,7 +42,7 @@ func TestKnownValues(t *testing.T) {
 
 // Verify that the Format function works as intended.
 func TestFormat(t *testing.T) {
-	c := Context{Secret: "cabezon"}
+	c := hashpass.Context{Secret: "cabezon"}
 
 	const site = "xyzzy"
 	// These examples were hand-checked.

@@ -1,7 +1,4 @@
-// Package alphabet defines a type to represent an ordered alphabet of
-// printable characters to use for password generation.  This is part of the
-// KeyFish command-line tool.
-package alphabet
+package hashpass
 
 import (
 	"errors"

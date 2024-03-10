@@ -1,10 +1,14 @@
-package alphabet
+package hashpass_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/creachadair/keyfish/hashpass"
+)
 
 func TestPick(t *testing.T) {
 	tests := []struct {
-		alpha      Alphabet
+		alpha      hashpass.Alphabet
 		pick, want byte
 	}{
 		// An empty alphabet always returns 0.

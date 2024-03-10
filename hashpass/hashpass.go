@@ -1,4 +1,4 @@
-// Package password implements the KeyFish password generation scheme.
+// Package hashpass implements a hashed password generation scheme.
 //
 // # Algorithm
 //
@@ -18,24 +18,22 @@
 // When a password is requested that exceeds the length in bytes of the HMAC
 // output, the HMAC is repeated using the same input but with a byte index
 // added as a counter.
-package password
+package hashpass
 
 import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"math"
 	"strconv"
-
-	"github.com/creachadair/keyfish/alphabet"
 )
 
 // A Context contains the information needed to generate a password given the
 // name of a site.
 type Context struct {
-	alphabet.Alphabet        // The alphabet from which passwords are drawn
-	Site              string // The site name or label (required)
-	Salt              string // A non-secret salt mixed in to the HMAC (optional)
-	Secret            string // The user's secret password (required)
+	Alphabet        // The alphabet from which passwords are drawn
+	Site     string // The site name or label (required)
+	Salt     string // A non-secret salt mixed in to the HMAC (optional)
+	Secret   string // The user's secret password (required)
 }
 
 // Password returns a password of n bytes based on the stored settings in the
@@ -75,17 +73,17 @@ func (c Context) Format(format string) string {
 	for i := 0; i < len(pw); i++ {
 		switch rune(format[i]) {
 		case '*':
-			pw[i] = alphabet.Letters.Pick(pw[i])
+			pw[i] = Letters.Pick(pw[i])
 		case '?':
-			pw[i] = alphabet.Puncts.Pick(pw[i])
+			pw[i] = Puncts.Pick(pw[i])
 		case '#':
-			pw[i] = alphabet.Digits.Pick(pw[i])
+			pw[i] = Digits.Pick(pw[i])
 		case '^':
-			pw[i] = alphabet.Uppercase.Pick(pw[i])
+			pw[i] = Uppercase.Pick(pw[i])
 		case '_':
-			pw[i] = alphabet.Lowercase.Pick(pw[i])
+			pw[i] = Lowercase.Pick(pw[i])
 		case '~':
-			pw[i] = alphabet.NoPunct.Pick(pw[i])
+			pw[i] = NoPunct.Pick(pw[i])
 		default:
 			pw[i] = format[i]
 		}

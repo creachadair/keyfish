@@ -3,9 +3,8 @@ package config
 import (
 	"testing"
 
-	"github.com/creachadair/keyfish/alphabet"
-	"github.com/creachadair/keyfish/password"
-	"github.com/google/go-cmp/cmp"
+	"github.com/creachadair/keyfish/hashpass"
+	gocmp "github.com/google/go-cmp/cmp"
 )
 
 func pbool(t bool) *bool { return &t }
@@ -54,7 +53,7 @@ func TestSiteLookup(t *testing.T) {
 	}
 	for _, test := range tests {
 		got, ok := testConfig.Site(test.name)
-		if diff := cmp.Diff(test.want, got); diff != "" {
+		if diff := gocmp.Diff(test.want, got); diff != "" {
 			t.Errorf("Site %q differs from expected (-want, +got)\n%s", test.name, diff)
 		}
 		if ok != test.ok {
@@ -64,25 +63,25 @@ func TestSiteLookup(t *testing.T) {
 }
 
 func TestContext(t *testing.T) {
-	pctx := func(a alphabet.Alphabet, site, salt, secret string) password.Context {
-		return password.Context{Alphabet: a, Site: site, Salt: salt, Secret: secret}
+	pctx := func(a hashpass.Alphabet, site, salt, secret string) hashpass.Context {
+		return hashpass.Context{Alphabet: a, Site: site, Salt: salt, Secret: secret}
 	}
 	tests := []struct {
 		site, secret string
-		want         password.Context
+		want         hashpass.Context
 	}{
-		{"nonesuch", "foo", pctx(alphabet.NoPunct, "nonesuch", "", "foo")},
-		{"xyz@nonesuch", "bar", pctx(alphabet.NoPunct, "nonesuch", "xyz", "bar")},
-		{"alpha", "baz", pctx(alphabet.All, "alpha", "NaCl", "baz")},
-		{"xyz@alpha", "frob", pctx(alphabet.All, "alpha", "xyz", "frob")},
-		{"bravo", "quux", pctx(alphabet.NoPunct, "bravo", "", "quux")},
-		{"romeo", "nut", pctx(alphabet.Digits+"AEIOU", "giant.edu", "", "nut")},
-		{"sigma", "boozle", pctx(alphabet.NoPunct, "glargh", "", "boozle")},
+		{"nonesuch", "foo", pctx(hashpass.NoPunct, "nonesuch", "", "foo")},
+		{"xyz@nonesuch", "bar", pctx(hashpass.NoPunct, "nonesuch", "xyz", "bar")},
+		{"alpha", "baz", pctx(hashpass.All, "alpha", "NaCl", "baz")},
+		{"xyz@alpha", "frob", pctx(hashpass.All, "alpha", "xyz", "frob")},
+		{"bravo", "quux", pctx(hashpass.NoPunct, "bravo", "", "quux")},
+		{"romeo", "nut", pctx(hashpass.Digits+"AEIOU", "giant.edu", "", "nut")},
+		{"sigma", "boozle", pctx(hashpass.NoPunct, "glargh", "", "boozle")},
 	}
 	for _, test := range tests {
 		site, _ := testConfig.Site(test.site)
 		got := site.Context(test.secret)
-		if diff := cmp.Diff(test.want, got); diff != "" {
+		if diff := gocmp.Diff(test.want, got); diff != "" {
 			t.Errorf("Context %q differs from expected (-want, +got)\n%s", test.secret, diff)
 		}
 	}

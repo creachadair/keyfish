@@ -14,8 +14,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/creachadair/keyfish/alphabet"
-	"github.com/creachadair/keyfish/password"
+	"github.com/creachadair/keyfish/hashpass"
 	"github.com/creachadair/otp"
 )
 
@@ -218,12 +217,12 @@ func (c *Config) Site(name string) (Site, bool) {
 }
 
 // Context returns a password generation context from s.
-func (s Site) Context(secret string) password.Context {
+func (s Site) Context(secret string) hashpass.Context {
 	siteKey := s.Key
 	if siteKey == "" {
 		siteKey = s.Host
 	}
-	return password.Context{
+	return hashpass.Context{
 		Alphabet: s.alphabet(),
 		Site:     siteKey,
 		Salt:     s.Salt,
@@ -231,30 +230,30 @@ func (s Site) Context(secret string) password.Context {
 	}
 }
 
-func (s Site) alphabet() alphabet.Alphabet {
+func (s Site) alphabet() hashpass.Alphabet {
 	if len(s.Alphabet) != 0 {
-		var a alphabet.Alphabet
+		var a hashpass.Alphabet
 
 		for _, elt := range s.Alphabet {
 			switch elt {
 			case "upper":
-				a += alphabet.Uppercase
+				a += hashpass.Uppercase
 			case "lower":
-				a += alphabet.Lowercase
+				a += hashpass.Lowercase
 			case "letter":
-				a += alphabet.Letters
+				a += hashpass.Letters
 			case "digit":
-				a += alphabet.Digits
+				a += hashpass.Digits
 			case "nopunct":
-				a += alphabet.NoPunct
+				a += hashpass.NoPunct
 			case "punct":
-				a += alphabet.Puncts
+				a += hashpass.Puncts
 			case "all":
-				a += alphabet.All
+				a += hashpass.All
 			default:
 				trim := strings.TrimPrefix(elt, "chars:")
 				if trim != elt {
-					a += alphabet.Alphabet(trim)
+					a += hashpass.Alphabet(trim)
 				} else {
 					log.Printf("Warning: Unknown alphabet spec %q (ignored)", elt)
 				}
@@ -262,9 +261,9 @@ func (s Site) alphabet() alphabet.Alphabet {
 		}
 		return a
 	} else if s.usePunct() {
-		return alphabet.All
+		return hashpass.All
 	}
-	return alphabet.NoPunct
+	return hashpass.NoPunct
 }
 
 // merge returns a copy of s in which non-empty fields of c are used to fill
