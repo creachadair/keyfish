@@ -40,16 +40,17 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"sort"
 	"strings"
 	"text/tabwriter"
 
 	"bitbucket.org/creachadair/shell"
-	"bitbucket.org/creachadair/stringset"
 	"github.com/creachadair/command"
 	"github.com/creachadair/getpass"
 	"github.com/creachadair/keyfish/clipboard"
 	"github.com/creachadair/keyfish/config"
 	"github.com/creachadair/keyfish/wordhash"
+	"github.com/creachadair/mds/mapset"
 	"github.com/creachadair/mds/value"
 	"github.com/creachadair/otp"
 )
@@ -129,110 +130,29 @@ If KEYFISH_CONFIG is set, that path is used instead.
 		Run: func(env *command.Env) error {
 			// Unless we're listing sites, at least one must be requested.
 			if doSites {
-				listSites(os.Stdout, stringset.FromKeys(cfg.Sites))
-				return nil
+				return runList(os.Stdout)
 			} else if len(env.Args) == 0 {
 				return env.Usagef("You must specify at least one site name")
 			}
 			if doShow {
-				out := json.NewEncoder(os.Stdout)
-				if cfg.Flags.Verbose {
-					out.SetIndent("", "  ")
-				}
-				for _, arg := range env.Args {
-					var site config.Site
-					var ok bool
-
-					for _, c := range config.SiteCandidates(arg) {
-						site, ok = cfg.Site(c)
-						if ok {
-							break
-						}
-					}
-					if !ok && cfg.Flags.Strict {
-						return fmt.Errorf("site %q is not known", arg)
-					}
-					if !cfg.Flags.Verbose {
-						site.Hints = nil
-						site.OTP = nil
-					}
-					if err := out.Encode(site); err != nil {
-						return fmt.Errorf("encoding site %q: %v", arg, err)
-					}
-				}
-				return nil
+				return runShow(env)
 			}
 
 			// Check all the sites before generating any secrets.
-			var sites []config.Site
-			for _, arg := range env.Args {
-				var site config.Site
-				var ok bool
-
-				for _, c := range config.SiteCandidates(arg) {
-					site, ok = cfg.Site(c)
-					if ok {
-						break
-					}
-				}
-				if !ok && cfg.Flags.Strict {
-					return fmt.Errorf("site %q is not known", arg)
-				}
-				sites = append(sites, site)
+			sites, err := checkSites(env)
+			if err != nil {
+				return err
 			}
-
-			for _, site := range sites {
-				// Check minimum length.
-				if site.Length < minLength {
-					return fmt.Errorf("password length must be ≥ %d", minLength)
-				} else if site.Format != "" && len(site.Format) < minLength {
-					return fmt.Errorf("format length must be ≥ %d", minLength)
-				}
-
-				if isFlagSet(&env.Command.Flags, "punct") {
-					site.Punct = &doPunct // override whatever was there
-				}
-				if cfg.Flags.Verbose {
-					log.Printf("Site: %v", site)
-				}
-
-				key, err := loadKeyIfNeeded()
-				if err != nil {
-					return fmt.Errorf("loading secret key: %w", err)
-				}
-				ctx := site.Context(key)
-				var pw string
-				if fmt := site.Format; fmt != "" {
-					pw = ctx.Format(fmt)
-				} else {
-					pw = ctx.Password(site.Length)
-				}
-				if doPrint || !cfg.Flags.Copy {
-					fmt.Println(pw)
-				} else if err := clipboard.WriteString(pw); err != nil {
-					log.Printf("Error copying to clipboard: %v", err)
-				} else {
-					if u := site.Login; u != "" {
-						fmt.Print(u, "@")
-					}
-					fmt.Print(site.Host, "\t", wordhash.String(pw))
-					if cfg.Flags.OTP {
-						otpc, ok := site.OTP[site.Salt]
-						if ok {
-							fmt.Print("\t", otp.Config{Key: string(otpc.Key)}.TOTP())
-						}
-					}
-					fmt.Println()
-				}
-			}
-			return nil
+			return runGenerate(env, sites)
 		},
 	}
 	command.RunOrFail(root.NewEnv(nil), os.Args[1:])
 }
 
-// listSites renders a nicely-formatted listing of sites to w.
-func listSites(w io.Writer, sites stringset.Set) {
+// runList renders a nicely-formatted listing of sites to w.
+func runList(w io.Writer) error {
+	sites := mapset.Keys(cfg.Sites)
+
 	const lineWidth = 80
 	const padding = 2
 
@@ -250,8 +170,10 @@ func listSites(w io.Writer, sites stringset.Set) {
 
 	// Fill columns before rows, so that the reader can scan down a column in
 	// lexicographic order rather than reading across rows.
+	elts := sites.Slice()
+	sort.Strings(elts)
+
 	var cols [][]string
-	elts := sites.Elements() // sorted
 	for i := 0; i < len(elts); {
 		n := i + numRows
 		if n > len(elts) {
@@ -273,7 +195,106 @@ func listSites(w io.Writer, sites stringset.Set) {
 		}
 		fmt.Fprintln(tw, strings.Join(row, "\t"))
 	}
-	tw.Flush()
+	return tw.Flush()
+}
+
+// runShow displays configuration data for the specified sites.
+func runShow(env *command.Env) error {
+	out := json.NewEncoder(os.Stdout)
+	if cfg.Flags.Verbose {
+		out.SetIndent("", "  ")
+	}
+	for _, arg := range env.Args {
+		var site config.Site
+		var ok bool
+
+		for _, c := range config.SiteCandidates(arg) {
+			site, ok = cfg.Site(c)
+			if ok {
+				break
+			}
+		}
+		if !ok && cfg.Flags.Strict {
+			return fmt.Errorf("site %q is not known", arg)
+		}
+		if !cfg.Flags.Verbose {
+			site.Hints = nil
+			site.OTP = nil
+		}
+		if err := out.Encode(site); err != nil {
+			return fmt.Errorf("encoding site %q: %v", arg, err)
+		}
+	}
+	return nil
+}
+
+// runGenerate generates passwords for the specified sites.
+func runGenerate(env *command.Env, sites []config.Site) error {
+	for _, site := range sites {
+		// Check minimum length.
+		if site.Length < minLength {
+			return fmt.Errorf("password length must be ≥ %d", minLength)
+		} else if site.Format != "" && len(site.Format) < minLength {
+			return fmt.Errorf("format length must be ≥ %d", minLength)
+		}
+
+		if isFlagSet(&env.Command.Flags, "punct") {
+			site.Punct = &doPunct // override whatever was there
+		}
+		if cfg.Flags.Verbose {
+			log.Printf("Site: %v", site)
+		}
+
+		key, err := loadKeyIfNeeded()
+		if err != nil {
+			return fmt.Errorf("loading secret key: %w", err)
+		}
+		ctx := site.Context(key)
+		var pw string
+		if fmt := site.Format; fmt != "" {
+			pw = ctx.Format(fmt)
+		} else {
+			pw = ctx.Password(site.Length)
+		}
+		if doPrint || !cfg.Flags.Copy {
+			fmt.Println(pw)
+		} else if err := clipboard.WriteString(pw); err != nil {
+			log.Printf("Error copying to clipboard: %v", err)
+		} else {
+			if u := site.Login; u != "" {
+				fmt.Print(u, "@")
+			}
+			fmt.Print(site.Host, "\t", wordhash.String(pw))
+			if cfg.Flags.OTP {
+				otpc, ok := site.OTP[site.Salt]
+				if ok {
+					fmt.Print("\t", otp.Config{Key: string(otpc.Key)}.TOTP())
+				}
+			}
+			fmt.Println()
+		}
+	}
+	return nil
+}
+
+func checkSites(env *command.Env) ([]config.Site, error) {
+	var sites []config.Site
+	for _, arg := range env.Args {
+		var site config.Site
+		var ok bool
+
+		for _, c := range config.SiteCandidates(arg) {
+			site, ok = cfg.Site(c)
+			if ok {
+				break
+			}
+		}
+		if !ok && cfg.Flags.Strict {
+			return nil, fmt.Errorf("site %q is not known", arg)
+		}
+		sites = append(sites, site)
+	}
+	return sites, nil
 }
 
 func isPipeCommand(key string) ([]string, bool) {

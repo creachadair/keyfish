@@ -2,7 +2,6 @@ module github.com/creachadair/keyfish
 
 require (
 	bitbucket.org/creachadair/shell v0.0.8
-	bitbucket.org/creachadair/stringset v0.0.14
 	github.com/creachadair/command v0.1.10
 	github.com/creachadair/getpass v0.2.1
 	github.com/creachadair/mds v0.12.0
