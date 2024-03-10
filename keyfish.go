@@ -39,7 +39,6 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"sort"
 	"strings"
 	"text/tabwriter"
@@ -82,7 +81,7 @@ func main() {
 	}
 
 	root := &command.C{
-		Name:  filepath.Base(os.Args[0]),
+		Name:  command.ProgramName(),
 		Usage: `[options] [tag@]site-name ...`,
 		Help: `Generate a site-specific password based on the given site name.
 
