@@ -63,7 +63,7 @@ func TestStore(t *testing.T) {
 	})
 
 	t.Run("WrongAccessKey", func(t *testing.T) {
-		s2, err := kfstore.Open[testDB](bytes.NewReader(buf.Bytes()), kfstore.AccessKey([]byte(altKey)))
+		s2, err := kfstore.Open[testDB](bytes.NewReader(buf.Bytes()), kfstore.AccessKey(altKey))
 		if err == nil {
 			t.Fatalf("Open with bad key: got %v, want error", s2)
 		} else {
@@ -73,7 +73,7 @@ func TestStore(t *testing.T) {
 
 	t.Run("WrongVersion", func(t *testing.T) {
 		bad := strings.ReplaceAll(buf.String(), kfstore.Format, "kf:v9")
-		s2, err := kfstore.Open[testDB](strings.NewReader(bad), kfstore.AccessKey([]byte(testKey)))
+		s2, err := kfstore.Open[testDB](strings.NewReader(bad), kfstore.AccessKey(testKey))
 		if err == nil {
 			t.Fatalf("Open with bad format: got %v, want error", s2)
 		} else {

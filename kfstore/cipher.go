@@ -24,7 +24,9 @@ type KeyFunc func(salt []byte) []byte
 // AccessKey returns a KeyFunc that ignores its argument and returns the
 // specified string as the key. It is a convenience wrapper for passing
 // pre-generated key.
-func AccessKey(key []byte) KeyFunc { return func(ignored []byte) []byte { return key } }
+func AccessKey[S ~string | ~[]byte](key S) KeyFunc {
+	return func(ignored []byte) []byte { return []byte(key) }
+}
 
 func decryptWithKey(key, data, extra []byte) ([]byte, error) {
 	aead, err := chacha20poly1305.NewX(key)
