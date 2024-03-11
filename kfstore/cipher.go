@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"unsafe"
 
 	"golang.org/x/crypto/chacha20poly1305"
 )
@@ -84,19 +83,4 @@ func decompressData(data []byte) []byte {
 		panic(fmt.Sprintf("zlib read: %v", err))
 	}
 	return dec
-}
-
-// zero sets all of data to zeroes.
-func zero(data []byte) {
-	n := len(data)
-	m := n &^ 7 // number of full 64-bit chunks in n
-
-	i := 0
-	for ; i < m; i += 8 {
-		v := (*uint64)(unsafe.Pointer(&data[i]))
-		*v = 0
-	}
-	for ; i < n; i++ {
-		data[i] = 0
-	}
 }
