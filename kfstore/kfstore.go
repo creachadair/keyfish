@@ -32,15 +32,14 @@ import (
 	"github.com/creachadair/mds/mbits"
 )
 
-// A Store is the encoded form of a database in persistent storage.
+// A Store is an encrypted store containing a user-provide DB value.
+// The concrete type of DB must be JSON-marshalable.
 //
 // The contents of a store are encoded as a JSON object, inside which the
 // database is encrypted with chacha20poly1305 using the AEAD construction and
 // a randomly-generated data key. The data key is itself encrypted (using the
 // same construction) with a caller-provided access key, and stored alongside
 // the data.
-//
-// The concrete type of DB must be JSON-marshalable.
 type Store[DB any] struct {
 	dataKeyEncrypted []byte // enceypted data key
 	dataKeyPlain     []byte // plaintext data key
