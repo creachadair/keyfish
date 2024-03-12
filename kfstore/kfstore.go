@@ -1,6 +1,26 @@
 // Package kfstore provides a self-contained encrypted data store for sensitive
 // data managed by keyfish. A Store is packaged as a JSON object containing an
 // encrypted database packet.
+//
+// # Storage Format
+//
+// On disk, the kfstore is a single JSON object in this layout:
+//
+//	{
+//	   "format":  "ks1",
+//	   "dataKey": "<base64-encoded-data-key>",
+//	   "data":    "<base64-encoded-data>",
+//	   "keySalt": "<base64-encoded-key-salt>"
+//	}
+//
+// The data value is zlib-compressed and encrypted with the data key using the
+// AEAD construction over chacha20poly1305 with the format as extra data.
+//
+// The data key is a cryptographically randomly generated key, encrypted with a
+// user-provided access key using the AEAD construction over chacha20poly1305.
+//
+// The key salt is a plaintext salt value provided by the caller for use in
+// access key generation via a KDF. This field is optional and may be empty.
 package kfstore
 
 import (
@@ -33,10 +53,10 @@ type Store[DB any] struct {
 // If the accessKey was generated using a key-derivation function, the salt
 // value for the KDF may be passed as keySalt, and it will be stored in plain
 // text alongside the data. This value is made available to the caller when the
-// store is reopened. It is optional and may be nil or empty.
+// store is reopened. The keySalt is optional and may be left nil or empty.
 //
 // If init != nil, it is used as the initial database for the store; otherwise
-// an empty DB is created.
+// an empty DB is created. The concrete type of DB must be JSON-marshalable.
 func New[DB any](accessKey, keySalt []byte, init *DB) (*Store[DB], error) {
 	if len(accessKey) != AccessKeyLen {
 		return nil, fmt.Errorf("access key is %d bytes, want %d", len(accessKey), AccessKeyLen)
@@ -147,10 +167,10 @@ func (s *Store[DB]) DB() *DB {
 
 // storeJSON is the JSON structure used to persist a Store.
 type storeJSON struct {
-	Format  string `json:"format"`  // currently kfstore.Format (ks1)
-	DataKey []byte `json:"dataKey"` // encrypted with accessKey
-	Data    []byte `json:"data"`    // encrypted with D(accessKey, dataKey)
-	KeySalt []byte `json:"keySalt"` // access key derivation salt (optional)
+	Format  string `json:"format"`            // currently kfstore.Format (ks1)
+	DataKey []byte `json:"dataKey"`           // encrypted with accessKey
+	Data    []byte `json:"data"`              // encrypted with D(accessKey, dataKey)
+	KeySalt []byte `json:"keySalt,omitempty"` // access key derivation salt (optional)
 
 	// The data are compressed with zlib prior to encryption.
 }
