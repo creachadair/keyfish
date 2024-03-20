@@ -120,10 +120,10 @@ If KEYFISH_CONFIG is set, that path is used instead.
 			fs.BoolVar(&doShow, "show", false, "Print specified configurations and exit")
 			fs.BoolVar(&doPrint, "print", false, "Print the result rather than copying (overrides -copy)")
 			fs.BoolVar(&doPunct, "punct", false, "Use punctuation, overriding the default")
-			fs.BoolVar(&cfg.Flags.Verbose, "v", false, "Verbose logging (includes hints with -print)")
-			fs.BoolVar(&cfg.Flags.Copy, "copy", false, "Copy to clipboard instead of printing")
-			fs.BoolVar(&cfg.Flags.OTP, "otp", false, "Generate an OTP for the site (if configured)")
-			fs.BoolVar(&cfg.Flags.Strict, "strict", false, "Report an error for sites not named in the config")
+			fs.BoolVar(&cfg.Flags.Verbose, "v", cfg.Flags.Verbose, "Verbose logging (includes hints with -print)")
+			fs.BoolVar(&cfg.Flags.Copy, "copy", cfg.Flags.Copy, "Copy to clipboard instead of printing")
+			fs.BoolVar(&cfg.Flags.OTP, "otp", cfg.Flags.OTP, "Generate an OTP for the site (if configured)")
+			fs.BoolVar(&cfg.Flags.Strict, "strict", cfg.Flags.Strict, "Report an error for sites not named in the config")
 		},
 
 		Run: func(env *command.Env) error {
