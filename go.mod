@@ -4,6 +4,7 @@ require (
 	bitbucket.org/creachadair/shell v0.0.8
 	github.com/creachadair/atomicfile v0.3.4
 	github.com/creachadair/command v0.1.13
+	github.com/creachadair/flax v0.0.0-20240212192608-428acafa3bbe
 	github.com/creachadair/getpass v0.2.1
 	github.com/creachadair/mds v0.14.3
 	github.com/creachadair/otp v0.4.2
