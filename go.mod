@@ -17,6 +17,4 @@ require (
 	golang.org/x/term v0.18.0 // indirect
 )
 
-go 1.21
-
-toolchain go1.21.6
+go 1.22
