@@ -9,7 +9,7 @@ import (
 
 // New generates a human-readable digest of data as a printable string.
 //
-// The string produced by New is not a cryptographic hash; the input is
+// The string produced by New is not a cryptographic hash; the output is
 // constructed by mapping a CRC32 of the input to a table of short English
 // words.
 func New[S ~string | ~[]byte](data S) string { return words.hash([]byte(data)) }
