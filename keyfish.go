@@ -263,7 +263,7 @@ func runGenerate(env *command.Env, sites []config.Site) error {
 			if u := site.Login; u != "" {
 				fmt.Print(u, "@")
 			}
-			fmt.Print(site.Host, "\t", wordhash.String(pw))
+			fmt.Print(site.Host, "\t", wordhash.New(pw))
 			if cfg.Flags.OTP {
 				otpc, ok := site.OTP[site.Salt]
 				if ok {

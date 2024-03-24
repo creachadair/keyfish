@@ -1,11 +1,13 @@
-package wordhash
+package wordhash_test
 
 import (
 	"hash/crc32"
 	"testing"
+
+	"github.com/creachadair/keyfish/wordhash"
 )
 
-func TestString(t *testing.T) {
+func TestNew(t *testing.T) {
 	// These test vectors were constructed by hand for the built-in word list,
 	// and must be updated if the word list changes.
 	//
@@ -24,15 +26,11 @@ func TestString(t *testing.T) {
 		{"0123456789abcdef!@#$%^&;", "hover-black-monad-jenny"},
 	}
 	for _, test := range tests {
-		got := String(test.input)
+		got := wordhash.New(test.input)
 		t.Logf("Input: %q, CRC: %08x, Hash: %q",
 			test.input, crc32.ChecksumIEEE([]byte(test.input)), got)
 		if got != test.want {
-			t.Errorf("String(%q): got %q, want %q", test.input, got, test.want)
-		}
-		got = Bytes([]byte(test.input))
-		if got != test.want {
-			t.Errorf("Bytes(%q): got %q, want %q", test.input, got, test.want)
+			t.Errorf("Hash(%q): got %q, want %q", test.input, got, test.want)
 		}
 	}
 }

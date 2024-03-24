@@ -1,7 +1,5 @@
-// Package wordhash converts digests into a reasonably-memorable human-readable
-// form. The resulting output is not of cryptographic quality -- in particular
-// it is not collision resistant -- but should be sufficient to give a human
-// viewer moderate confidence that they are viewing the same value.
+// Package wordhash generates human-readable non-cryptographic digests
+// to use for visual confirmation.
 package wordhash
 
 import (
@@ -9,11 +7,12 @@ import (
 	"strings"
 )
 
-// String generates a human-readable digest of data as a printable string.
-func String(data string) string { return words.hash([]byte(data)) }
-
-// Bytes generates a human-readable digest of data as a printable string.
-func Bytes(data []byte) string { return words.hash(data) }
+// New generates a human-readable digest of data as a printable string.
+//
+// The string produced by New is not a cryptographic hash; the input is
+// constructed by mapping a CRC32 of the input to a table of short English
+// words.
+func New[S ~string | ~[]byte](data S) string { return words.hash([]byte(data)) }
 
 type wordmap [256]string
 
