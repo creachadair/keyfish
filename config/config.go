@@ -49,6 +49,9 @@ type Config struct {
 
 // A Site represents the non-secret configuration for a single site.
 type Site struct {
+	// A human-readable title for the site (optional).
+	Title string `json:"title,omitempty"`
+
 	// The hostname that identifies this site (required).
 	// This can be any non-empty string, but conventionally is the domain name
 	// of the site, e.g. "dartmouth.edu".
