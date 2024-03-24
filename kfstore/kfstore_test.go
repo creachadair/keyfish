@@ -3,6 +3,7 @@ package kfstore_test
 import (
 	"bytes"
 	crand "crypto/rand"
+	"io"
 	mrand "math/rand"
 	"strings"
 	"testing"
@@ -17,11 +18,7 @@ type testDB struct {
 }
 
 func TestStore(t *testing.T) {
-	// Stub out the random generator for the test so that we don't thrash the
-	// system entropy pool for unit tests.
-	save := crand.Reader
-	crand.Reader = mrand.New(mrand.NewSource(20240309152407))
-	defer func() { crand.Reader = save }()
+	mtest.Swap[io.Reader](t, &crand.Reader, mrand.New(mrand.NewSource(20240309152407)))
 
 	const testKey = "00000000000000000000000000000000"
 	const altKey = "11111111111111111111111111111111"
