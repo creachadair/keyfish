@@ -159,6 +159,24 @@ func runDebugShow(env *command.Env, query string) error {
 	return nil
 }
 
+// runDebugEdit implements the "debug show" subcommand.
+func runDebugEdit(env *command.Env, query string) error {
+	s, err := loadDB(env)
+	if err != nil {
+		return err
+	}
+	res, err := findRecord(s.DB(), query)
+	if err != nil {
+		return err
+	}
+	repl, err := kflib.Edit(env.Context(), res.record)
+	if err != nil {
+		return err
+	}
+	s.DB().Records[res.label] = repl
+	return saveDB(env, s)
+}
+
 // runDebugExportJSON implements the "debug export-json" subcommand.
 func runDebugExportJSON(env *command.Env, dbPath string) error {
 	s, err := kflib.OpenDB(dbPath)

@@ -85,6 +85,11 @@ multiple candidate records that could be selected.`,
 					Help:  "Print the config record for the specified query.",
 					Run:   command.Adapt(runDebugShow),
 				}, {
+					Name:  "edit",
+					Usage: "<query>",
+					Help:  "Edit the record for the specified query.",
+					Run:   command.Adapt(runDebugEdit),
+				}, {
 					Name:  "change-key",
 					Usage: "<db-path>",
 					Help:  "Change the access key on the specified database.",

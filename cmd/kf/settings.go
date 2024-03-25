@@ -30,6 +30,16 @@ func loadDB(env *command.Env) (*kfdb.Store, error) {
 	return kflib.OpenDB(set.DBPath)
 }
 
+// saveDB saves the specified database to the DBPath.
+func saveDB(env *command.Env, s *kfdb.Store) error {
+	set := env.Config.(*settings)
+	if err := kflib.SaveDB(s, set.DBPath); err != nil {
+		return err
+	}
+	fmt.Fprintln(env, "<saved>")
+	return nil
+}
+
 // findResult is the result of a successful call to findRecord.
 type findResult struct {
 	tag    string       // the tag from the query, if present
