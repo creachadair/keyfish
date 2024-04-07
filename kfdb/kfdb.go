@@ -103,7 +103,7 @@ type Record struct {
 	Notes string `json:"notes,omitempty"`
 
 	// Details are optional labelled data annotations.
-	Details map[string]any `json:"details,omitempty"`
+	Details []*Detail `json:"details,omitempty"`
 
 	// Hashpass, if non-nil, is a configuration for a hashed password.
 	Hashpass *Hashpass `json:"hashpass,omitempty"`
@@ -115,8 +115,21 @@ type Record struct {
 	OTP *otpauth.URL `json:"otp,omitempty"`
 }
 
+// Detail is a labelled data annotation for a record.
+type Detail struct {
+	// Label is a human-readable label for the detail.
+	Label string `json:"label"`
+
+	// Hidden, if true, indicates the value is sensitive and should not be
+	// displayed plainly unless the user requests it.
+	Hidden bool `json:"hidden,omitempty"`
+
+	// Value is the display content of the detail.
+	Value string `json:"value"`
+}
+
 // Hashpass contains settings for a "hashed" password generator.
-// See [github.com/creachadair/keyfish/haspass.Context] for details on the
+// See [github.com/creachadair/keyfish/hashpass.Context] for details on the
 // algorithm used for password generation.
 type Hashpass struct {
 	// SecretKey, if set, is used as the hashpass generator key.
