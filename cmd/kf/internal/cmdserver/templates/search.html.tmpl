@@ -1,0 +1,18 @@
+{{with .SearchResult -}}
+{{if gt (len .) 1}}<div class=sr-tag>{{len .}} results</div>{{end}}
+<table id=sr>{{range .}}
+  <tr class=sr>
+    <td>
+      <button class=tab hx-get="/view/{{.Index}}" hx-target="#result">View</button>
+    </td>
+    <td class=label>
+      <input name=quality type=hidden value="{{.Quality}}" />
+      {{.Record.Label}}
+    </td>
+    <td class=title>
+      {{if .Record.Title}}{{.Record.Title}}
+      {{- else if .Record.Hosts}}{{index .Record.Hosts 0}}{{else}}(no description)
+    {{end}}</td>
+  </tr>{{end}}
+</table>{{else}}<div class=sr-tag>(no results)</div>
+{{end}}

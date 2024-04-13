@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Keyfish password manager</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="htmx-config" content='{"includeIndicatorStyles":false}' />
+    <link rel=icon href="/static/kf128.png" />
+    <link rel=stylesheet href="/static/style.css" />
+    <script src="/static/htmx.min.js"></script>
+    <script src="/static/script.js"></script>
+  </head>
+  <body>
+    <h1><img class=icon src="/static/kf128.png" width=32 height=32 />Keyfish</h1>
+    <div id="search">
+      <input id="query" name="q" type="text" class="textbox" size="25" value="{{.Query}}"
+             autofocus autocomplete=off autocorrect=off autocapitalize=none
+             placeholder="Label, hostname, or title; use * to list all"
+             hx-get="/search"
+             hx-trigger="keyup changed delay:250ms"
+             hx-params="q"
+             hx-target="#result" />
+    </div>
+    <div id="result">{{if .Query}}
+      {{template "search.html.tmpl" .}}
+    {{end}}</div>
+  </body>
+</html>

@@ -7,7 +7,9 @@ import (
 	"github.com/creachadair/command"
 	"github.com/creachadair/flax"
 	"github.com/creachadair/keyfish/cmd/kf/config"
+
 	"github.com/creachadair/keyfish/cmd/kf/internal/cmddebug"
+	"github.com/creachadair/keyfish/cmd/kf/internal/cmdserver"
 )
 
 func main() {
@@ -70,6 +72,7 @@ the KEYFISH_DB environment variable.`,
 				Help:  "Archive the specified record.",
 				Run:   command.Adapt(runArchive),
 			},
+			cmdserver.Command,
 			command.HelpCommand([]command.HelpTopic{{
 				Name: "query",
 				Help: `Syntax of query arguments.

@@ -34,3 +34,6 @@ func SaveDB(env *command.Env, s *kfdb.Store) error {
 	fmt.Fprintln(env, "<saved>")
 	return nil
 }
+
+// DBPath returns the database path associated with env, or "".
+func DBPath(env *command.Env) string { return env.Config.(*Settings).DBPath }
