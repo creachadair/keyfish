@@ -29,9 +29,8 @@ type DB struct {
 	// responsibility of the tool that defines it.
 	Settings map[string]json.RawMessage `json:"settings,omitempty"`
 
-	// Records are the data records contained in the database.  Each record is
-	// identified by a non-empty string label.
-	Records map[string]*Record `json:"records,omitempty"`
+	// Records are the data records contained in the database.
+	Records []*Record `json:"records,omitempty"`
 }
 
 // ErrNoSettings is reported by UnmarshalSettings if the requested settings key
@@ -84,6 +83,9 @@ type Defaults struct {
 
 // A Record records an item of interest such as a login account.
 type Record struct {
+	// Label is a short identifier for this record.
+	Label string `json:"label,omitempty"`
+
 	// Title is a human-readable title for this record.
 	Title string `json:"title,omitempty"`
 
