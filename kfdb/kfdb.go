@@ -32,10 +32,6 @@ type DB struct {
 	// Records are the data records contained in the database.  Each record is
 	// identified by a non-empty string label.
 	Records map[string]*Record `json:"records,omitempty"`
-
-	// Archived contains data records that are no longer active in the
-	// database. Each record is saved along with its original label.
-	Archive []*Archive `json:"archive,omitempty"`
 }
 
 // ErrNoSettings is reported by UnmarshalSettings if the requested settings key
@@ -117,13 +113,10 @@ type Record struct {
 
 	// OTP, if non-nil, is used to generate one-time 2FA codes.
 	OTP *otpauth.URL `json:"otp,omitempty"`
-}
 
-// An Archive represents an archived record, along with the label it was
-// originally saved under.
-type Archive struct {
-	Label string `json:"label"`
-	*Record
+	// Archived, if true, indicates the record is archived and should not be
+	// shown in default listings and search results.
+	Archived bool `json:"archived,omitempty"`
 }
 
 // Detail is a labelled data annotation for a record.
