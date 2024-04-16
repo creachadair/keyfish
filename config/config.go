@@ -114,6 +114,9 @@ type Site struct {
 	// User-defined password hints, security questions, and other metadata that
 	// do not affect the password but the user may need to log in.
 	Hints map[string]interface{} `json:"hints,omitempty"`
+
+	// Indicates the site entry is archived and should not be listed.
+	Archived bool `json:"archived,omitempty"`
 }
 
 // An OTP represents the settings for an OTP generator.
