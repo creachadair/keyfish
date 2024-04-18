@@ -15,7 +15,6 @@ import (
 	"github.com/creachadair/keyfish/kflib"
 	"github.com/creachadair/keyfish/wordhash"
 	"github.com/creachadair/mds/slice"
-	"github.com/creachadair/otp/otpauth"
 )
 
 var listFlags struct {
@@ -89,12 +88,15 @@ func runPW(env *command.Env, query string) error {
 	}
 	fmt.Print(pw)
 
-	if pwFlags.OTP && res.Record.OTP != nil {
-		otp, err := kflib.GenerateOTP(res.Record.OTP, 0)
-		if err != nil {
-			otp = "<invalid-otp>"
+	if pwFlags.OTP {
+		otpURL := getOTPCode(res.Record, res.Tag)
+		if otpURL != nil {
+			otp, err := kflib.GenerateOTP(res.Record.OTP, 0)
+			if err != nil {
+				otp = "<invalid-otp>"
+			}
+			fmt.Print(" ", otp)
 		}
-		fmt.Print(" ", otp)
 	}
 	fmt.Println()
 	return nil
@@ -114,17 +116,7 @@ func runOTP(env *command.Env, query string) error {
 	if err != nil {
 		return err
 	}
-	otpURL := res.Record.OTP
-	if res.Tag != "" {
-		for _, d := range res.Record.Details {
-			if d.Label != "tag" {
-				continue
-			} else if u, err := otpauth.ParseURL(d.Value); err == nil {
-				otpURL = u
-				break
-			}
-		}
-	}
+	otpURL := getOTPCode(res.Record, res.Tag)
 	if otpURL == nil {
 		return fmt.Errorf("no OTP config for %q", res.Record.Label)
 	}
