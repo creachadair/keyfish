@@ -17,6 +17,7 @@ import (
 	"github.com/creachadair/getpass"
 	"github.com/creachadair/keyfish/hashpass"
 	"github.com/creachadair/keyfish/kfdb"
+	"github.com/creachadair/mds/slice"
 	"github.com/creachadair/mds/value"
 	"github.com/creachadair/otp"
 	"github.com/creachadair/otp/otpauth"
@@ -145,12 +146,15 @@ func MatchRecord(query string, r *kfdb.Record) MatchQuality {
 // FindRecord finds the unique record matching the specified query.  An exact
 // match for a label is preferred; otherwise FindRecord will look for a full or
 // partial match on host names, or other substrings in the title and notes. An
-// error is reported if query matches no records, or more than 1.
+// error is reported if query matches no records, or more than 1. Archived
+// records are not considered.
 //
 // If the query begins with a tag (tag@label), the tag is removed and returned
 // along with the result.
 func FindRecord(db *kfdb.DB, query string) (FindResult, error) {
-	found := FindRecords(db.Records, query)
+	found := slice.Partition(FindRecords(db.Records, query), func(r FoundRecord) bool {
+		return !r.Record.Archived
+	})
 	if len(found) == 0 {
 		return FindResult{}, fmt.Errorf("no matches for %q", query)
 	}
