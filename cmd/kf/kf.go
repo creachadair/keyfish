@@ -77,6 +77,12 @@ generate a code instead of the base record's code.`,
 				Help:  "Archive the specified record.",
 				Run:   command.Adapt(runArchive),
 			},
+			{
+				Name:  "unarchive",
+				Usage: "<query>",
+				Help:  "Unarchive the specified record.",
+				Run:   command.Adapt(runArchive),
+			},
 			cmdserver.Command,
 			command.HelpCommand([]command.HelpTopic{{
 				Name: "query",

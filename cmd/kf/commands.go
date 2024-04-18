@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"slices"
@@ -148,8 +147,10 @@ func runCreateDB(env *command.Env, dbPath string) error {
 	return nil
 }
 
-// runArchive implements the "archive" subcommand.
+// runArchive implements the "archive" and "unarchive" subcommands.
 func runArchive(env *command.Env, query string) error {
+	doArchive := env.Command.Name == "archive"
+
 	s, err := config.LoadDB(env)
 	if err != nil {
 		return err
@@ -159,9 +160,9 @@ func runArchive(env *command.Env, query string) error {
 	res, err := kflib.FindRecord(db, query)
 	if err != nil {
 		return err
-	} else if res.Record.Archived {
-		return errors.New("record is already archived")
+	} else if res.Record.Archived == doArchive {
+		return fmt.Errorf("record is already %sd", env.Command.Name)
 	}
-	res.Record.Archived = true
+	res.Record.Archived = doArchive
 	return config.SaveDB(env, s)
 }
