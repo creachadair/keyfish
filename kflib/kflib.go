@@ -309,14 +309,17 @@ func (w *DBWatcher) Store() *kfdb.Store {
 		f, err := os.Open(w.path)
 		if err != nil {
 			log.Printf("WARNING: Open database: %v (skipped)", err)
+			w.hasUpdate = false // don't retry until it changes again
 			break
 		}
+		defer f.Close()
+
 		st, err := kfdb.Open(f, w.passphrase)
 		if err != nil {
 			log.Printf("WARNING: Load database: %v (skipped)", err)
+			// N.B. Don't reset the flag; it might just be an incomplete update.
 			break
 		}
-		f.Close()
 		log.Printf("Updated database %q", w.path)
 		w.hasUpdate = false
 		w.store = st
@@ -337,7 +340,7 @@ func (w *DBWatcher) Run(ctx context.Context) {
 			if !ok {
 				return
 			}
-			if evt.Op&(fsnotify.Rename|fsnotify.Remove) != 0 {
+			if evt.Op&fsnotify.Rename != 0 {
 				log.Printf("Database %q has moved; stopping the watcher", w.path)
 				return
 			} else if evt.Op&(fsnotify.Create|fsnotify.Chmod) == 0 {
