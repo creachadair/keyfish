@@ -136,7 +136,18 @@ div#view {
     font-family: var(--font-mono);
 }
 
+div#view div.info {
+    flex-direction: row;
+    flex-grow: 1;
+    align-content: start;
+}
+
+div#view div.info div.tab {
+    flex-direction: column;
+}
+
 div#view table {
+    min-width: 50%;
     margin-top: 1rem;
     font-size: 80%;
 }
