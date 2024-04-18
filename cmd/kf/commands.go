@@ -15,6 +15,7 @@ import (
 	"github.com/creachadair/keyfish/kflib"
 	"github.com/creachadair/keyfish/wordhash"
 	"github.com/creachadair/mds/slice"
+	"github.com/creachadair/otp/otpauth"
 )
 
 var listFlags struct {
@@ -113,10 +114,21 @@ func runOTP(env *command.Env, query string) error {
 	if err != nil {
 		return err
 	}
-	if res.Record.OTP == nil {
+	otpURL := res.Record.OTP
+	if res.Tag != "" {
+		for _, d := range res.Record.Details {
+			if d.Label != "tag" {
+				continue
+			} else if u, err := otpauth.ParseURL(d.Value); err == nil {
+				otpURL = u
+				break
+			}
+		}
+	}
+	if otpURL == nil {
 		return fmt.Errorf("no OTP config for %q", res.Record.Label)
 	}
-	otp, err := kflib.GenerateOTP(res.Record.OTP, otpFlags.Shift)
+	otp, err := kflib.GenerateOTP(otpURL, otpFlags.Shift)
 	if err != nil {
 		return err
 	}

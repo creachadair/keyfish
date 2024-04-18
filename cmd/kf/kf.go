@@ -54,9 +54,14 @@ the KEYFISH_DB environment variable.`,
 				Run:      command.Adapt(runPW),
 			},
 			{
-				Name:     "otp",
-				Usage:    "<query>",
-				Help:     "Print a TOTP code for the specified query.",
+				Name:  "otp",
+				Usage: "<query>",
+				Help: `Print a TOTP code for the specified query.
+
+If the specified query does not match a record with an OTP code,
+an error is reported. If a tag is set on the query, and the record
+has a detail whose contents are an OTP URL, that URL is used to
+generate a code instead of the base record's code.`,
 				SetFlags: command.Flags(flax.MustBind, &otpFlags),
 				Run:      command.Adapt(runOTP),
 			},
