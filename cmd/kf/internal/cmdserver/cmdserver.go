@@ -2,22 +2,20 @@
 package cmdserver
 
 import (
-	"bytes"
 	"context"
 	"embed"
-	"encoding/json"
 	"errors"
 	"html/template"
 	"log"
 	"net/http"
 	"os/signal"
-	"strings"
 	"syscall"
 
 	"github.com/creachadair/command"
 	"github.com/creachadair/flax"
 	"github.com/creachadair/keyfish/cmd/kf/config"
 	"github.com/creachadair/keyfish/kflib"
+	"github.com/creachadair/otp/otpauth"
 )
 
 var Command = &command.C{
@@ -74,12 +72,8 @@ var staticFS embed.FS
 var tmplFS embed.FS
 
 var ui = template.Must(template.New("ui").Funcs(map[string]any{
-	"strJoin": func(ss []string) string { return strings.Join(ss, ", ") },
-	"toJSON": func(v any) string {
-		var buf bytes.Buffer
-		enc := json.NewEncoder(&buf)
-		enc.SetIndent("", "  ")
-		enc.Encode(v)
-		return buf.String()
+	"isOTP": func(s string) bool {
+		_, err := otpauth.ParseURL(s)
+		return err == nil
 	},
 }).ParseFS(tmplFS, "templates/*"))

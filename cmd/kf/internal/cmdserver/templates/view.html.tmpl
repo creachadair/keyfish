@@ -65,11 +65,29 @@
       <th>{{$d.Label}}</th>
       {{if $d.Hidden -}}
       <td>
-        <button hx-get="/detail/{{$id}}/{{$index}}" hx-target="closest tr">Show</button>
+        <button hx-get="/detail/{{$id}}/{{$index}}" hx-target="closest tr">
+          Show
+        </button>{{if isOTP .Value}}
+        <button class="copyable"
+                      hx-get="/totp/{{$id}}?detail={{$index}}"
+                      hx-target="#r{{$id}}d{{$index}}otp"
+                      hx-swap="outerHTML">
+          Copy
+        </button>
+        <input id="r{{$id}}d{{$index}}otp" type="hidden" value="" />{{end}}
       </td>
-      <td>(hidden)</td>{{else}}
+      <td>(hidden)</td>{{else}}{{- if isOTP .Value}}
+      <td>
+        <button class="copyable"
+                hx-get="/totp/{{$id}}?detail={{$index}}"
+                hx-target="#r{{$id}}d{{$index}}otp"
+                hx-swap="outerHTML">
+          Copy
+        </button>
+        <input id="r{{$id}}d{{$index}}otp" type="hidden" value="" />
+      </td>{{end}}
       <td class="notes copyable" colspan="2">
-        <pre>{{$d.Value}}</pre>
+        <pre>{{.Value}}</pre>
       </td>{{end}}
     </tr>{{end}}
   </table>{{end}}{{end -}}

@@ -1,6 +1,14 @@
 <th>{{.Label}}</th>
 <td>
     <button id="{{.ID}}btn">Hide</button>
+    {{- if isOTP .Value}}
+    <button class="copyable"
+            hx-get="/totp/{{.RecordID}}?detail={{.DetailID}}"
+            hx-target="#{{.ID}}otp"
+            hx-swap="outerHTML">
+      Copy
+    </button>
+    <input id="{{.ID}}otp" type="hidden" value="" />{{end}}
 </td>
 <td id="{{.ID}}vis" class="notes copyable">
   <pre>{{.Value}}</pre>

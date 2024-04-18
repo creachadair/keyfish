@@ -12,6 +12,7 @@ import (
 	"github.com/creachadair/keyfish/kfdb"
 	"github.com/creachadair/keyfish/kflib"
 	"github.com/creachadair/mds/slice"
+	"github.com/creachadair/otp/otpauth"
 )
 
 // UI implements the HTTP endpoints for the Keyfish web UI.
@@ -130,9 +131,11 @@ func (s UI) detail(w http.ResponseWriter, r *http.Request) {
 	// N.B. Capitalization of HX matters here.
 	w.Header().Set("HX-Trigger-After-Settle", fmt.Sprintf(`{"setValueToggle":"%s"}`, tag))
 	s.runTemplate(w, r, "detail.html.tmpl", uiDetail{
-		ID:    tag,
-		Label: det.Label,
-		Value: det.Value,
+		RecordID: id,
+		DetailID: index,
+		ID:       tag,
+		Label:    det.Label,
+		Value:    det.Value,
 	})
 }
 
@@ -185,18 +188,30 @@ func (s UI) totp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	rec := st.DB().Records[id]
-	if rec.OTP == nil {
+	u, field := rec.OTP, "otpval"
+	if det, err := strconv.Atoi(r.FormValue("detail")); err == nil {
+		if det < 0 || det >= len(rec.Details) {
+			http.Error(w, "no such detail", http.StatusNotFound)
+			return
+		}
+		u, err = otpauth.ParseURL(rec.Details[det].Value)
+		if err != nil {
+			http.Error(w, "detail is not an OTP", http.StatusGone)
+			return
+		}
+		field = fmt.Sprintf("r%dd%dotp", id, det)
+	} else if u == nil {
 		http.Error(w, "no OTP configuration", http.StatusNotFound)
 		return
 	}
-	otp, err := kflib.GenerateOTP(rec.OTP, 0)
+	otp, err := kflib.GenerateOTP(u, 0)
 	if err != nil {
 		http.Error(w, "unable to generate OTP", http.StatusInternalServerError)
 		return
 	}
 
-	w.Header().Set("HX-Trigger-After-Settle", `{"copyText":"otpval"}`)
-	s.runTemplate(w, r, "pass.html.tmpl", uiDetail{ID: "otpval", Value: otp})
+	w.Header().Set("HX-Trigger-After-Settle", fmt.Sprintf(`{"copyText":"%s"}`, field))
+	s.runTemplate(w, r, "pass.html.tmpl", uiDetail{ID: field, Value: otp})
 }
 
 // contentSecurityPolicy is the CSP header we send to client browsers.
@@ -233,7 +248,9 @@ type uiRecord struct {
 }
 
 type uiDetail struct {
-	ID    string
-	Label string
-	Value string
+	RecordID int
+	DetailID int
+	ID       string
+	Label    string
+	Value    string
 }

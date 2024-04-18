@@ -115,9 +115,10 @@ button {
 
     color: var(--c-high);
     background: var(--c-med-light);
-    border-radius: 10px;
+    border-radius: 5px;
     border-width: 1px;
-    padding: 0.5rem;
+    padding: 0.25rem;
+    margin: 0.1rem 0;
 }
 
 button.tab {
@@ -159,10 +160,6 @@ div#view th {
 
 div#view th:first-of-type {
     width: 25%;
-}
-
-div#view td.btn {
-    width: 7%;
 }
 
 div#view th, td {
