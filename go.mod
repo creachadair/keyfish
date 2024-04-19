@@ -10,14 +10,10 @@ require (
 	github.com/creachadair/otp v0.4.2
 	github.com/fsnotify/fsnotify v1.7.0
 	github.com/google/go-cmp v0.6.0
-	github.com/tdewolff/minify/v2 v2.20.19
 	golang.org/x/crypto v0.22.0
 	golang.org/x/term v0.19.0
 )
 
-require (
-	github.com/tdewolff/parse/v2 v2.7.12 // indirect
-	golang.org/x/sys v0.19.0 // indirect
-)
+require golang.org/x/sys v0.19.0 // indirect
 
 go 1.22

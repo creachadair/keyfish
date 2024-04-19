@@ -1,14 +1,9 @@
 package service
 
 import (
-	"bytes"
 	"html/template"
-	"log"
 	"path"
 	"strings"
-
-	"github.com/tdewolff/minify/v2"
-	"github.com/tdewolff/minify/v2/js"
 )
 
 var (
@@ -21,21 +16,8 @@ var (
 			return ext != "" && len(ext) < 6
 		},
 	}).Parse(sitesListText))
-	menuPage     = template.Must(template.New("menu").Parse(menuPageText))
-	minifiedCode template.JS // populated from rawCode, see below.
+	menuPage = template.Must(template.New("menu").Parse(menuPageText))
 )
-
-func init() {
-	const mediaType = "application/javascript"
-
-	var buf bytes.Buffer
-	m := minify.New()
-	m.Add(mediaType, &js.Minifier{KeepVarNames: false})
-	if err := m.Minify(mediaType, &buf, strings.NewReader(rawCode)); err != nil {
-		log.Panicf("Minification failed: %v", err)
-	}
-	minifiedCode = template.JS(buf.String())
-}
 
 // The raw helper code for the page. This is minified and injected into the
 // final output during program initialization.

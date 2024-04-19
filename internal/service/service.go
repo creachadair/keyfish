@@ -5,6 +5,7 @@ package service
 import (
 	"errors"
 	"fmt"
+	"html/template"
 	"net"
 	"net/http"
 	"net/url"
@@ -234,7 +235,7 @@ func (c *Config) serveSites(w http.ResponseWriter, kc *config.Config, label stri
 	w.Header().Set("Content-Type", "text/html")
 	return 0, sitesList.Execute(w, map[string]interface{}{
 		"Sites": kc.Sites,
-		"Code":  minifiedCode,
+		"Code":  template.JS(rawCode),
 		"Label": label,
 	})
 }
