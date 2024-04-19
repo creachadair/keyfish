@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	"github.com/creachadair/command"
@@ -73,6 +74,9 @@ var tmplFS embed.FS
 
 var ui = template.Must(template.New("ui").Funcs(map[string]any{
 	"isOTP": func(s string) bool {
+		if !strings.HasPrefix(s, "otpauth:") {
+			return false
+		}
 		_, err := otpauth.ParseURL(s)
 		return err == nil
 	},
