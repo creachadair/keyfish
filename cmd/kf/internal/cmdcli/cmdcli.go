@@ -79,7 +79,10 @@ Use --sep to choose the word separator when --words is set.
 
 Output is written to stdout, or use --copy to send it to the
 clipboard. When --copy is set, a non-cryptographic digest of the
-generated value is printed to stdout as a human-readable checksum.`,
+generated value is printed to stdout as a human-readable checksum.
+
+With --set, the password is also stored on the record matching the
+given query, in addition to printing or copying it.`,
 		SetFlags: command.Flags(flax.MustBind, &randFlags),
 		Run:      command.Adapt(runRandom),
 	},
@@ -243,12 +246,29 @@ var randFlags struct {
 	NoDigit bool   `flag:"no-digits,Omit digits from the generated password"`
 	Symbols bool   `flag:"symbols,Include punctuation in the generated password"`
 	WordSep string `flag:"sep,default='-',Word separator"`
+	Set     string `flag:"set,Store the generated password in this record"`
 }
 
 func runRandom(env *command.Env) error {
 	if randFlags.Length <= 0 {
 		return env.Usagef("the --length must be positive")
 	}
+
+	var s *kfdb.Store
+	var r *kfdb.Record
+	if randFlags.Set != "" {
+		var err error
+		s, err = config.LoadDB(env)
+		if err != nil {
+			return err
+		}
+		fr, err := kflib.FindRecord(s.DB(), randFlags.Set, false)
+		if err != nil {
+			return err
+		}
+		r = fr.Record
+	}
+
 	var pw string
 	if randFlags.Words {
 		pw = kflib.RandomWords(randFlags.Length, randFlags.WordSep)
@@ -262,12 +282,22 @@ func runRandom(env *command.Env) error {
 		}
 		pw = kflib.RandomChars(randFlags.Length, cs)
 	}
+
+	if r != nil {
+		r.Password = pw
+		fmt.Fprintf(env, "Setting password on record %q\n", r.Label)
+		if err := config.SaveDB(env, s); err != nil {
+			return err
+		}
+	}
+
 	if randFlags.Copy {
 		if err := clipboard.WriteString(pw); err != nil {
 			return fmt.Errorf("copying password: %w", err)
 		}
 		pw = wordhash.New(pw)
 	}
+
 	fmt.Println(pw)
 	return nil
 }
