@@ -20,11 +20,17 @@
         width: 90%;
         margin: 0 5%;
     }
+    div#view div.info {
+        flex-direction: column;
+    }
 }
 @media only screen and (min-device-width: 1000px) {
     body {
         width: 70%;
         margin: 2rem 15%;
+    }
+    div#view div.info {
+        flex-direction: row;
     }
 }
 
@@ -143,7 +149,6 @@ div#view {
 }
 
 div#view div.info {
-    flex-direction: row;
     flex-grow: 1;
     align-content: start;
 }
