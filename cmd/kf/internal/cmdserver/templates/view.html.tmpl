@@ -27,7 +27,7 @@
   <div class=tab><table>
     <tr><th>{{if $r.Password}}Password:{{else}}Hashpass:{{end}}</th>
       <td>
-        <button class="copyable"
+        <button class="tab copyable"
                 hx-get="/password/{{$id}}"
                 hx-target="#pwval"
                 hx-swap="outerHTML"
@@ -47,7 +47,7 @@
     </tr>{{end}}{{if $r.OTP}}
     <tr><th>OTP:</th>
       <td>
-        <button class="copyable"
+        <button class="tab copyable"
                 hx-get="/totp/{{$id}}"
                 hx-target="#otpval"
                 hx-swap="outerHTML">
