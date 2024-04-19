@@ -68,6 +68,21 @@ generate a code instead of the base record's code.`,
 		Help:  "Unarchive the specified record.",
 		Run:   command.Adapt(runArchive),
 	},
+	{
+		Name: "random",
+		Help: `Generate a cryptographically random password.
+
+By default, a password is output as ASCII letters and digits.
+Use --no-digits to exclude digits, --symbols to include punctuation.
+Use --words to choose words from a word list instead.
+Use --sep to choose the word separator when --words is set.
+
+Output is written to stdout, or use --copy to send it to the
+clipboard. When --copy is set, a non-cryptographic digest of the
+generated value is printed to stdout as a human-readable checksum.`,
+		SetFlags: command.Flags(flax.MustBind, &randFlags),
+		Run:      command.Adapt(runRandom),
+	},
 }
 
 var listFlags struct {
@@ -219,4 +234,40 @@ func runArchive(env *command.Env, query string) error {
 	}
 	res.Record.Archived = doArchive
 	return config.SaveDB(env, s)
+}
+
+var randFlags struct {
+	Length  int    `flag:"length,The length of the password to generate"`
+	Words   bool   `flag:"words,Generate words instead of characters"`
+	Copy    bool   `flag:"copy,Copy the generated password to the clipboard"`
+	NoDigit bool   `flag:"no-digits,Omit digits from the generated password"`
+	Symbols bool   `flag:"symbols,Include punctuation in the generated password"`
+	WordSep string `flag:"sep,default='-',Word separator"`
+}
+
+func runRandom(env *command.Env) error {
+	if randFlags.Length <= 0 {
+		return env.Usagef("the --length must be positive")
+	}
+	var pw string
+	if randFlags.Words {
+		pw = kflib.RandomWords(randFlags.Length, randFlags.WordSep)
+	} else {
+		cs := kflib.Letters
+		if !randFlags.NoDigit {
+			cs |= kflib.Digits
+		}
+		if randFlags.Symbols {
+			cs |= kflib.Symbols
+		}
+		pw = kflib.RandomChars(randFlags.Length, cs)
+	}
+	if randFlags.Copy {
+		if err := clipboard.WriteString(pw); err != nil {
+			return fmt.Errorf("copying password: %w", err)
+		}
+		pw = wordhash.New(pw)
+	}
+	fmt.Println(pw)
+	return nil
 }
