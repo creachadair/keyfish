@@ -252,7 +252,7 @@ func GetHashpassInfo(db *kfdb.DB, rec *kfdb.Record, tag string) HashpassInfo {
 		hc.Alphabet = hashpass.NoPunct
 	}
 	return HashpassInfo{
-		Length:  cmp.Or(h.Length, d.PasswordLength),
+		Length:  cmp.Or(h.Length, value.At(d.Hashpass).Length),
 		Format:  h.Format,
 		Context: hc,
 	}
