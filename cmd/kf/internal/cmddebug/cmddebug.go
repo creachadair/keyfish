@@ -59,7 +59,7 @@ func runDebugShowRecord(env *command.Env, dbPath, query string) error {
 	if err != nil {
 		return err
 	}
-	res, err := kflib.FindRecord(s.DB(), query)
+	res, err := kflib.FindRecord(s.DB(), query, true)
 	if err != nil {
 		return err
 	}
@@ -105,7 +105,7 @@ func runDebugEditRecord(env *command.Env, dbPath, query string) error {
 	if err != nil {
 		return err
 	}
-	res, err := kflib.FindRecord(s.DB(), query)
+	res, err := kflib.FindRecord(s.DB(), query, true)
 	if err != nil {
 		return err
 	}

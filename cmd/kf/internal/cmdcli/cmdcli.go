@@ -137,7 +137,7 @@ func runPW(env *command.Env, query string) error {
 	if err != nil {
 		return err
 	}
-	res, err := kflib.FindRecord(s.DB(), query)
+	res, err := kflib.FindRecord(s.DB(), query, false)
 	if err != nil {
 		return err
 	}
@@ -180,7 +180,7 @@ func runOTP(env *command.Env, query string) error {
 	if err != nil {
 		return err
 	}
-	res, err := kflib.FindRecord(s.DB(), query)
+	res, err := kflib.FindRecord(s.DB(), query, false)
 	if err != nil {
 		return err
 	}
@@ -226,7 +226,7 @@ func runArchive(env *command.Env, query string) error {
 	}
 	db := s.DB()
 
-	res, err := kflib.FindRecord(db, query)
+	res, err := kflib.FindRecord(db, query, !doArchive)
 	if err != nil {
 		return err
 	} else if res.Record.Archived == doArchive {
