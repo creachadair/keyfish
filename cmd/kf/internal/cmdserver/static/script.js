@@ -30,8 +30,9 @@
         }
     }
 
-    // Add a listener to the button injected when text is reported from a copy
-    // button, allowing the user to copy it to the clipboard.
+    // Add a listener for the HTMX event our API handler reports when injecting
+    // the text requested by clicking a copy button, to copy the text from the
+    // element where it was stored (identified in the detail) to the clipboard.
     window.addEventListener('copyText', (evt) => {
         const id = evt.detail.value;
         const text = document.getElementById(id);
