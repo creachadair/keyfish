@@ -10,12 +10,17 @@ import (
 	"github.com/creachadair/keyfish/kfdb"
 	"github.com/creachadair/keyfish/kflib"
 
+	"github.com/creachadair/keyfish/cmd/kf/config"
 	"github.com/creachadair/keyfish/cmd/kf/internal/cmdconvert"
 )
 
 var Command = &command.C{
-	Name:     "debug",
-	Help:     "Debug commands (potentially dangerous).",
+	Name: "debug",
+	Help: `Debug commands (potentially dangerous).
+
+Debug commands require specifying a database path explicitly.
+Use "@" to refer to the path set via the --db flag.`,
+
 	Unlisted: true,
 
 	Commands: []*command.C{{
@@ -55,7 +60,7 @@ var Command = &command.C{
 
 // runDebugShowRecord implements the "debug show-record" subcommand.
 func runDebugShowRecord(env *command.Env, dbPath, query string) error {
-	s, err := kflib.OpenDB(dbPath)
+	s, err := kflib.OpenDB(getDBPath(env, dbPath))
 	if err != nil {
 		return err
 	}
@@ -80,7 +85,8 @@ func runDebugShowRecord(env *command.Env, dbPath, query string) error {
 
 // runDebugEdit implements the "debug edit" subcommand.
 func runDebugEdit(env *command.Env, dbPath string) error {
-	s, err := kflib.OpenDB(dbPath)
+	dp := getDBPath(env, dbPath)
+	s, err := kflib.OpenDB(dp)
 	if err != nil {
 		return err
 	}
@@ -92,16 +98,17 @@ func runDebugEdit(env *command.Env, dbPath string) error {
 		return err
 	}
 	*s.DB() = *repl
-	if err := kflib.SaveDB(s, dbPath); err != nil {
+	if err := kflib.SaveDB(s, dp); err != nil {
 		return err
 	}
-	fmt.Fprintf(env, "Edit applied to %q\n", dbPath)
+	fmt.Fprintf(env, "Edit applied to %q\n", dp)
 	return nil
 }
 
 // runDebugEditRecord implements the "debug edit-record" subcommand.
 func runDebugEditRecord(env *command.Env, dbPath, query string) error {
-	s, err := kflib.OpenDB(dbPath)
+	dp := getDBPath(env, dbPath)
+	s, err := kflib.OpenDB(dp)
 	if err != nil {
 		return err
 	}
@@ -117,16 +124,16 @@ func runDebugEditRecord(env *command.Env, dbPath, query string) error {
 		return err
 	}
 	s.DB().Records[res.Index] = repl
-	if err := kflib.SaveDB(s, dbPath); err != nil {
+	if err := kflib.SaveDB(s, dp); err != nil {
 		return err
 	}
-	fmt.Fprintf(env, "Record edit applied to %q\n", dbPath)
+	fmt.Fprintf(env, "Record edit applied to %q\n", dp)
 	return nil
 }
 
 // runDebugExport implements the "debug export" subcommand.
 func runDebugExport(env *command.Env, dbPath string) error {
-	s, err := kflib.OpenDB(dbPath)
+	s, err := kflib.OpenDB(getDBPath(env, dbPath))
 	if err != nil {
 		return fmt.Errorf("open database: %w", err)
 	}
@@ -143,21 +150,23 @@ func runDebugImport(env *command.Env, dbPath, jsonPath string) error {
 	if err := json.Unmarshal(data, &db); err != nil {
 		return fmt.Errorf("parse JSON: %w", err)
 	}
-	s, err := kflib.OpenDB(dbPath)
+	dp := getDBPath(env, dbPath)
+	s, err := kflib.OpenDB(dp)
 	if err != nil {
 		return fmt.Errorf("open database: %w", err)
 	}
 	*s.DB() = db
-	if err := kflib.SaveDB(s, dbPath); err != nil {
+	if err := kflib.SaveDB(s, dp); err != nil {
 		return err
 	}
-	fmt.Fprintf(env, "Imported %q into %q\n", jsonPath, dbPath)
+	fmt.Fprintf(env, "Imported %q into %q\n", jsonPath, dp)
 	return nil
 }
 
 // runDebugChangeKey implements the "debug change-key" subcommand.
 func runDebugChangeKey(env *command.Env, dbPath string) error {
-	s, err := kflib.OpenDB(dbPath)
+	dp := getDBPath(env, dbPath)
+	s, err := kflib.OpenDB(dp)
 	if err != nil {
 		return fmt.Errorf("open database: %w", err)
 	}
@@ -169,9 +178,16 @@ func runDebugChangeKey(env *command.Env, dbPath string) error {
 	if err != nil {
 		return err
 	}
-	if err := kflib.SaveDB(s2, dbPath); err != nil {
+	if err := kflib.SaveDB(s2, dp); err != nil {
 		return err
 	}
-	fmt.Fprintf(env, "Access key updated for %q\n", dbPath)
+	fmt.Fprintf(env, "Access key updated for %q\n", dp)
 	return nil
+}
+
+func getDBPath(env *command.Env, dbPath string) string {
+	if dbPath == "@" {
+		return config.DBPath(env)
+	}
+	return dbPath
 }
