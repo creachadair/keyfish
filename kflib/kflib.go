@@ -146,15 +146,18 @@ func MatchRecord(query string, r *kfdb.Record) MatchQuality {
 // FindRecord finds the unique record matching the specified query.  An exact
 // match for a label is preferred; otherwise FindRecord will look for a full or
 // partial match on host names, or other substrings in the title and notes. An
-// error is reported if query matches no records, or more than 1. Archived
-// records are not considered.
+// error is reported if query matches no records, or more than 1.  If all is
+// true, all records are considered; otherwise archived records are skipped.
 //
 // If the query begins with a tag (tag@label), the tag is removed and returned
 // along with the result.
-func FindRecord(db *kfdb.DB, query string) (FindResult, error) {
-	found := slice.Partition(FindRecords(db.Records, query), func(r FoundRecord) bool {
-		return !r.Record.Archived
-	})
+func FindRecord(db *kfdb.DB, query string, all bool) (FindResult, error) {
+	found := FindRecords(db.Records, query)
+	if !all {
+		found = slice.Partition(found, func(r FoundRecord) bool {
+			return !r.Record.Archived
+		})
+	}
 	if len(found) == 0 {
 		return FindResult{}, fmt.Errorf("no matches for %q", query)
 	}
