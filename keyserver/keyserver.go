@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/creachadair/keyfish/service"
+	"github.com/creachadair/keyfish/internal/service"
 )
 
 var (
