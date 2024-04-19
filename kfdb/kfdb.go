@@ -73,10 +73,6 @@ type Defaults struct {
 	// not provide one.
 	Addr string `json:"addr,omitempty"`
 
-	// PasswordLength, if positive, is used as the default password length when
-	// generating a password that does not specify its own length.
-	PasswordLength int `json:"passwordLength,omitempty"`
-
 	// Hashpass, if set, contains defaults for the hashpass generator.
 	Hashpass *Hashpass `json:"hashpass,omitempty"`
 }

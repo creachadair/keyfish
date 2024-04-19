@@ -69,7 +69,7 @@ func runConvert(env *command.Env, configPath, dbPath string) error {
 		db.Defaults.Addr = base.Default.EMail
 	}
 	if base.Default.Length > 0 {
-		db.Defaults.PasswordLength = base.Default.Length
+		db.Defaults.Hashpass.Length = base.Default.Length
 	}
 	if base.Default.Login != "" {
 		db.Defaults.Username = base.Default.Login
