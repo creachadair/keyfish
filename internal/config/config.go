@@ -14,7 +14,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/creachadair/keyfish/hashpass"
+	"github.com/creachadair/keyfish/internal/hashpass"
 	"github.com/creachadair/otp"
 )
 

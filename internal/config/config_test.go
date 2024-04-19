@@ -3,7 +3,7 @@ package config
 import (
 	"testing"
 
-	"github.com/creachadair/keyfish/hashpass"
+	"github.com/creachadair/keyfish/internal/hashpass"
 	gocmp "github.com/google/go-cmp/cmp"
 )
 

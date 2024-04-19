@@ -1,4 +1,4 @@
-// Unit tests for package keyfish/hashpass
+// Unit tests for package keyfish/internal/hashpass
 // Author: M. J. Fromberger <michael.j.fromberger@gmail.com>
 
 package hashpass_test
@@ -6,7 +6,7 @@ package hashpass_test
 import (
 	"testing"
 
-	"github.com/creachadair/keyfish/hashpass"
+	"github.com/creachadair/keyfish/internal/hashpass"
 )
 
 // Check test vectors confirmed against the Chrome extension.

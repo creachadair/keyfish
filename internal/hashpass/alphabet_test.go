@@ -3,7 +3,7 @@ package hashpass_test
 import (
 	"testing"
 
-	"github.com/creachadair/keyfish/hashpass"
+	"github.com/creachadair/keyfish/internal/hashpass"
 )
 
 func TestPick(t *testing.T) {

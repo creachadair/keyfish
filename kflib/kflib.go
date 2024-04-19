@@ -15,7 +15,7 @@ import (
 
 	"github.com/creachadair/atomicfile"
 	"github.com/creachadair/getpass"
-	"github.com/creachadair/keyfish/hashpass"
+	"github.com/creachadair/keyfish/internal/hashpass"
 	"github.com/creachadair/keyfish/kfdb"
 	"github.com/creachadair/mds/slice"
 	"github.com/creachadair/mds/value"

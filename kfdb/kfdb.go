@@ -135,8 +135,8 @@ type Detail struct {
 }
 
 // Hashpass contains settings for a "hashed" password generator.
-// See [github.com/creachadair/keyfish/hashpass.Context] for details on the
-// algorithm used for password generation.
+// See [github.com/creachadair/keyfish/internal/hashpass.Context] for details
+// on the algorithm used for password generation.
 type Hashpass struct {
 	// SecretKey, if set, is used as the hashpass generator key.
 	SecretKey string `json:"secretKey,omitempty"`
