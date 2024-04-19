@@ -1,4 +1,4 @@
-package main
+package cmdcli
 
 import (
 	"fmt"
@@ -8,6 +8,7 @@ import (
 	"text/tabwriter"
 
 	"github.com/creachadair/command"
+	"github.com/creachadair/flax"
 	"github.com/creachadair/keyfish/clipboard"
 	"github.com/creachadair/keyfish/cmd/kf/config"
 	"github.com/creachadair/keyfish/kfdb"
@@ -15,6 +16,59 @@ import (
 	"github.com/creachadair/keyfish/wordhash"
 	"github.com/creachadair/mds/slice"
 )
+
+var Commands = []*command.C{
+	{
+		Name:     "list",
+		Help:     "List the entries in the database.",
+		SetFlags: command.Flags(flax.MustBind, &listFlags),
+		Run:      command.Adapt(runList),
+	},
+	{
+		Name:     "print",
+		Usage:    "<query>",
+		Help:     "Print the password for the specified query.",
+		SetFlags: command.Flags(flax.MustBind, &pwFlags),
+		Run:      command.Adapt(runPW),
+	},
+	{
+		Name:     "copy",
+		Usage:    "<query>",
+		Help:     "Copy the password for the specified query to the clipboard.",
+		SetFlags: command.Flags(flax.MustBind, &pwFlags),
+		Run:      command.Adapt(runPW),
+	},
+	{
+		Name:  "otp",
+		Usage: "<query>",
+		Help: `Print a TOTP code for the specified query.
+
+If the specified query does not match a record with an OTP code,
+an error is reported. If a tag is set on the query, and the record
+has a detail whose contents are an OTP URL, that URL is used to
+generate a code instead of the base record's code.`,
+		SetFlags: command.Flags(flax.MustBind, &otpFlags),
+		Run:      command.Adapt(runOTP),
+	},
+	{
+		Name:  "create-db",
+		Usage: "<db-path>",
+		Help:  "Create a new empty database.",
+		Run:   command.Adapt(runCreateDB),
+	},
+	{
+		Name:  "archive",
+		Usage: "<query>",
+		Help:  "Archive the specified record.",
+		Run:   command.Adapt(runArchive),
+	},
+	{
+		Name:  "unarchive",
+		Usage: "<query>",
+		Help:  "Unarchive the specified record.",
+		Run:   command.Adapt(runArchive),
+	},
+}
 
 var listFlags struct {
 	All bool `flag:"a,Include archived entries in the output"`
