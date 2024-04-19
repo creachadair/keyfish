@@ -47,7 +47,7 @@ import (
 	"github.com/creachadair/command"
 	"github.com/creachadair/getpass"
 	"github.com/creachadair/keyfish/clipboard"
-	"github.com/creachadair/keyfish/config"
+	"github.com/creachadair/keyfish/internal/config"
 	"github.com/creachadair/keyfish/wordhash"
 	"github.com/creachadair/mds/mapset"
 	"github.com/creachadair/mds/value"

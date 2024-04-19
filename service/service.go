@@ -14,7 +14,7 @@ import (
 	"time"
 
 	"github.com/creachadair/keyfish/clipboard"
-	"github.com/creachadair/keyfish/config"
+	"github.com/creachadair/keyfish/internal/config"
 	"github.com/creachadair/otp"
 )
 

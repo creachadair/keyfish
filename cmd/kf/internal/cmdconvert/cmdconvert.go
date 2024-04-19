@@ -11,7 +11,7 @@ import (
 
 	"github.com/creachadair/command"
 	"github.com/creachadair/flax"
-	"github.com/creachadair/keyfish/config"
+	"github.com/creachadair/keyfish/internal/config"
 	"github.com/creachadair/keyfish/kfdb"
 	"github.com/creachadair/keyfish/kflib"
 	"github.com/creachadair/mds/value"
