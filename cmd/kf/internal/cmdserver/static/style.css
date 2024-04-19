@@ -18,13 +18,13 @@
 @media only screen and (max-device-width: 480px) {
     body {
         width: 90%;
-        margin: 1rem;
+        margin: 0 5%;
     }
 }
 @media only screen and (min-device-width: 1000px) {
     body {
-        width: 50%;
-        margin: 2rem 7%;
+        width: 70%;
+        margin: 2rem 15%;
     }
 }
 
@@ -122,12 +122,17 @@ button {
 }
 
 button.tab {
-    width: 90%;
-    height: 90%;
+    width: 100%;
+    height: 100%;
+}
+
+td.tab {
+    width: 7%;
 }
 
 button.ctrl {
     margin: 0;
+    width: 100%;
     margin-top: 1em;
     padding: 0.2rem;
     border: none;

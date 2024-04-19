@@ -2,7 +2,7 @@
 {{if gt (len .) 1}}<div class=sr-tag>{{len .}} results</div>{{end}}
 <table id=sr>{{range .}}
   <tr class=sr>
-    <td>
+    <td class="tab">
       <button class=tab hx-get="/view/{{.Index}}" hx-target="#result">View</button>
     </td>
     <td class=label>
