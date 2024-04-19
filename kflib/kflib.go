@@ -241,9 +241,12 @@ func GetHashpassInfo(db *kfdb.DB, rec *kfdb.Record, tag string) HashpassInfo {
 	h, d := value.At(rec.Hashpass), value.At(db.Defaults)
 	hc := hashpass.Context{
 		Alphabet: hashpass.All,
-		Site:     cmp.Or(h.Seed, rec.Hosts[0]),
+		Site:     h.Seed,
 		Salt:     cmp.Or(tag, h.Tag),
 		Secret:   cmp.Or(h.SecretKey, value.At(d.Hashpass).SecretKey),
+	}
+	if hc.Site == "" && len(rec.Hosts) != 0 {
+		hc.Site = rec.Hosts[0]
 	}
 	if h.Punct != nil && !*h.Punct {
 		hc.Alphabet = hashpass.NoPunct
