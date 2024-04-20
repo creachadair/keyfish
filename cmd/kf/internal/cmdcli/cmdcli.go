@@ -240,7 +240,7 @@ func runArchive(env *command.Env, query string) error {
 }
 
 var randFlags struct {
-	Length  int    `flag:"length,The length of the password to generate"`
+	Length  int    `flag:"n,The length of the password to generate"`
 	Words   bool   `flag:"words,Generate words instead of characters"`
 	Copy    bool   `flag:"copy,Copy the generated password to the clipboard"`
 	NoDigit bool   `flag:"no-digits,Omit digits from the generated password"`
@@ -251,7 +251,7 @@ var randFlags struct {
 
 func runRandom(env *command.Env) error {
 	if randFlags.Length <= 0 {
-		return env.Usagef("the --length must be positive")
+		return env.Usagef("the length (-n) must be positive")
 	}
 
 	var s *kfdb.Store
