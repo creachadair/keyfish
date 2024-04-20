@@ -118,7 +118,7 @@ Finally, though, I decided it was past time to switch to a properly-encrypted
 storage format. To avoid having to change all my passwords all at once, I kept
 the same HMAC-based password generation scheme as a default option. Now,
 though, the configuration data are encrypted with an AEAD on ChaCha20-Poly1305
-using a storage format inspired by the one of my teammates designed for the
+using a storage format inspired by the one my teammates designed for the
 [setec](https://github.com/tailscale/setec) tool we built together.
 
 With an encrypted config file, it's no longer necessary to keep track of key
