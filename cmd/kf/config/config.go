@@ -20,7 +20,7 @@ type Settings struct {
 func LoadDB(env *command.Env) (*kfdb.Store, error) {
 	set := env.Config.(*Settings)
 	if set.DBPath == "" {
-		return nil, errors.New("no database path specified")
+		return nil, errors.New("no database path specified (provide --db or set KEYFISH_DB)")
 	}
 	return kflib.OpenDB(set.DBPath)
 }
