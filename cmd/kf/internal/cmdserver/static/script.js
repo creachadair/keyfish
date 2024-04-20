@@ -84,7 +84,7 @@
     window.addEventListener('htmx:afterSettle', (evt) => {
         evt.target.querySelectorAll('.copyable').forEach((elt) => {
             elt.addEventListener('click', (ign) => {
-                pulse(elt, 'copying', 250);
+                pulse(elt, 'copying', 300); // match transition timing
                 copyToClipboard(elt.innerText);
             });
         });

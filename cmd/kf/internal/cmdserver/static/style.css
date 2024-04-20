@@ -5,7 +5,7 @@
     --c-med-light: #3282b880;
     --c-high: #bbe1fa;
     --c-high-light: #bbe1fa80;
-    --c-pulse: #ccf2fb;
+    --c-pulse: #ccf2fb80;
     --f-size: 18px;
 
     --text-body: var(--c-high);
@@ -195,7 +195,7 @@ td.copyable {
 
 .copyable {
     cursor: grab;
-    transition: background-color 0.5s ease-out;
+    transition: background-color 0.3s ease-out;
 }
 
 .copying {
