@@ -1,10 +1,10 @@
 package cmdcli
 
 import (
+	"cmp"
 	"fmt"
 	"os"
 	"slices"
-	"strings"
 	"text/tabwriter"
 
 	"github.com/creachadair/command"
@@ -14,12 +14,13 @@ import (
 	"github.com/creachadair/keyfish/kfdb"
 	"github.com/creachadair/keyfish/kflib"
 	"github.com/creachadair/keyfish/wordhash"
-	"github.com/creachadair/mds/slice"
+	"github.com/creachadair/mds/value"
 )
 
 var Commands = []*command.C{
 	{
 		Name:     "list",
+		Usage:    "[query]",
 		Help:     "List the entries in the database.",
 		SetFlags: command.Flags(flax.MustBind, &listFlags),
 		Run:      command.Adapt(runList),
@@ -76,38 +77,40 @@ var listFlags struct {
 }
 
 // runList implements the "list" subcommand.
-func runList(env *command.Env) error {
+func runList(env *command.Env, optQuery ...string) error {
+	var query string // everything
+	if len(optQuery) > 1 {
+		return env.Usagef("extra arguments after query: %q", optQuery[1:])
+	} else if len(optQuery) == 1 {
+		query = optQuery[0]
+	}
+
 	s, err := config.LoadDB(env)
 	if err != nil {
 		return err
 	}
 	db := s.DB()
 
-	var ids []string
-	var maxWidth int
-	for _, r := range db.Records {
-		if r.Archived && (listFlags.Arch || listFlags.NArch) {
-			ids = append(ids, r.Label+"*")
-		} else if !r.Archived && !listFlags.NArch {
-			ids = append(ids, r.Label)
-		} else {
+	fr := kflib.FindRecords(db.Records, query)
+	slices.SortFunc(fr, func(a, b kflib.FoundRecord) int {
+		return cmp.Compare(a.Record.Label, b.Record.Label)
+	})
+
+	tw := tabwriter.NewWriter(os.Stdout, 4, 0, 1, ' ', 0)
+	for _, r := range fr {
+		if r.Record.Archived {
+			if !(listFlags.Arch || listFlags.NArch) {
+				continue
+			}
+		} else if listFlags.NArch {
 			continue
 		}
-		maxWidth = max(maxWidth, len(ids[len(ids)-1]))
-	}
-	slices.Sort(ids)
-
-	const lineLength = 90
-	const padding = 2
-
-	fw := maxWidth + padding
-	nc := (lineLength + fw - 1) / fw
-	nr := (len(ids) + nc - 1) / nc
-
-	cols := slice.Chunks(ids, nr)
-	tw := tabwriter.NewWriter(os.Stdout, maxWidth, 0, padding, ' ', 0)
-	for r := 0; r < nr; r++ {
-		fmt.Fprintln(tw, strings.Join(slice.Strip(cols, r), "\t"))
+		tag := value.Cond(r.Record.Archived, "*", "-")
+		title := r.Record.Title
+		if title == "" && len(r.Record.Hosts) != 0 {
+			title = r.Record.Hosts[0]
+		}
+		fmt.Fprintf(tw, "%s\t%s\t%s\n", r.Record.Label, tag, title)
 	}
 	return tw.Flush()
 }
