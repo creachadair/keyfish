@@ -100,7 +100,6 @@ func runConvert(env *command.Env, configPath, dbPath string) error {
 			Hashpass: &kfdb.Hashpass{
 				Seed:   site.Key,
 				Length: site.Length,
-				Format: site.Format,
 				Tag:    site.Salt,
 				Punct:  site.Punct,
 			},

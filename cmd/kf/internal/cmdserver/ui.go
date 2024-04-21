@@ -164,11 +164,7 @@ func (s UI) password(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "no key secret available", http.StatusInternalServerError)
 			return
 		}
-		if hc.Format != "" {
-			pw = hc.Context.Format(hc.Format)
-		} else {
-			pw = hc.Password(hc.Length)
-		}
+		pw = hc.Password(hc.Length)
 	}
 
 	w.Header().Set("HX-Trigger-After-Settle", `{"copyText":"pwval"}`)

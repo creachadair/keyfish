@@ -253,16 +253,14 @@ func GetHashpassInfo(db *kfdb.DB, rec *kfdb.Record, tag string) HashpassInfo {
 	}
 	return HashpassInfo{
 		Length:  cmp.Or(h.Length, value.At(d.Hashpass).Length),
-		Format:  h.Format,
 		Context: hc,
 	}
 }
 
 // HashpassInfo carries settings for hashpass key generation.
 type HashpassInfo struct {
-	Length           int    // the desired password length
-	Format           string // the format string to use
-	hashpass.Context        // the hashpass context for generation
+	Length           int // the desired password length
+	hashpass.Context     // the hashpass context for generation
 }
 
 // DBWatcher is a database connected with a file path watcher, that reloads the
