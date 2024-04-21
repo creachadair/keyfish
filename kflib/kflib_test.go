@@ -2,6 +2,7 @@ package kflib_test
 
 import (
 	crand "crypto/rand"
+	"fmt"
 	"io"
 	"log"
 	mrand "math/rand"
@@ -12,13 +13,12 @@ import (
 	"github.com/creachadair/mds/mtest"
 )
 
-func TestRandomChars(t *testing.T) {
-	mtest.Swap[io.Reader](t, &crand.Reader, mrand.New(mrand.NewSource(20240323171652)))
-
-	tests := []struct {
+func TestChars(t *testing.T) {
+	type tcase struct {
 		length  int
 		charset kflib.Charset
-	}{
+	}
+	tests := []tcase{
 		{5, 0},
 		{8, 0},
 		{12, kflib.AllChars},
@@ -26,14 +26,13 @@ func TestRandomChars(t *testing.T) {
 		{37, kflib.Letters | kflib.Digits},
 		{42, kflib.AllChars},
 	}
-	for _, tc := range tests {
-		got := kflib.RandomChars(tc.length, tc.charset)
+	check := func(t *testing.T, got string, tc tcase) {
 		if len(got) < 8 {
 			t.Errorf("Got length %d, want at least 8", len(got))
 		} else if tc.length >= 8 && len(got) != tc.length {
 			t.Errorf("Got length %d, want %d", len(got), tc.length)
 		}
-		log.Printf("Generated %q", got)
+		t.Logf("Generated %q", got)
 		hasLetter, hasDigit, hasSymbol := checkPW(got)
 		if !hasLetter {
 			t.Error("No letters found")
@@ -45,6 +44,20 @@ func TestRandomChars(t *testing.T) {
 			t.Errorf("Has symbol = %v, want %v", hasSymbol, ws)
 		}
 	}
+	t.Run("Random", func(t *testing.T) {
+		mtest.Swap[io.Reader](t, &crand.Reader, mrand.New(mrand.NewSource(20240323171652)))
+
+		for _, tc := range tests {
+			check(t, kflib.RandomChars(tc.length, tc.charset), tc)
+		}
+	})
+	t.Run("Hashed", func(t *testing.T) {
+		const passphrase, seed = "magic is as magic does", "example.com"
+		for i, tc := range tests {
+			salt := fmt.Sprintf("%d", i+1)
+			check(t, kflib.HashedChars(tc.length, tc.charset, passphrase, seed, salt), tc)
+		}
+	})
 }
 
 func checkPW(s string) (hasLetter, hasDigit, hasOther bool) {

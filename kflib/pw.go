@@ -2,12 +2,16 @@ package kflib
 
 import (
 	crand "crypto/rand"
+	"crypto/sha256"
 	"encoding/binary"
 	"fmt"
+	"io"
 	"math"
 	"strings"
 
 	_ "embed"
+
+	"golang.org/x/crypto/hkdf"
 )
 
 // To update the word list, run "go generate ./kflib".
@@ -54,27 +58,23 @@ const (
 // RandomChars creates a new randomly-generated password of the given length
 // and using the specified character types. A minimum length of 8 is enforced.
 func RandomChars(length int, charset Charset) string {
-	chars := pwLetters
-	if charset&Digits != 0 {
-		chars += pwDigits
-	}
-	if charset&Symbols != 0 {
-		chars += pwSymbols
-	}
-	clen := uint64(len(chars))
-
 	length = max(length, 8)
 	out := make([]byte, length)
-	var bits uint64 // entropy bits
-	var nb int      // unconsumed entropy count
-	for i := range length {
-		if nb < bitsPerChar {
-			bits, nb = randomUint64(), 64
-		}
-		out[i] = chars[int(bits%clen)]
-		bits /= clen
-		nb -= bitsPerChar
-	}
+	fillRandom(out, expandCharset(charset), crand.Reader)
+	return string(out)
+}
+
+// HashedChars creates a new HKDF password of the given length using the
+// specified character types. A minimum length of 8 is enforced.
+//
+// The passphrase is a strong secret passphrase. The seed is not secret, but
+// must be fixed for a given context. The salt is optional, if non-empty it is
+// mixed in to the HKDF as additional context.
+func HashedChars(length int, charset Charset, passphrase, seed, salt string) string {
+	rng := hkdf.New(sha256.New, []byte(passphrase), []byte(seed), []byte(salt))
+	length = max(length, 8)
+	out := make([]byte, length)
+	fillRandom(out, expandCharset(charset), rng)
 	return string(out)
 }
 
@@ -88,7 +88,7 @@ func RandomWords(numWords int, joiner string) string {
 	var nb int      // unconsumed entropy count
 	for i := range numWords {
 		if nb < bitsPerWord {
-			bits, nb = randomUint64(), 64
+			bits, nb = randomUint64(crand.Reader), 64
 		}
 		out[i] = words[int(bits%wordListLen)]
 		bits /= wordListLen
@@ -112,10 +112,40 @@ const (
 	bitsPerChar = 7 // log2(52 + 10 + 28) = 6.492, round up to 7
 )
 
-func randomUint64() uint64 {
+// randomUint64 returns a random value populated by reading rng.
+func randomUint64(rng io.Reader) uint64 {
 	var buf [8]byte
-	if _, err := crand.Read(buf[:]); err != nil {
+	if _, err := io.ReadFull(rng, buf[:]); err != nil {
 		panic(err)
 	}
 	return binary.LittleEndian.Uint64(buf[:])
+}
+
+// fillRandom populates out with a random password on the given alphabet using
+// rng as the source of randomness.
+func fillRandom(out []byte, chars string, rng io.Reader) {
+	clen := uint64(len(chars))
+
+	var bits uint64 // entropy bits
+	var nb int      // unconsumed entropy count
+	for i := range out {
+		if nb < bitsPerChar {
+			bits, nb = randomUint64(rng), 64
+		}
+		out[i] = chars[int(bits%clen)]
+		bits /= clen
+		nb -= bitsPerChar
+	}
+}
+
+// expandCharset returns the alphabet described by c.
+func expandCharset(c Charset) string {
+	chars := pwLetters
+	if c&Digits != 0 {
+		chars += pwDigits
+	}
+	if c&Symbols != 0 {
+		chars += pwSymbols
+	}
+	return chars
 }
