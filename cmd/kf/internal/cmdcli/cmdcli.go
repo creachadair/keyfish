@@ -71,7 +71,8 @@ given query, in addition to printing or copying it.`,
 }
 
 var listFlags struct {
-	All bool `flag:"a,Include archived entries in the output"`
+	Arch  bool `flag:"a,Include archived entries in the output"`
+	NArch bool `flag:"n,Exclude unarchived entries from the output"`
 }
 
 // runList implements the "list" subcommand.
@@ -85,13 +86,12 @@ func runList(env *command.Env) error {
 	var ids []string
 	var maxWidth int
 	for _, r := range db.Records {
-		if r.Archived {
-			if !listFlags.All {
-				continue
-			}
+		if r.Archived && (listFlags.Arch || listFlags.NArch) {
 			ids = append(ids, r.Label+"*")
-		} else {
+		} else if !r.Archived && !listFlags.NArch {
 			ids = append(ids, r.Label)
+		} else {
+			continue
 		}
 		maxWidth = max(maxWidth, len(ids[len(ids)-1]))
 	}
