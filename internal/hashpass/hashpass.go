@@ -23,7 +23,6 @@ package hashpass
 import (
 	"crypto/hmac"
 	"crypto/sha256"
-	"math"
 	"strconv"
 )
 
@@ -89,16 +88,6 @@ func (c Context) Format(format string) string {
 		}
 	}
 	return string(pw)
-}
-
-// Entropy returns an estimate of the bits of entropy for a password of the
-// given length generated with the current settings.  The result may be zero.
-func (c Context) Entropy(length int) int {
-	if length < 0 || len(c.Alphabet) == 0 {
-		return 0
-	}
-	bpc := int(math.Floor(-math.Log2(1 / float64(len(c.Alphabet)))))
-	return bpc * length
 }
 
 // makeHash computes the HMAC/SHA256 of the site key using the salt from the
