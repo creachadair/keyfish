@@ -9,6 +9,7 @@ import (
 	"github.com/creachadair/keyfish/cmd/kf/config"
 
 	"github.com/creachadair/keyfish/cmd/kf/internal/cmdcli"
+	"github.com/creachadair/keyfish/cmd/kf/internal/cmddb"
 	"github.com/creachadair/keyfish/cmd/kf/internal/cmddebug"
 	"github.com/creachadair/keyfish/cmd/kf/internal/cmdserver"
 )
@@ -35,6 +36,7 @@ the KEYFISH_DB environment variable.`,
 
 		Commands: append(
 			cmdcli.Commands,
+			cmddb.Command,
 			cmdserver.Command,
 			command.HelpCommand([]command.HelpTopic{{
 				Name: "query",

@@ -48,11 +48,6 @@ Use "@" to refer to the path set via the --db flag.`,
 		Usage: "<db-path> <json-path>",
 		Help:  "Import a plaintext JSON into a database, replacing its contents.",
 		Run:   command.Adapt(runDebugImport),
-	}, {
-		Name:  "change-key",
-		Usage: "<db-path>",
-		Help:  "Change the access key on the specified database.",
-		Run:   command.Adapt(runDebugChangeKey),
 	},
 		cmdconvert.Command,
 	},
@@ -160,28 +155,6 @@ func runDebugImport(env *command.Env, dbPath, jsonPath string) error {
 		return err
 	}
 	fmt.Fprintf(env, "Imported %q into %q\n", jsonPath, dp)
-	return nil
-}
-
-// runDebugChangeKey implements the "debug change-key" subcommand.
-func runDebugChangeKey(env *command.Env, dbPath string) error {
-	dp := getDBPath(env, dbPath)
-	s, err := kflib.OpenDB(dp)
-	if err != nil {
-		return fmt.Errorf("open database: %w", err)
-	}
-	newpp, err := kflib.ConfirmPassphrase("New passphrase: ")
-	if err != nil {
-		return err
-	}
-	s2, err := kfdb.New(newpp, s.DB())
-	if err != nil {
-		return err
-	}
-	if err := kflib.SaveDB(s2, dp); err != nil {
-		return err
-	}
-	fmt.Fprintf(env, "Access key updated for %q\n", dp)
 	return nil
 }
 

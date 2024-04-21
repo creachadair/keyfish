@@ -51,24 +51,6 @@ generate a code instead of the base record's code.`,
 		Run:      command.Adapt(runOTP),
 	},
 	{
-		Name:  "create-db",
-		Usage: "<db-path>",
-		Help:  "Create a new empty database.",
-		Run:   command.Adapt(runCreateDB),
-	},
-	{
-		Name:  "archive",
-		Usage: "<query>",
-		Help:  "Archive the specified record.",
-		Run:   command.Adapt(runArchive),
-	},
-	{
-		Name:  "unarchive",
-		Usage: "<query>",
-		Help:  "Unarchive the specified record.",
-		Run:   command.Adapt(runArchive),
-	},
-	{
 		Name: "random",
 		Help: `Generate a cryptographically random password.
 
@@ -85,6 +67,18 @@ With --set, the password is also stored on the record matching the
 given query, in addition to printing or copying it.`,
 		SetFlags: command.Flags(flax.MustBind, &randFlags),
 		Run:      command.Adapt(runRandom),
+	},
+	{
+		Name:  "archive",
+		Usage: "<query>",
+		Help:  "Archive the specified record.",
+		Run:   command.Adapt(runArchive),
+	},
+	{
+		Name:  "unarchive",
+		Usage: "<query>",
+		Help:  "Unarchive the specified record.",
+		Run:   command.Adapt(runArchive),
 	},
 }
 
@@ -196,26 +190,6 @@ func runOTP(env *command.Env, query string) error {
 		return err
 	}
 	fmt.Println(otp)
-	return nil
-}
-
-// runCreateDB implements the "create" subcommand.
-func runCreateDB(env *command.Env, dbPath string) error {
-	if _, err := os.Stat(dbPath); err == nil {
-		return fmt.Errorf("database %q already exists", dbPath)
-	}
-	passphrase, err := kflib.ConfirmPassphrase("New database passphrase: ")
-	if err != nil {
-		return err
-	}
-	s, err := kfdb.New(passphrase, nil)
-	if err != nil {
-		return fmt.Errorf("create database: %w", err)
-	}
-	if err := kflib.SaveDB(s, dbPath); err != nil {
-		return err
-	}
-	fmt.Fprintf(env, "Created database %q\n", dbPath)
 	return nil
 }
 
