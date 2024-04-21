@@ -68,18 +68,6 @@ given query, in addition to printing or copying it.`,
 		SetFlags: command.Flags(flax.MustBind, &randFlags),
 		Run:      command.Adapt(runRandom),
 	},
-	{
-		Name:  "archive",
-		Usage: "<query>",
-		Help:  "Archive the specified record.",
-		Run:   command.Adapt(runArchive),
-	},
-	{
-		Name:  "unarchive",
-		Usage: "<query>",
-		Help:  "Unarchive the specified record.",
-		Run:   command.Adapt(runArchive),
-	},
 }
 
 var listFlags struct {
@@ -191,26 +179,6 @@ func runOTP(env *command.Env, query string) error {
 	}
 	fmt.Println(otp)
 	return nil
-}
-
-// runArchive implements the "archive" and "unarchive" subcommands.
-func runArchive(env *command.Env, query string) error {
-	doArchive := env.Command.Name == "archive"
-
-	s, err := config.LoadDB(env)
-	if err != nil {
-		return err
-	}
-	db := s.DB()
-
-	res, err := kflib.FindRecord(db, query, !doArchive)
-	if err != nil {
-		return err
-	} else if res.Record.Archived == doArchive {
-		return fmt.Errorf("record is already %sd", env.Command.Name)
-	}
-	res.Record.Archived = doArchive
-	return config.SaveDB(env, s)
 }
 
 var randFlags struct {
