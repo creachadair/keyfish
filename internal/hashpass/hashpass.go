@@ -57,8 +57,6 @@ func (c Context) Password(n int) string {
 //
 // A hash mark ("#") in the format is a wildcard for a decimal digit.
 // An asterisk ("*") is a wildcard for a letter of either case.
-// A caret ("^") is a wildcard for an uppercase letter.
-// An underscore ("_") is a wildcard for a lowercase letter.
 // A question mark ("?") is a wildcard for any punctuation character.
 // A tilde ("~") is a wildcard for any non-punctuation character.
 // All other characters are copied literally to the output.
@@ -77,10 +75,6 @@ func (c Context) Format(format string) string {
 			pw[i] = Puncts.Pick(pw[i])
 		case '#':
 			pw[i] = Digits.Pick(pw[i])
-		case '^':
-			pw[i] = Uppercase.Pick(pw[i])
-		case '_':
-			pw[i] = Lowercase.Pick(pw[i])
 		case '~':
 			pw[i] = NoPunct.Pick(pw[i])
 		default:

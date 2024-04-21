@@ -11,14 +11,8 @@ import (
 type Alphabet string
 
 const (
-	// Uppercase is an alphabet of the uppercase ASCII letters.
-	Uppercase = Alphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-
-	// Lowercase is an alphabet of the lowercase ASCII letters.
-	Lowercase = Alphabet("abcdefghijklmnopqrstuvwxyz")
-
 	// Letters is an alphabet of the ASCII letters.
-	Letters = Uppercase + Lowercase
+	Letters = Alphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
 
 	// Digits is an alphabet comprising the ASCII decimal digits.
 	Digits = Alphabet("0123456789")

@@ -65,9 +65,7 @@ type Site struct {
 	// This overrides the Punct setting. The entries in the slice define which
 	// components to include:
 	//
-	//    "upper"     : uppercase letters (A..Z)
-	//    "lower"     : lowercase letters (a..z)
-	//    "letter"    : upper + lower
+	//    "letter"    : ASCII letters (A..Z, a..z)
 	//    "digit"     : decimal digits (0..9)
 	//    "nopunct"   : upper + lower + digit
 	//    "punct"     : punctuation (the built-in set)
@@ -242,10 +240,6 @@ func (s Site) alphabet() hashpass.Alphabet {
 
 		for _, elt := range s.Alphabet {
 			switch elt {
-			case "upper":
-				a += hashpass.Uppercase
-			case "lower":
-				a += hashpass.Lowercase
 			case "letter":
 				a += hashpass.Letters
 			case "digit":

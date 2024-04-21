@@ -25,7 +25,7 @@ func TestKnownValues(t *testing.T) {
 		{hashpass.All, 50, "cabezon", "bar", "l!?9F+hJq8F^ewy%5l:YEt!H?73/bCWAj#GD2jI1jzu^-tC20F"},
 		{hashpass.NoPunct, 32, "bloodfish", "", "jq77585eZJxN2uyD5IUEKcNxll2jWQys"},
 		{hashpass.NoPunct, 32, "bloodfish", "foo", "ZenZA1Ht88eewraGuFLkXIu92NQlV3rk"},
-		{hashpass.Lowercase + hashpass.Digits, 32, "cabezon", "foo", "a8592shtn9k5amb4blwx5mwgf2kry0h8"},
+		{hashpass.Letters + hashpass.Digits, 32, "cabezon", "foo", "B619wfMiW9S1BVDzBTno2VmLIwSeqtM8"},
 	}
 	for _, test := range tests {
 		c := hashpass.Context{
@@ -49,44 +49,36 @@ func TestFormat(t *testing.T) {
 	tests := []struct {
 		salt, format, expect string
 	}{
-		// Examples with mixed uppercase and lowercase.
-		{"", "________", "ckwpxgpz"},
-		{"", "^___^___", "CkwpXgpz"},
-
 		// The asterisk can generate upper and lowercase results.
-		{"", "_**^", "cUtP"},
+		{"", "****", "EUtf"},
 
 		// The tilde covers letters and digits.
 		{"0", "~~~~~~~~", "PZpkOX2o"},
 
 		// Characters not in the alphabets are passed through unchanged.
-		{"", "<____>", "<kwpx>"},
+		{"", "<****>", "<Utfu>"},
 
 		// Some examples with punctuation wildcards.
-		{"", "^_?_?", "Ck/p/"},
-		{"", "^_?_?^_?_^^^^^^_??", "Ck/p/Gp?mIFHBHDk./"},
+		{"", "**?*?", "EU/f/"},
+		{"", "**?*?**?********??", "EU/f/Mf?ZQLPCOGU./"},
 
 		// Punctuation marks other than the wildcards are preserved, but the
 		// wildcards work.
 		{"", "[%.+&@%]", "[%.+&@%]"},
 		{"", "[%.??@%]", "[%.=/@%]"},
-		{"", "[%.??^%]", "[%.=/G%]"},
+		{"", "[%.??*%]", "[%.=/M%]"},
 
 		// Password generation respects the seed.
-		{"foo", "^????_^__", "A?:?.nFoj"},
+		{"foo", "~????****", "B?:?.aKcT"},
 
 		// The exact identity of characters doesn't matter, only category.
-		{"foo", "_####____#", "a9897nfoj9"},
+		{"foo", "*####****#", "B9897aKcT9"},
 
 		// Length and salt.
 		{"", "?????????????????? ??????????????????????", "@&/=/%=?-^$%!%#&./ =:^*_.!-#-.&+:#/+.!*?,"},
-		{"", "__________________ ______________________", "ckwpxgpzmifhbhdkvx pvhlpubmdmujqveyrvblzs"},
-		{"", "^^^^^^^^^^^^^^^^^^ ^^^^^^^^^^^^^^^^^^^^^^", "CKWPXGPZMIFHBHDKVX PVHLPUBMDMUJQVEYRVBLZS"},
 		{"", "****************** **********************", "EUtfuMfzZQLPCOGUqv eqPWepCZGYpThrJwiqCXzk"},
 		{"", "################## ######################", "048692594322021489 5834580414836819680497"},
 		{"q", "????????????????????????????????????????", ",@?_$^!$*,/,*/-=$!^?:,-&:+$&..-?##@#=@^/"},
-		{"r", "________________________________________", "cxrmjefrfpovbxfikkaxrmmzzljqrqoomeyqsqsw"},
-		{"s", "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^", "IABGPSJYGWECVOLVJTTJBYVISEJDHLCAFANMWRGY"},
 		{"t", "****************************************", "aoUqoKKrLyxHBtcypBMzPukXNcTbOJpBBrMVxqoq"},
 		{"u", "########################################", "8364621019243126110487340041013933601615"},
 	}
