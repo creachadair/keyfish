@@ -38,9 +38,13 @@ Use "@" to refer to the path set via the --db flag.`,
 			Run:   command.Adapt(runDebugImport),
 		},
 		{
-			Name:     "hashpass",
-			Usage:    "[flags] [salt]@seed",
-			Help:     "Generate an HKDF based hash password or passphrase.",
+			Name:  "hashpass",
+			Usage: "[flags] [salt]@seed",
+			Help: `Generate an HKDF based hashed password.
+
+The seed is the non-secret generator seed. If provided, the salt is
+mixed in to the HKDF as additional context. The user is prompted for
+the HKDF secret. The output is written as a single line to stdout.`,
 			SetFlags: command.Flags(flax.MustBind, &hpFlags),
 			Run:      command.Adapt(runDebugHashpass),
 		},
