@@ -145,9 +145,6 @@ type Hashpass struct {
 	// If zero, the default length is used.
 	Length int `json:"length,omitempty"`
 
-	// Format, if non-empty, defines the layout of the generated password.
-	Format string `json:"format,omitempty"`
-
 	// Tag, if non-empty, defines a record tag to include in the generator hash
 	// if one is not provided explicitly.
 	Tag string `json:"tag,omitempty"`
