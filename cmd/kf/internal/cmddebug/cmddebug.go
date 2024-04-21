@@ -34,11 +34,6 @@ Use "@" to refer to the path set via the --db flag.`,
 		Help:  "Edit the record matching the specified query.",
 		Run:   command.Adapt(runDebugEditRecord),
 	}, {
-		Name:  "edit",
-		Usage: "<db-path>",
-		Help:  "Edit the full content of the database.",
-		Run:   command.Adapt(runDebugEdit),
-	}, {
 		Name:  "export",
 		Usage: "<db-path>",
 		Help:  "Export the contents of a database in plaintext as JSON.",
@@ -75,28 +70,6 @@ func runDebugShowRecord(env *command.Env, dbPath, query string) error {
 		I: res.Index,
 		R: res.Record,
 	})
-	return nil
-}
-
-// runDebugEdit implements the "debug edit" subcommand.
-func runDebugEdit(env *command.Env, dbPath string) error {
-	dp := getDBPath(env, dbPath)
-	s, err := kflib.OpenDB(dp)
-	if err != nil {
-		return err
-	}
-	repl, err := kflib.Edit(env.Context(), s.DB())
-	if errors.Is(err, kflib.ErrNoChange) {
-		fmt.Fprintln(env, "No change")
-		return nil
-	} else if err != nil {
-		return err
-	}
-	*s.DB() = *repl
-	if err := kflib.SaveDB(s, dp); err != nil {
-		return err
-	}
-	fmt.Fprintf(env, "Edit applied to %q\n", dp)
 	return nil
 }
 
