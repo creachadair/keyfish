@@ -245,6 +245,10 @@ func GenerateHashpass(db *kfdb.DB, rec *kfdb.Record, tag string) (string, error)
 
 	length := cmp.Or(h.Length, value.At(d.Hashpass).Length)
 	salt := cmp.Or(tag, h.Tag)
+	seed := h.Seed
+	if seed == "" && len(rec.Hosts) != 0 {
+		seed = rec.Hosts[0]
+	}
 
 	// If enabled, use the new-style HKDF algorithm instead.
 	if h.UseHKDF {
@@ -252,18 +256,15 @@ func GenerateHashpass(db *kfdb.DB, rec *kfdb.Record, tag string) (string, error)
 		if v := h.Punct; v != nil && !*v {
 			cs &^= Symbols
 		}
-		return HashedChars(length, cs, secret, h.Seed, salt), nil
+		return HashedChars(length, cs, secret, seed, salt), nil
 	}
 
 	// Otherwise, fall back to the old style.
 	hc := hashpass.Context{
 		Alphabet: hashpass.All,
-		Site:     h.Seed,
+		Site:     seed,
 		Salt:     salt,
 		Secret:   secret,
-	}
-	if hc.Site == "" && len(rec.Hosts) != 0 {
-		hc.Site = rec.Hosts[0]
 	}
 	if h.Punct != nil && !*h.Punct {
 		hc.Alphabet = hashpass.NoPunct
