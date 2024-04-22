@@ -6,10 +6,10 @@
   <table>
     <tr><th>Label:</th>
       <td>{{$r.Label}}</td>
-    </tr>
+    </tr>{{if $r.Title}}
     <tr><th>Title:</th>
       <td>{{$r.Title}}</td>
-    </tr>{{if $r.Hosts}}
+    </tr>{{end}}{{if $r.Hosts}}
     <tr><th>Host:</th>
       <td class="copyable">{{index $r.Hosts 0}}</td>
     </tr>{{end}}{{if $r.Username}}
