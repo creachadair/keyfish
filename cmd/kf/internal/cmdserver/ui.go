@@ -159,12 +159,11 @@ func (s UI) password(w http.ResponseWriter, r *http.Request) {
 	if rec.Password != "" && !preferHash {
 		pw = rec.Password
 	} else {
-		hc := kflib.GetHashpassInfo(st.DB(), rec, r.FormValue("tag"))
-		if hc.Secret == "" {
-			http.Error(w, "no key secret available", http.StatusInternalServerError)
+		pw, err = kflib.GenerateHashpass(st.DB(), rec, r.FormValue("tag"))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		pw = hc.Password(hc.Length)
 	}
 
 	w.Header().Set("HX-Trigger-After-Settle", `{"copyText":"pwval"}`)

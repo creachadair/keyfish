@@ -133,7 +133,7 @@ func runPW(env *command.Env, query string) error {
 	var pw string
 	if res.Record.Password != "" {
 		pw = res.Record.Password
-	} else if pw, err = genPassword(s.DB(), res.Tag, res.Record); err != nil {
+	} else if pw, err = kflib.GenerateHashpass(s.DB(), res.Record, res.Tag); err != nil {
 		return err
 	}
 	if env.Command.Name == "copy" {

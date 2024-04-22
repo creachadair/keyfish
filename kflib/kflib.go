@@ -234,16 +234,33 @@ func FindRecords(recs []*kfdb.Record, query string) []FoundRecord {
 	return out
 }
 
-// GetHashpassInfo returns a hashpass configuration for the specified record in
-// the given database. If no hashpass secret is available, the Secret field of
-// the result will be empty.
-func GetHashpassInfo(db *kfdb.DB, rec *kfdb.Record, tag string) HashpassInfo {
+// GenerateHashpass hashpass password for the specified record in the given
+// database. It reports an error if no hashpass secret is available.  will be
+func GenerateHashpass(db *kfdb.DB, rec *kfdb.Record, tag string) (string, error) {
 	h, d := value.At(rec.Hashpass), value.At(db.Defaults)
+	secret := cmp.Or(h.SecretKey, value.At(d.Hashpass).SecretKey)
+	if secret == "" {
+		return "", errors.New("no hashpass secret is available")
+	}
+
+	length := cmp.Or(h.Length, value.At(d.Hashpass).Length)
+	salt := cmp.Or(tag, h.Tag)
+
+	// If enabled, use the new-style HKDF algorithm instead.
+	if h.UseHKDF {
+		cs := AllChars
+		if v := h.Punct; v != nil && !*v {
+			cs &^= Symbols
+		}
+		return HashedChars(length, cs, secret, h.Seed, salt), nil
+	}
+
+	// Otherwise, fall back to the old style.
 	hc := hashpass.Context{
 		Alphabet: hashpass.All,
 		Site:     h.Seed,
-		Salt:     cmp.Or(tag, h.Tag),
-		Secret:   cmp.Or(h.SecretKey, value.At(d.Hashpass).SecretKey),
+		Salt:     salt,
+		Secret:   secret,
 	}
 	if hc.Site == "" && len(rec.Hosts) != 0 {
 		hc.Site = rec.Hosts[0]
@@ -251,16 +268,7 @@ func GetHashpassInfo(db *kfdb.DB, rec *kfdb.Record, tag string) HashpassInfo {
 	if h.Punct != nil && !*h.Punct {
 		hc.Alphabet = hashpass.NoPunct
 	}
-	return HashpassInfo{
-		Length:  cmp.Or(h.Length, value.At(d.Hashpass).Length),
-		Context: hc,
-	}
-}
-
-// HashpassInfo carries settings for hashpass key generation.
-type HashpassInfo struct {
-	Length           int // the desired password length
-	hashpass.Context     // the hashpass context for generation
+	return hc.Password(length), nil
 }
 
 // DBWatcher is a database connected with a file path watcher, that reloads the

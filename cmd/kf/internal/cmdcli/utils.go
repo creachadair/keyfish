@@ -4,14 +4,8 @@ import (
 	"strings"
 
 	"github.com/creachadair/keyfish/kfdb"
-	"github.com/creachadair/keyfish/kflib"
 	"github.com/creachadair/otp/otpauth"
 )
-
-func genPassword(db *kfdb.DB, tag string, rec *kfdb.Record) (string, error) {
-	hc := kflib.GetHashpassInfo(db, rec, tag)
-	return hc.Password(hc.Length), nil
-}
 
 func getOTPCode(rec *kfdb.Record, tag string) *otpauth.URL {
 	if tag == "" {
