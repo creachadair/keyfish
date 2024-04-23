@@ -4,6 +4,9 @@ package config
 import (
 	"errors"
 	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/creachadair/command"
 	"github.com/creachadair/keyfish/kfdb"
@@ -18,17 +21,16 @@ type Settings struct {
 // LoadDB opens the database specified by the DBPath setting. If the database
 // does not exist, LoadDB reports an error.
 func LoadDB(env *command.Env) (*kfdb.Store, error) {
-	set := env.Config.(*Settings)
-	if set.DBPath == "" {
+	path := DBPath(env)
+	if path == "" {
 		return nil, errors.New("no database path specified (provide --db or set KEYFISH_DB)")
 	}
-	return kflib.OpenDB(set.DBPath)
+	return kflib.OpenDB(path)
 }
 
 // SaveDB saves the specified database to the DBPath.
 func SaveDB(env *command.Env, s *kfdb.Store) error {
-	set := env.Config.(*Settings)
-	if err := kflib.SaveDB(s, set.DBPath); err != nil {
+	if err := kflib.SaveDB(s, DBPath(env)); err != nil {
 		return err
 	}
 	fmt.Fprintln(env, "<saved>")
@@ -36,4 +38,13 @@ func SaveDB(env *command.Env, s *kfdb.Store) error {
 }
 
 // DBPath returns the database path associated with env, or "".
-func DBPath(env *command.Env) string { return env.Config.(*Settings).DBPath }
+func DBPath(env *command.Env) string {
+	set := env.Config.(*Settings)
+	if tail, ok := strings.CutPrefix(set.DBPath, "$0"); ok {
+		ep, err := os.Executable()
+		if err == nil {
+			return filepath.Join(filepath.Dir(ep), tail)
+		}
+	}
+	return set.DBPath
+}

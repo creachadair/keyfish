@@ -2,6 +2,7 @@
 package main
 
 import (
+	"cmp"
 	"os"
 
 	"github.com/creachadair/command"
@@ -15,10 +16,17 @@ import (
 	"github.com/creachadair/keyfish/cmd/kf/internal/cmdserver"
 )
 
+// defaultDBPath, if set, defines a default database path to use when one is
+// not otherwise provided. It is exposed as a variable so the linker can set
+// it. If the path begins with "$0" the path is taken relative to the directory
+// containing the program executable.
+var defaultDBPath string
+
 func main() {
-	var flags struct {
-		DBPath string `flag:"db,default=$KEYFISH_DB,Database path (required)"`
-	}
+	var flags = struct {
+		DBPath string `flag:"db,default=*,Database path (required)"`
+	}{cmp.Or(defaultDBPath, os.Getenv("KEYFISH_DB"))}
+
 	root := &command.C{
 		Name: command.ProgramName(),
 		Help: `🐟 A command-line tool for the Keyfish password generator.
