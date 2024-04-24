@@ -6,7 +6,7 @@
             hx-get="/totp/{{.RecordID}}?detail={{.DetailID}}"
             hx-target="#{{.ID}}otp"
             hx-swap="outerHTML">
-      Copy
+      TOTP
     </button>
     <input id="{{.ID}}otp" type="hidden" value="" />{{end}}
 </td>

@@ -51,7 +51,7 @@
                 hx-get="/totp/{{$id}}"
                 hx-target="#otpval"
                 hx-swap="outerHTML">
-          TOTP
+          Copy
         </button>
         <input id="otpval" type="hidden" value="" />
       </td>
@@ -72,7 +72,7 @@
                       hx-get="/totp/{{$id}}?detail={{$index}}"
                       hx-target="#r{{$id}}d{{$index}}otp"
                       hx-swap="outerHTML">
-          Copy
+          TOTP
         </button>
         <input id="r{{$id}}d{{$index}}otp" type="hidden" value="" />{{end}}
       </td>
@@ -82,7 +82,7 @@
                 hx-get="/totp/{{$id}}?detail={{$index}}"
                 hx-target="#r{{$id}}d{{$index}}otp"
                 hx-swap="outerHTML">
-          Copy
+          TOTP
         </button>
         <input id="r{{$id}}d{{$index}}otp" type="hidden" value="" />
       </td>{{end}}
