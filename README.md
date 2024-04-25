@@ -97,7 +97,7 @@ the years since 2012, I've made various small-to-medium changes:
   app as a separate server.
 
 - I added more and more metadata to the config file, to keep track of all the
-  nonsense you need to long into things: Security questions and their answers,
+  nonsense you need to log into things: Security questions and their answers,
   confirmation PINs, which e-mail address I'd used to sign up, and so on.
 
 - I added the ability to store TOTP keys and to have the tool (and its web app)
