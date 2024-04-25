@@ -9,7 +9,6 @@ import (
 	"github.com/creachadair/command"
 	"github.com/creachadair/flax"
 	"github.com/creachadair/keyfish/cmd/kf/config"
-	"github.com/creachadair/keyfish/cmd/kf/internal/cmdconvert"
 	"github.com/creachadair/keyfish/kfdb"
 	"github.com/creachadair/keyfish/kflib"
 	"github.com/creachadair/mds/value"
@@ -48,7 +47,6 @@ the HKDF secret. The output is written as a single line to stdout.`,
 			SetFlags: command.Flags(flax.MustBind, &hpFlags),
 			Run:      command.Adapt(runDebugHashpass),
 		},
-		cmdconvert.Command,
 	},
 }
 
