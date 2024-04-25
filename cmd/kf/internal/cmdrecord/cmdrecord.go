@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/creachadair/command"
+	"github.com/creachadair/flax"
 	"github.com/creachadair/keyfish/cmd/kf/config"
 	"github.com/creachadair/keyfish/kfdb"
 	"github.com/creachadair/keyfish/kflib"
@@ -17,6 +18,13 @@ var Command = &command.C{
 	Help: "Commands to manipulate records.",
 
 	Commands: []*command.C{
+		{
+			Name:     "add",
+			Usage:    "<label>",
+			Help:     "Add a new record with the specified label.",
+			SetFlags: command.Flags(flax.MustBind, &addFlags),
+			Run:      command.Adapt(runRecordAdd),
+		},
 		{
 			Name:  "show",
 			Usage: "<query>",
@@ -42,6 +50,43 @@ var Command = &command.C{
 			Run:   command.Adapt(runRecordArchive),
 		},
 	},
+}
+
+var addFlags struct {
+	Title    string `flag:"title,Specify the title of the record"`
+	Username string `flag:"username,Specify the username for the record"`
+	EMail    string `flag:"email,Specify an e-mail for the record"`
+	Host     string `flag:"host,Specify a hostname for the record"`
+}
+
+// runRecordAdd implements the "record add" subcommand.
+func runRecordAdd(env *command.Env, label string) error {
+	s, err := config.LoadDB(env)
+	if err != nil {
+		return err
+	}
+	db := s.DB()
+	if _, err := kflib.FindRecord(db, label, true); err == nil {
+		return fmt.Errorf("label %q already exists", label)
+	}
+
+	nr := &kfdb.Record{
+		Label:    label,
+		Title:    addFlags.Title,
+		Username: addFlags.Username,
+	}
+	if addFlags.EMail != "" {
+		nr.Addrs = append(nr.Addrs, addFlags.EMail)
+	}
+	if addFlags.Host != "" {
+		nr.Hosts = append(nr.Hosts, addFlags.Host)
+	}
+	db.Records = append(db.Records, nr)
+	if err := config.SaveDB(env, s); err != nil {
+		return err
+	}
+	fmt.Fprintf(env, "Created new record %q\n", label)
+	return nil
 }
 
 // runRecordShow implements the "record show" subcommand.
