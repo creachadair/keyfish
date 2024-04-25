@@ -25,6 +25,7 @@
     </tr>{{end}}
   </table>
   <div class=tab><table>
+    {{- if or $r.Password $r.Hashpass}}
     <tr><th>{{if $r.Password}}Password:{{else}}Hashpass:{{end}}</th>
       <td>
         <button class="tab copyable"
@@ -36,7 +37,7 @@
         </button>
         <input id="pwval" type="hidden" value="" />
       <td>
-    </tr>{{if $r.Tags}}
+    </tr>{{end}}{{if $r.Tags}}
     <tr><th>Tags:</th>
       <td>
         <select name="tag">
