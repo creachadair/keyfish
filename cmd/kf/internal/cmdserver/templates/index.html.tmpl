@@ -11,7 +11,12 @@
     <script src="/static/script.js"></script>
   </head>
   <body>
-    <h1><img class=icon src="/static/kf128.png" width=32 height=32 />Keyfish</h1>
+    <h1><img class=icon src="/static/kf128.png" width=32 height=32
+             {{if and (.CanLock) (not .Locked)}}hx-get="/lock" hx-target="body"{{end}} />
+      Keyfish
+    </h1>
+    {{- if .Locked}}
+    {{template "lock.html.tmpl" .}}{{else}}
     <div id="search">
       <input id="query" name="q" type="text" class="textbox" size="25" value="{{.Query}}"
              autofocus autocomplete=off autocorrect=off autocapitalize=none
@@ -24,5 +29,6 @@
     <div id="result">{{if .Query}}
       {{template "search.html.tmpl" .}}
     {{end}}</div>
+    {{- end}}
   </body>
 </html>

@@ -27,7 +27,9 @@ var Command = &command.C{
 }
 
 var serverFlags struct {
-	Addr string `flag:"addr,Service address (host:port)"`
+	Addr   string `flag:"addr,Service address (host:port)"`
+	PIN    string `flag:"pin,PIN to unlock the UI"`
+	Locked bool   `flag:"locked,Set the UI to initially locked"`
 }
 
 func runServer(env *command.Env) error {
@@ -38,13 +40,16 @@ func runServer(env *command.Env) error {
 	if err != nil {
 		return err
 	}
+	ui := &UI{
+		Store:     w.Store,
+		Static:    staticFS,
+		Templates: ui,
+		LockPIN:   serverFlags.PIN,
+		Locked:    serverFlags.Locked && serverFlags.PIN != "",
+	}
 	srv := &http.Server{
-		Addr: serverFlags.Addr,
-		Handler: UI{
-			Store:     w.Store,
-			Static:    staticFS,
-			Templates: ui,
-		}.ServeMux(),
+		Addr:    serverFlags.Addr,
+		Handler: ui.ServeMux(),
 	}
 	ctx, cancel := signal.NotifyContext(env.Context(), syscall.SIGINT, syscall.SIGTERM)
 	defer cancel()

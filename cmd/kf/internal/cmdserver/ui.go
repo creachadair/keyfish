@@ -25,6 +25,12 @@ type UI struct {
 
 	// Templates are the compiled UI templates.
 	Templates *template.Template
+
+	// LockPIN, if non-empty, is the PIN used to unlock a locked UI.
+	LockPIN string
+
+	// Locked, if true, is whether the UI is (currently) locked.
+	Locked bool
 }
 
 // ServeMux returns a router for the UI endpoints:
@@ -36,23 +42,28 @@ type UI struct {
 //	GET /detail   -- serve a single record detail (partial)
 //	GET /password -- serve a single record password (partial)
 //	GET /totp     -- serve a single record TOTP code (partial)
-func (s UI) ServeMux() http.Handler {
+//	GET /unlock   -- request an unlock of the UI
+func (s *UI) ServeMux() http.Handler {
 	mux := http.NewServeMux()
 	if s.Static != nil {
 		mux.Handle("GET /static/", http.FileServer(http.FS(s.Static)))
 	}
 	mux.HandleFunc("GET /{$}", addCSP(s.ui))
-	mux.HandleFunc("GET /search", addCSP(s.search))
-	mux.HandleFunc("GET /view/{id}", addCSP(s.view))
-	mux.HandleFunc("GET /detail/{id}/{index}", addCSP(s.detail))
-	mux.HandleFunc("GET /password/{id}", addCSP(s.password))
-	mux.HandleFunc("GET /totp/{id}", addCSP(s.totp))
+	mux.HandleFunc("GET /search", addCSP(s.checkLock(s.search)))
+	mux.HandleFunc("GET /view/{id}", addCSP(s.checkLock(s.view)))
+	mux.HandleFunc("GET /detail/{id}/{index}", addCSP(s.checkLock(s.detail)))
+	mux.HandleFunc("GET /password/{id}", addCSP(s.checkLock(s.password)))
+	mux.HandleFunc("GET /totp/{id}", addCSP(s.checkLock(s.totp)))
+	if s.LockPIN != "" {
+		mux.HandleFunc("GET /lock", addCSP(s.lock))
+		mux.HandleFunc("GET /unlock", addCSP(s.unlock))
+	}
 	return mux
 }
 
 // runTemplate invokes the named template with the specified argument value.
 // If the template reports an error, runTemplates serves a 500.
-func (s UI) runTemplate(w http.ResponseWriter, r *http.Request, name string, value any) {
+func (s *UI) runTemplate(w http.ResponseWriter, r *http.Request, name string, value any) {
 	var buf bytes.Buffer
 	if err := s.Templates.Lookup(name).Execute(&buf, value); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -63,8 +74,8 @@ func (s UI) runTemplate(w http.ResponseWriter, r *http.Request, name string, val
 }
 
 // ui serves the main UI page.
-func (s UI) ui(w http.ResponseWriter, r *http.Request) {
-	var u uiData
+func (s *UI) ui(w http.ResponseWriter, r *http.Request) {
+	u := uiData{CanLock: s.LockPIN != "", Locked: s.Locked}
 	if query := strings.TrimSpace(r.FormValue("q")); query != "" {
 		if query != "*" {
 			u.Query = query
@@ -75,12 +86,14 @@ func (s UI) ui(w http.ResponseWriter, r *http.Request) {
 }
 
 // search serves search results (partial).
-func (s UI) search(w http.ResponseWriter, r *http.Request) {
+func (s *UI) search(w http.ResponseWriter, r *http.Request) {
 	query := strings.TrimSpace(r.FormValue("q"))
-	if query == "" {
+	switch query {
+	case "":
 		return // no results, empty response
-	} else if query == "*" {
+	case "*":
 		query = "" // find everything
+	default:
 	}
 	s.runTemplate(w, r, "search.html.tmpl", uiData{
 		SearchResult: searchRecords(s.Store().DB().Records, query),
@@ -88,7 +101,7 @@ func (s UI) search(w http.ResponseWriter, r *http.Request) {
 }
 
 // view serves a record view (partial).
-func (s UI) view(w http.ResponseWriter, r *http.Request) {
+func (s *UI) view(w http.ResponseWriter, r *http.Request) {
 	st := s.Store()
 	index, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil {
@@ -108,7 +121,7 @@ func (s UI) view(w http.ResponseWriter, r *http.Request) {
 
 // detail serves a record detail view (partial).  This is only called for
 // details marked as "hidden".
-func (s UI) detail(w http.ResponseWriter, r *http.Request) {
+func (s *UI) detail(w http.ResponseWriter, r *http.Request) {
 	id, err1 := strconv.Atoi(r.PathValue("id"))
 	index, err2 := strconv.Atoi(r.PathValue("index"))
 	if err1 != nil || err2 != nil {
@@ -142,7 +155,7 @@ func (s UI) detail(w http.ResponseWriter, r *http.Request) {
 // password serves a record password fragment (partial).
 // It serves a storedpassword if one is available, otherwise it falls back to a
 // hashpass. If hashpass=1 is set it always produces a hashpass.
-func (s UI) password(w http.ResponseWriter, r *http.Request) {
+func (s *UI) password(w http.ResponseWriter, r *http.Request) {
 	st := s.Store()
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil {
@@ -172,7 +185,7 @@ func (s UI) password(w http.ResponseWriter, r *http.Request) {
 
 // totp serves a record TOTP fragment (partial).
 // It reports an error if the record does not have an OTP configuration.
-func (s UI) totp(w http.ResponseWriter, r *http.Request) {
+func (s *UI) totp(w http.ResponseWriter, r *http.Request) {
 	st := s.Store()
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil {
@@ -209,6 +222,33 @@ func (s UI) totp(w http.ResponseWriter, r *http.Request) {
 	s.runTemplate(w, r, "pass.html.tmpl", uiDetail{ID: field, Value: otp})
 }
 
+// lock requests a lock of the UI.  It redirects to the UI.
+func (s *UI) lock(w http.ResponseWriter, r *http.Request) {
+	s.Locked = true
+	http.Redirect(w, r, "/", http.StatusFound)
+}
+
+// unlock requests an unlock of the UI.  It redirects to the UI if it is not
+// locked, or reports an error if the specified PIN does not match.
+func (s *UI) unlock(w http.ResponseWriter, r *http.Request) {
+	if s.Locked && r.FormValue("lockpin") != s.LockPIN {
+		http.Error(w, "invalid PIN", http.StatusForbidden)
+		return
+	}
+	s.Locked = false
+	http.Redirect(w, r, "/", http.StatusFound)
+}
+
+func (s *UI) checkLock(h http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if s.Locked {
+			http.Error(w, "UI is locked", http.StatusForbidden)
+			return
+		}
+		h.ServeHTTP(w, r)
+	}
+}
+
 // contentSecurityPolicy is the CSP header we send to client browsers.
 var contentSecurityPolicy = strings.Join([]string{
 	`base-uri 'self'`,
@@ -235,6 +275,8 @@ type uiData struct {
 	Query        string
 	SearchResult []kflib.FoundRecord
 	TargetRecord *uiRecord
+	CanLock      bool // whether locking is enabled
+	Locked       bool // whether the UI is locked now
 }
 
 type uiRecord struct {
