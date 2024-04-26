@@ -45,6 +45,8 @@ body {
     flex-wrap: wrap;
 }
 
+div#search { flex-direction: row; }
+
 div {
     display: flex;
     flex-direction: column;
@@ -70,6 +72,7 @@ option {
 input#query {
     border-radius: 20px;
     padding: 0.5rem;
+    width: 100%;
 }
 
 img.icon {
@@ -120,11 +123,15 @@ button {
     font-size: 90%;
 
     color: var(--c-high);
-    background: var(--c-med-light);
+    background: var(--c-low);
     border-radius: 5px;
     border-width: 1px;
     padding: 0.25rem;
     margin: 0.1rem 0;
+}
+
+button:hover {
+    background: var(--c-med-light);
 }
 
 button.tab {
@@ -142,6 +149,17 @@ button.ctrl {
     margin-top: 1em;
     padding: 0.2rem;
     border: none;
+}
+
+button.lock {
+    width: fit-content;
+    background: var(--c-base);
+    margin: 0 0.5rem;
+    border: none;
+    font-size: 85%;
+}
+button.lock:hover {
+    background: var(--c-med-light);
 }
 
 div#view {
