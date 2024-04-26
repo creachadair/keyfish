@@ -77,7 +77,7 @@ func (s *UI) runTemplate(w http.ResponseWriter, r *http.Request, name string, va
 func (s *UI) ui(w http.ResponseWriter, r *http.Request) {
 	u := uiData{CanLock: s.LockPIN != "", Locked: s.Locked}
 	if query := strings.TrimSpace(r.FormValue("q")); query != "" {
-		if query != "*" {
+		if query != "*" && query != "?" {
 			u.Query = query
 		}
 		u.SearchResult = searchRecords(s.Store().DB().Records, u.Query)
@@ -91,7 +91,7 @@ func (s *UI) search(w http.ResponseWriter, r *http.Request) {
 	switch query {
 	case "":
 		return // no results, empty response
-	case "*":
+	case "*", "?":
 		query = "" // find everything
 	default:
 	}
