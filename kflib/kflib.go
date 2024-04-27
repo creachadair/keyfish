@@ -240,12 +240,13 @@ func FindRecords(recs []*kfdb.Record, query string) []FoundRecord {
 // database. It reports an error if no hashpass secret is available.  will be
 func GenerateHashpass(db *kfdb.DB, rec *kfdb.Record, tag string) (string, error) {
 	h, d := value.At(rec.Hashpass), value.At(db.Defaults)
-	secret := cmp.Or(h.SecretKey, value.At(d.Hashpass).SecretKey)
+	dh := value.At(d.Hashpass)
+	secret := cmp.Or(h.SecretKey, dh.SecretKey)
 	if secret == "" {
 		return "", errors.New("no hashpass secret is available")
 	}
 
-	length := cmp.Or(h.Length, value.At(d.Hashpass).Length)
+	length := cmp.Or(h.Length, dh.Length)
 	salt := cmp.Or(tag, h.Tag)
 	seed := h.Seed
 	if seed == "" && len(rec.Hosts) != 0 {
@@ -256,8 +257,12 @@ func GenerateHashpass(db *kfdb.DB, rec *kfdb.Record, tag string) (string, error)
 	}
 
 	cs := AllChars
-	if v := h.Punct; v != nil && !*v {
-		cs &^= Symbols
+	if h.Punct != nil {
+		if !*h.Punct {
+			cs &^= Symbols // punctuation is disabled for this record
+		}
+	} else if dh.Punct != nil && !*dh.Punct {
+		cs &^= Symbols // punctuation is disabled by default
 	}
 	return HashedChars(length, cs, secret, seed, salt), nil
 }
