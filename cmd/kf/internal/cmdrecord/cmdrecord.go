@@ -39,14 +39,14 @@ var Command = &command.C{
 		},
 		{
 			Name:  "archive",
-			Usage: "<query>",
-			Help:  "Archive the specified record.",
+			Usage: "<query> ...",
+			Help:  "Archive the specified records.",
 			Run:   command.Adapt(runRecordArchive),
 		},
 		{
 			Name:  "unarchive",
-			Usage: "<query>",
-			Help:  "Unarchive the specified record.",
+			Usage: "<query> ...",
+			Help:  "Unarchive the specified records.",
 			Run:   command.Adapt(runRecordArchive),
 		},
 	},
@@ -140,7 +140,10 @@ func runRecordEdit(env *command.Env, query string) error {
 }
 
 // runRecordArchive implements the "archive" and "unarchive" subcommands.
-func runRecordArchive(env *command.Env, query string) error {
+func runRecordArchive(env *command.Env, queries ...string) error {
+	if len(queries) == 0 {
+		return env.Usagef("at least one query is required")
+	}
 	doArchive := env.Command.Name == "archive"
 
 	s, err := config.LoadDB(env)
@@ -149,12 +152,14 @@ func runRecordArchive(env *command.Env, query string) error {
 	}
 	db := s.DB()
 
-	res, err := kflib.FindRecord(db, query, !doArchive)
-	if err != nil {
-		return err
-	} else if res.Record.Archived == doArchive {
-		return fmt.Errorf("record is already %sd", env.Command.Name)
+	for _, query := range queries {
+		res, err := kflib.FindRecord(db, query, !doArchive)
+		if err != nil {
+			return err
+		} else if res.Record.Archived == doArchive {
+			return fmt.Errorf("record is already %sd", env.Command.Name)
+		}
+		res.Record.Archived = doArchive
 	}
-	res.Record.Archived = doArchive
 	return config.SaveDB(env, s)
 }
