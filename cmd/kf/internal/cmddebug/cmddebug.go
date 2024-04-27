@@ -12,6 +12,7 @@ import (
 	"github.com/creachadair/keyfish/kfdb"
 	"github.com/creachadair/keyfish/kflib"
 	"github.com/creachadair/mds/value"
+	"github.com/creachadair/otp/otpauth"
 )
 
 var Command = &command.C{
@@ -46,6 +47,13 @@ mixed in to the HKDF as additional context. The user is prompted for
 the HKDF secret. The output is written as a single line to stdout.`,
 			SetFlags: command.Flags(flax.MustBind, &hpFlags),
 			Run:      command.Adapt(runDebugHashpass),
+		},
+		{
+			Name:     "totp",
+			Usage:    "[flags] <otp-secret>",
+			Help:     "Generate an initial TOTP code and an OTP URL.",
+			SetFlags: command.Flags(flax.MustBind, &otpFlags),
+			Run:      command.Adapt(runDebugTOTP),
 		},
 	},
 }
@@ -111,6 +119,35 @@ func runDebugHashpass(env *command.Env, input string) error {
 		cs |= kflib.Symbols
 	}
 	fmt.Println(kflib.HashedChars(hpFlags.Length, cs, pp, seed, salt))
+	return nil
+}
+
+var otpFlags struct {
+	Account string `flag:"account,The name of the account"`
+	Issuer  string `flag:"issuer,The issuer of the TOTP secret"`
+	Digits  int    `flag:"digits,Number of code digits to generate"`
+}
+
+// runDebugTOTP implements the "debug totp" subcommand.
+func runDebugTOTP(env *command.Env, secret []string) error {
+	key := strings.TrimSpace(strings.Join(strings.Fields(strings.Join(secret, "")), ""))
+	if key == "" {
+		return env.Usagef("you must provide a base32-encoded secret")
+	}
+	u := &otpauth.URL{
+		Type:      "totp",
+		Issuer:    otpFlags.Issuer,
+		Account:   otpFlags.Account,
+		Digits:    otpFlags.Digits,
+		Period:    30,
+		RawSecret: key,
+	}
+	code, err := kflib.GenerateOTP(u, 0)
+	if err != nil {
+		return fmt.Errorf("generate OTP code: %w", err)
+	}
+	fmt.Println("URL:", u)
+	fmt.Println("OTP:", code)
 	return nil
 }
 
