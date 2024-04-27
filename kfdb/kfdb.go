@@ -137,10 +137,6 @@ type Hashpass struct {
 	// SecretKey, if set, is used as the hashpass generator key.
 	SecretKey string `json:"secretKey,omitempty"`
 
-	// UseHKDF, if true, enables the HKDF generation algorithm instead of the
-	// legacy HMAC-based algorithm.
-	UseHKDF bool `json:"useHKDF,omitempty"`
-
 	// Seed is the seed used for password generation. If empty, the first
 	// element of the Hosts for the record is used.
 	Seed string `json:"seed,omitempty"`
