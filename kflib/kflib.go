@@ -131,6 +131,9 @@ func MatchRecord(query string, r *kfdb.Record) MatchQuality {
 	}
 
 	sub := strings.ToLower(query)
+	if strings.Contains(r.Label, sub) {
+		return MatchSubstring
+	}
 	if strings.Contains(strings.ToLower(r.Notes), sub) ||
 		strings.Contains(strings.ToLower(r.Title), sub) {
 		return MatchSubstring
