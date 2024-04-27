@@ -15,7 +15,6 @@ import (
 
 	"github.com/creachadair/atomicfile"
 	"github.com/creachadair/getpass"
-	"github.com/creachadair/keyfish/internal/hashpass"
 	"github.com/creachadair/keyfish/kfdb"
 	"github.com/creachadair/mds/slice"
 	"github.com/creachadair/mds/value"
@@ -252,27 +251,15 @@ func GenerateHashpass(db *kfdb.DB, rec *kfdb.Record, tag string) (string, error)
 	if seed == "" && len(rec.Hosts) != 0 {
 		seed = rec.Hosts[0]
 	}
-
-	// If enabled, use the new-style HKDF algorithm instead.
-	if h.UseHKDF {
-		cs := AllChars
-		if v := h.Punct; v != nil && !*v {
-			cs &^= Symbols
-		}
-		return HashedChars(length, cs, secret, seed, salt), nil
+	if seed == "" {
+		return "", fmt.Errorf("no hashpass seed is available")
 	}
 
-	// Otherwise, fall back to the old style.
-	hc := hashpass.Context{
-		Alphabet: hashpass.All,
-		Site:     seed,
-		Salt:     salt,
-		Secret:   secret,
+	cs := AllChars
+	if v := h.Punct; v != nil && !*v {
+		cs &^= Symbols
 	}
-	if h.Punct != nil && !*h.Punct {
-		hc.Alphabet = hashpass.NoPunct
-	}
-	return hc.Password(length), nil
+	return HashedChars(length, cs, secret, seed, salt), nil
 }
 
 // DBWatcher is a database connected with a file path watcher, that reloads the
