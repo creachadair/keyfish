@@ -219,3 +219,7 @@ td.copyable {
 .copying {
     background-color: var(--c-pulse);
 }
+
+.mono {
+    font-family: var(--font-mono);
+}

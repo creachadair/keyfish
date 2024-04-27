@@ -11,7 +11,7 @@
     <input id="{{.ID}}otp" type="hidden" value="" />{{end}}
 </td>
 <td id="{{.ID}}vis" class="notes copyable">
-  <pre>{{.Value}}</pre>
+  <span class="mono">{{formatText .Value}}</span>
 </td>
 <td class="nvis" id="{{.ID}}nvis">
   (hidden)

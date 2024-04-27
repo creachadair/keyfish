@@ -85,4 +85,7 @@ var ui = template.Must(template.New("ui").Funcs(map[string]any{
 		_, err := otpauth.ParseURL(s)
 		return err == nil
 	},
+	"formatText": func(s string) any {
+		return template.HTML(strings.ReplaceAll(template.HTMLEscapeString(s), "\n", "<br />\n"))
+	},
 }).ParseFS(tmplFS, "templates/*"))

@@ -21,7 +21,7 @@
     </tr>{{end}}{{if $r.Notes}}
     <tr>
       <th>Notes:</th>
-      <td><pre>{{$r.Notes}}</pre></td>
+      <td><span class="mono">{{formatText $r.Notes}}</span></td>
     </tr>{{end}}
   </table>
   <div class=tab><table>
@@ -88,7 +88,7 @@
         <input id="r{{$id}}d{{$index}}otp" type="hidden" value="" />
       </td>{{end}}
       <td class="notes copyable" colspan="2">
-        <pre>{{.Value}}</pre>
+        <span class="mono">{{formatText .Value}}</span>
       </td>{{end}}
     </tr>{{end}}
   </table>{{end}}{{end -}}
