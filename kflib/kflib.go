@@ -25,11 +25,28 @@ import (
 
 // OpenDB opens the specified database store.
 func OpenDB(dbPath string) (*kfdb.Store, error) {
-	s, _, err := openDBInternal(dbPath)
+	f, err := os.Open(dbPath)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("open database: %w", err)
 	}
-	return s, nil
+	defer f.Close()
+
+	pp, err := GetPassphrase("Passphrase: ")
+	if err != nil {
+		return nil, fmt.Errorf("read passphrase: %w", err)
+	}
+	return kfdb.Open(f, pp)
+}
+
+// OpenDBWithPassphrase opens the specified database store using the provided
+// access key passphrase instead of prompting at the terminal.
+func OpenDBWithPassphrase(dbPath, passphrase string) (*kfdb.Store, error) {
+	f, err := os.Open(dbPath)
+	if err != nil {
+		return nil, fmt.Errorf("open database: %w", err)
+	}
+	defer f.Close()
+	return kfdb.Open(f, passphrase)
 }
 
 // SaveDB writes the specified database store to dbPath.
@@ -278,36 +295,14 @@ type DBWatcher struct {
 	hasUpdate bool
 }
 
-func openDBInternal(dbPath string) (*kfdb.Store, string, error) {
-	f, err := os.Open(dbPath)
-	if err != nil {
-		return nil, "", fmt.Errorf("open database: %w", err)
-	}
-	defer f.Close()
-
-	passphrase, err := GetPassphrase("Passphrase: ")
-	if err != nil {
-		return nil, "", fmt.Errorf("read passphrase: %w", err)
-	}
-	st, err := kfdb.Open(f, passphrase)
-	if err != nil {
-		return nil, "", err
-	}
-	return st, passphrase, nil
-}
-
-// OpenDBWatcher opens a watcher that automatically reloads the specified store
-// from its original path when that path is modified.
-func OpenDBWatcher(dbPath string) (*DBWatcher, error) {
+// NewDBWatcher creates a watcher that automatically reloads the specified
+// store from its original path when that path is modified.
+func NewDBWatcher(s *kfdb.Store, dbPath, passphrase string) (*DBWatcher, error) {
 	w, err := fsnotify.NewWatcher()
 	if err != nil {
 		return nil, err
 	}
-	s, pp, err := openDBInternal(dbPath)
-	if err != nil {
-		return nil, err
-	}
-	return &DBWatcher{path: dbPath, fw: w, passphrase: pp, store: s}, nil
+	return &DBWatcher{path: dbPath, fw: w, passphrase: passphrase, store: s}, nil
 }
 
 // Store returns the current database. If an update is available, Store tries
