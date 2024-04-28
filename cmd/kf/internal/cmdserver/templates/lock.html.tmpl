@@ -3,11 +3,10 @@
   <table>
     <tr>
       <th>PIN:</th>
-      <td><input id="lockpin" name="lockpin"
-                 type="password" size="5" autofocus
-                 autocomplete="off"
-                 hx-get="/unlock"
-                 hx-target="body"
+      <td><input id="lockpin" class="failable"
+                 name="lockpin" type="password" size="5"
+                 autofocus autocomplete="off"
+                 hx-get="/unlock" hx-target="body"
                  />
       </td>
     </tr>

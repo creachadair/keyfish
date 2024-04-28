@@ -79,6 +79,17 @@
         setTimeout(() => { elt.classList.toggle(cls); }, time);
     }
 
+    function setLockPin() {
+        const lockPin = document.getElementById('lockpin');
+        if (lockPin) {
+            lockPin.addEventListener('htmx:responseError', (evt) => {
+                pulse(lockPin, 'failing', 200);
+                console.log("Error: "+evt.detail.xhr.response);
+                lockPin.value = '';
+            })
+        }
+    }
+
     // After htmx is done settling the DOM, attach click handlers to copyable
     // things so that the user can click to copy their contents.
     window.addEventListener('htmx:afterSettle', (evt) => {
@@ -88,5 +99,6 @@
                 copyToClipboard(elt.innerText);
             });
         });
+        setLockPin();
     });
 })()

@@ -6,6 +6,7 @@
     --c-high: #bbe1fa;
     --c-high-light: #bbe1fa80;
     --c-pulse: #ccf2fb80;
+    --c-error: #f73859;
     --c-link: #d3b53d;
     --c-linked: #a3b86c;
     --f-size: 18px;
@@ -228,6 +229,14 @@ td.copyable {
 
 .copying {
     background-color: var(--c-pulse);
+}
+
+.failable {
+    transition: background-color 0.2s ease-out;
+}
+
+.failing {
+    background-color: var(--c-error);
 }
 
 .mono {
