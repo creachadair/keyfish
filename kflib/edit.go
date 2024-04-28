@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"cmp"
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -15,9 +14,10 @@ import (
 	"github.com/creachadair/mds/mdiff"
 	"github.com/creachadair/mds/mstr"
 	"golang.org/x/term"
+	yaml "gopkg.in/yaml.v3"
 )
 
-// Edit invokes an editor with the specified object rendered as JSON.  The
+// Edit invokes an editor with the specified object rendered as YAML.  The
 // editor is selected by the EDITOR environment variable.  When the editor
 // exits, the user is prompted to confirm any changes.  If they do, the results
 // are unmarshaled back into a new value, which is returned; otherwise an error
@@ -30,8 +30,8 @@ func Edit[T any](ctx context.Context, value T) (T, error) {
 
 	// Indent the input value as JSON for the editor.
 	var buf bytes.Buffer
-	enc := json.NewEncoder(&buf)
-	enc.SetIndent("", "  ")
+	enc := yaml.NewEncoder(&buf)
+	enc.SetIndent(3)
 	if err := enc.Encode(value); err != nil {
 		return out, fmt.Errorf("marshal value: %w", err)
 	}
@@ -45,14 +45,14 @@ func Edit[T any](ctx context.Context, value T) (T, error) {
 	}
 	defer os.RemoveAll(dir)
 
-	epath := filepath.Join(dir, "value.json")
+	epath := filepath.Join(dir, "value.yaml")
 	if err := os.WriteFile(epath, buf.Bytes(), 0600); err != nil {
 		return out, err
 	}
 
 	// Run the editor on that file.
 	name := cmp.Or(os.Getenv("EDITOR"), "vi")
-	cmd := exec.CommandContext(ctx, name, "value.json")
+	cmd := exec.CommandContext(ctx, name, "value.yaml")
 	cmd.Dir = dir
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stderr
@@ -99,7 +99,7 @@ confirm:
 		}
 	}
 
-	err = json.Unmarshal(edited, &out)
+	err = yaml.Unmarshal(edited, &out)
 	return out, err
 }
 

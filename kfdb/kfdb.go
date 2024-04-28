@@ -22,15 +22,15 @@ type Store = kfstore.Store[DB]
 // A DB is a database of sensitive data managed by keyfish.
 type DB struct {
 	// Defaults are default values for certain record fields.
-	Defaults *Defaults `json:"defaults,omitempty"`
+	Defaults *Defaults `json:"defaults,omitempty" yaml:"defaults,omitempty"`
 
 	// Settings is an opaque collection of tool-specific settings.  Each tool
 	// should use its own unique key in this map. The format of the value is the
 	// responsibility of the tool that defines it.
-	Settings map[string]json.RawMessage `json:"settings,omitempty"`
+	Settings map[string]json.RawMessage `json:"settings,omitempty" yaml:"settings,omitempty"`
 
 	// Records are the data records contained in the database.
-	Records []*Record `json:"records,omitempty"`
+	Records []*Record `json:"records,omitempty" yaml:"records,omitempty"`
 }
 
 // ErrNoSettings is reported by UnmarshalSettings if the requested settings key
@@ -67,85 +67,85 @@ func (db *DB) MarshalSettings(key string, v any) error {
 type Defaults struct {
 	// Username, if set, is used as the default username for records that do not
 	// provide one.
-	Username string `json:"username,omitempty"`
+	Username string `json:"username,omitempty" yaml:"username,omitempty"`
 
 	// Addr, if set, is used as the default e-mail address for records that do
 	// not provide one.
-	Addr string `json:"addr,omitempty"`
+	Addr string `json:"addr,omitempty" yaml:"addr,omitempty"`
 
 	// Hashpass, if set, contains defaults for the hashpass generator.
-	Hashpass *Hashpass `json:"hashpass,omitempty"`
+	Hashpass *Hashpass `json:"hashpass,omitempty" yaml:"hashpass,omitempty"`
 }
 
 // A Record records an item of interest such as a login account.
 type Record struct {
 	// Label is a short identifier for this record.
-	Label string `json:"label,omitempty"`
+	Label string `json:"label,omitempty" yaml:"label,omitempty"`
 
 	// Title is a human-readable title for this record.
-	Title string `json:"title,omitempty"`
-
-	// Username is the user name or login associated with this record.
-	Username string `json:"username,omitempty"`
-
-	// Hosts are optional hostnames associated with this record.
-	Hosts Strings `json:"hosts,omitempty"`
-
-	// Addrs are e-mail addresses associated with this record.
-	Addrs Strings `json:"addrs,omitempty"`
-
-	// Tags are optional query tags associated with this record.
-	Tags []string `json:"tags,omitempty"`
-
-	// Notes are optional human-readable notes.
-	Notes string `json:"notes,omitempty"`
-
-	// Details are optional labelled data annotations.
-	Details []*Detail `json:"details,omitempty"`
-
-	// Hashpass, if non-nil, is a configuration for a hashed password.
-	Hashpass *Hashpass `json:"hashpass,omitempty"`
-
-	// Password, if non-empty, is a generated password.
-	Password string `json:"password,omitempty"`
-
-	// OTP, if non-nil, is used to generate one-time 2FA codes.
-	OTP *otpauth.URL `json:"otp,omitempty"`
+	Title string `json:"title,omitempty" yaml:"title,omitempty"`
 
 	// Archived, if true, indicates the record is archived and should not be
 	// shown in default listings and search results.
-	Archived bool `json:"archived,omitempty"`
+	Archived bool `json:"archived,omitempty" yaml:"archived,omitempty"`
+
+	// Username is the user name or login associated with this record.
+	Username string `json:"username,omitempty" yaml:"username,omitempty"`
+
+	// Hosts are optional hostnames associated with this record.
+	Hosts Strings `json:"hosts,omitempty" yaml:"hosts,flow,omitempty"`
+
+	// Addrs are e-mail addresses associated with this record.
+	Addrs Strings `json:"addrs,omitempty" yaml:"addrs,flow,omitempty"`
+
+	// Tags are optional query tags associated with this record.
+	Tags []string `json:"tags,omitempty" yaml:"tags,flow,omitempty"`
+
+	// Notes are optional human-readable notes.
+	Notes string `json:"notes,omitempty" yaml:"notes,omitempty"`
+
+	// Hashpass, if non-nil, is a configuration for a hashed password.
+	Hashpass *Hashpass `json:"hashpass,omitempty" yaml:"hashpass,omitempty"`
+
+	// Password, if non-empty, is a generated password.
+	Password string `json:"password,omitempty" yaml:"password,omitempty"`
+
+	// OTP, if non-nil, is used to generate one-time 2FA codes.
+	OTP *otpauth.URL `json:"otp,omitempty" yaml:"otp,omitempty"`
+
+	// Details are optional labelled data annotations.
+	Details []*Detail `json:"details,omitempty" yaml:"details,omitempty"`
 }
 
 // Detail is a labelled data annotation for a record.
 type Detail struct {
 	// Label is a human-readable label for the detail.
-	Label string `json:"label"`
+	Label string `json:"label" yaml:"label"`
 
 	// Hidden, if true, indicates the value is sensitive and should not be
 	// displayed plainly unless the user requests it.
-	Hidden bool `json:"hidden,omitempty"`
+	Hidden bool `json:"hidden,omitempty" yaml:"hidden,omitempty"`
 
 	// Value is the display content of the detail.
-	Value string `json:"value"`
+	Value string `json:"value" yaml:"value"`
 }
 
 // Hashpass contains settings for a HKDF password generator.
 type Hashpass struct {
 	// SecretKey, if set, is used as the hashpass generator key.
-	SecretKey string `json:"secretKey,omitempty"`
+	SecretKey string `json:"secretKey,omitempty" yaml:"secret-key,omitempty"`
 
 	// Seed is the seed used for password generation. If empty, the first
 	// element of the Hosts for the record is used.
-	Seed string `json:"seed,omitempty"`
+	Seed string `json:"seed,omitempty" yaml:"seed,omitempty"`
 
 	// Length specifies the length of the generated password in characters.
 	// If zero, the default length is used.
-	Length int `json:"length,omitempty"`
+	Length int `json:"length,omitempty" yaml:"length,omitempty"`
 
 	// Punct, if non-nil, specifies whether punctuation should be included in
 	// the generated password.
-	Punct *bool `json:"punct,omitempty"`
+	Punct *bool `json:"punct,omitempty" yaml:"punct,omitempty"`
 }
 
 // Strings is a convenience alias for an array of strings that decodes from
