@@ -247,7 +247,6 @@ func GenerateHashpass(db *kfdb.DB, rec *kfdb.Record, tag string) (string, error)
 	}
 
 	length := cmp.Or(h.Length, dh.Length)
-	salt := cmp.Or(tag, h.Tag)
 	seed := h.Seed
 	if seed == "" && len(rec.Hosts) != 0 {
 		seed = rec.Hosts[0]
@@ -264,7 +263,7 @@ func GenerateHashpass(db *kfdb.DB, rec *kfdb.Record, tag string) (string, error)
 	} else if dh.Punct != nil && !*dh.Punct {
 		cs &^= Symbols // punctuation is disabled by default
 	}
-	return HashedChars(length, cs, secret, seed, salt), nil
+	return HashedChars(length, cs, secret, seed, tag), nil
 }
 
 // DBWatcher is a database connected with a file path watcher, that reloads the

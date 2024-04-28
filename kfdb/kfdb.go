@@ -130,9 +130,7 @@ type Detail struct {
 	Value string `json:"value"`
 }
 
-// Hashpass contains settings for a "hashed" password generator.
-// See [github.com/creachadair/keyfish/internal/hashpass.Context] for details
-// on the algorithm used for password generation.
+// Hashpass contains settings for a HKDF password generator.
 type Hashpass struct {
 	// SecretKey, if set, is used as the hashpass generator key.
 	SecretKey string `json:"secretKey,omitempty"`
@@ -145,12 +143,8 @@ type Hashpass struct {
 	// If zero, the default length is used.
 	Length int `json:"length,omitempty"`
 
-	// Tag, if non-empty, defines a record tag to include in the generator hash
-	// if one is not provided explicitly.
-	Tag string `json:"tag,omitempty"`
-
 	// Punct, if non-nil, specifies whether punctuation should be included in
-	// the generated password. This is ignored if the Format is set.
+	// the generated password.
 	Punct *bool `json:"punct,omitempty"`
 }
 
