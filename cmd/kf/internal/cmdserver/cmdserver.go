@@ -8,6 +8,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"net/url"
 	"os/signal"
 	"strings"
 	"syscall"
@@ -86,5 +87,12 @@ var ui = template.Must(template.New("ui").Funcs(map[string]any{
 	},
 	"formatText": func(s string) any {
 		return template.HTML(strings.ReplaceAll(template.HTMLEscapeString(s), "\n", "<br />\n"))
+	},
+	"toURL": func(s string) string {
+		u, err := url.Parse(s)
+		if err != nil || u.Scheme == "" {
+			return "https://" + s
+		}
+		return u.String()
 	},
 }).ParseFS(tmplFS, "templates/*"))

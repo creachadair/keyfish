@@ -6,6 +6,8 @@
     --c-high: #bbe1fa;
     --c-high-light: #bbe1fa80;
     --c-pulse: #ccf2fb80;
+    --c-link: #d3b53d;
+    --c-linked: #a3b86c;
     --f-size: 18px;
 
     --text-body: var(--c-high);
@@ -32,6 +34,14 @@
     div#view div.info {
         flex-direction: row;
     }
+}
+
+a {
+    color: var(--c-link);
+    font-weight: bold;
+}
+a:visited {
+    color: var(--c-linked);
 }
 
 body {
