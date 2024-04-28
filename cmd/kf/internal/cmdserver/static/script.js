@@ -3,7 +3,7 @@
     // but that API is only available in a secure context.  When running on
     // Tailscale without HTTPS, or for local testing, use a shim that falls
     // back to execCommand.
-    if (window.isSecureContext && navigator.hasOwn('clipboard')) {
+    if (window.isSecureContext && navigator.hasOwnProperty('clipboard')) {
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text);
         }
