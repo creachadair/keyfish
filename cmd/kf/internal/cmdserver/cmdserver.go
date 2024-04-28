@@ -15,7 +15,6 @@ import (
 	"github.com/creachadair/command"
 	"github.com/creachadair/flax"
 	"github.com/creachadair/keyfish/cmd/kf/config"
-	"github.com/creachadair/keyfish/kflib"
 	"github.com/creachadair/otp/otpauth"
 )
 
@@ -36,7 +35,7 @@ func runServer(env *command.Env) error {
 	if serverFlags.Addr == "" {
 		return env.Usagef("you must provide a service --addr")
 	}
-	w, err := kflib.OpenDBWatcher(config.DBPath(env))
+	w, err := config.WatchDB(env)
 	if err != nil {
 		return err
 	}

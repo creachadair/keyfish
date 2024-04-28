@@ -25,7 +25,8 @@ var defaultDBPath string
 func main() {
 	var flags = struct {
 		DBPath string `flag:"db,default=*,Database path (required)"`
-	}{cmp.Or(defaultDBPath, os.Getenv("KEYFISH_DB"))}
+		PFile  string `flag:"kf.pfile,PRIVATE:Read passphrase from this file path"`
+	}{DBPath: cmp.Or(defaultDBPath, os.Getenv("KEYFISH_DB"))}
 
 	root := &command.C{
 		Name: command.ProgramName(),
@@ -39,7 +40,10 @@ the KEYFISH_DB environment variable.`,
 		SetFlags: command.Flags(flax.MustBind, &flags),
 
 		Init: func(env *command.Env) error {
-			env.Config = &config.Settings{DBPath: flags.DBPath}
+			env.Config = &config.Settings{
+				DBPath: flags.DBPath,
+				PFile:  flags.PFile,
+			}
 			return nil
 		},
 
