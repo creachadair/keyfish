@@ -6,7 +6,6 @@ import (
 	crand "crypto/rand"
 	"crypto/sha256"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 
@@ -24,42 +23,8 @@ type DB struct {
 	// Defaults are default values for certain record fields.
 	Defaults *Defaults `json:"defaults,omitempty" yaml:"defaults,omitempty"`
 
-	// Settings is an opaque collection of tool-specific settings.  Each tool
-	// should use its own unique key in this map. The format of the value is the
-	// responsibility of the tool that defines it.
-	Settings map[string]json.RawMessage `json:"settings,omitempty" yaml:"settings,omitempty"`
-
 	// Records are the data records contained in the database.
 	Records []*Record `json:"records,omitempty" yaml:"records,omitempty"`
-}
-
-// ErrNoSettings is reported by UnmarshalSettings if the requested settings key
-// is not defined on the database.
-var ErrNoSettings = errors.New("settings key not found")
-
-// UnmarshalSettings unmarshals the settings corresponding to key into v.  If
-// no settings for that key are available, it reports ErrNoSettings and does
-// not modify v.
-func (db *DB) UnmarshalSettings(key string, v any) error {
-	src, ok := db.Settings[key]
-	if !ok || len(src) == 0 {
-		return fmt.Errorf("unmarshal %q: %w", key, ErrNoSettings)
-	}
-	return json.Unmarshal(src, v)
-}
-
-// MarshalSettings marshals the specified value into the settings map under
-// key, replacing any existing value for that key.
-func (db *DB) MarshalSettings(key string, v any) error {
-	bits, err := json.Marshal(v)
-	if err != nil {
-		return fmt.Errorf("marshal %q: %w", key, err)
-	}
-	if db.Settings == nil {
-		db.Settings = make(map[string]json.RawMessage)
-	}
-	db.Settings[key] = bits
-	return nil
 }
 
 // Defaults are default values applied to records that do not define their own
