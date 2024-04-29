@@ -12,6 +12,7 @@ import (
 	"github.com/creachadair/keyfish/kfstore"
 	"github.com/creachadair/otp/otpauth"
 	"golang.org/x/crypto/hkdf"
+	yaml "gopkg.in/yaml.v3"
 )
 
 // Store is an alias for kfstore.Store to avoid the need to import the kfstore
@@ -144,6 +145,30 @@ func (a *array[T]) UnmarshalJSON(data []byte) error {
 	}
 	*a = make(array[T], 1)
 	return json.Unmarshal(data, &(*a)[0])
+}
+
+// UnmarshalYAML implements yaml.Unmarshaler. If the input is an array, it is
+// unmarshaled normally; otherwise it unmarshals a single value.
+func (a *array[T]) UnmarshalYAML(node *yaml.Node) error {
+	switch node.Kind {
+	case yaml.SequenceNode:
+		if len(node.Content) == 0 {
+			*a = nil
+			return nil
+		}
+		type shim[T any] array[T]
+		return node.Decode((*shim[T])(a))
+
+	case yaml.ScalarNode:
+		if node.ShortTag() != "!!str" {
+			return fmt.Errorf("invalid value %q", node.ShortTag())
+		}
+		*a = make(array[T], 1)
+		return node.Decode(&(*a)[0])
+
+	default:
+		return fmt.Errorf("invalid node type %v", node.Kind)
+	}
 }
 
 // Open reads a DB store from r using the given passphrase to generate a store
