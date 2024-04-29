@@ -105,7 +105,7 @@ func runDebugHashpass(env *command.Env, input string) error {
 
 	salt, seed, ok := strings.Cut(input, "@")
 	if !ok {
-		seed = input
+		salt, seed = "", input
 	}
 	pp, err := value.Cond(hpFlags.Confirm, kflib.ConfirmPassphrase, kflib.GetPassphrase)("Passphrase: ")
 	if err != nil {
