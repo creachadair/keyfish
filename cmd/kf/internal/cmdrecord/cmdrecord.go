@@ -57,6 +57,7 @@ var addFlags struct {
 	Username string `flag:"username,Specify the username for the record"`
 	EMail    string `flag:"email,Specify an e-mail for the record"`
 	Host     string `flag:"host,Specify a hostname for the record"`
+	Edit     bool   `flag:"edit,Open the new record in an editor"`
 }
 
 // runRecordAdd implements the "record add" subcommand.
@@ -80,6 +81,12 @@ func runRecordAdd(env *command.Env, label string) error {
 	}
 	if addFlags.Host != "" {
 		nr.Hosts = append(nr.Hosts, addFlags.Host)
+	}
+	if addFlags.Edit {
+		nr, err = kflib.Edit(env.Context(), nr)
+		if err != nil && !errors.Is(err, kflib.ErrNoChange) {
+			return err
+		}
 	}
 	db.Records = append(db.Records, nr)
 	if err := config.SaveDB(env, s); err != nil {
