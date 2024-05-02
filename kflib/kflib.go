@@ -185,22 +185,12 @@ func FindRecord(db *kfdb.DB, query string, all bool) (FindResult, error) {
 		tag = ""
 	}
 
-	// Scan through results in decreasing order of quality, selecting the first
-	// unique match if there is one.
-	pos := 0
-	for pos < len(found) {
-		end := pos + 1
-		for end < len(found) && found[end].Quality == found[pos].Quality {
-			end++
-		}
-		if end-pos == 1 {
-			return FindResult{
-				Tag:    tag,
-				Index:  found[pos].Index,
-				Record: found[pos].Record,
-			}, nil
-		}
-		pos = end
+	if best, ok := PickBest(found); ok {
+		return FindResult{
+			Tag:    tag,
+			Index:  best.Index,
+			Record: best.Record,
+		}, nil
 	}
 
 	// At this point there was no unique match, report a diagnostic error.
@@ -216,11 +206,29 @@ func FindRecord(db *kfdb.DB, query string, all bool) (FindResult, error) {
 		len(found), query, strings.Join(hits, ", "))
 }
 
+// PickBest reports whether there is a unique "best" match in a slice of found
+// records, and if so returns that specific record. The records must be ordered
+// in decreasing order of match quality.
+func PickBest(found []FoundRecord) (FoundRecord, bool) {
+	pos := 0
+	for pos < len(found) {
+		end := pos + 1
+		for end < len(found) && found[end].Quality == found[pos].Quality {
+			end++
+		}
+		if end-pos == 1 {
+			return found[pos], true
+		}
+		pos = end
+	}
+	return FoundRecord{}, false
+}
+
 // FoundRecord is a single record reported by FindRecords.
 type FoundRecord struct {
-	Quality MatchQuality // how this record was matched
-	Index   int          // the index of the record in the database
-	Record  *kfdb.Record // the record itself
+	Quality MatchQuality `json:"quality"` // how this record was matched
+	Index   int          `json:"index"`   // the index of the record in the database
+	Record  *kfdb.Record `json:"record"`  // the record itself
 }
 
 // FindRecords finds candidate records matching the specified query.  If the
