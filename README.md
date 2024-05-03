@@ -205,7 +205,15 @@ and we'll see what's become of it all.
     ovary-heath-waist-zebra
     ```
 
-5. Run a local web app to access the database:
+5. Copy the password for a record:
+
+    ```shell
+    % kf copy email
+    Passphrase: .........
+    ovary-heath-waist-zebra
+    ```
+
+6. Run a local web app to access the database from a browser:
 
     ```shell
     % kf web -addr localhost:8422
