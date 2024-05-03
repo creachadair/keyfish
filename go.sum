@@ -6,8 +6,8 @@ github.com/creachadair/flax v0.0.0-20240212192608-428acafa3bbe h1:Za5bZ3VxQXRJqf
 github.com/creachadair/flax v0.0.0-20240212192608-428acafa3bbe/go.mod h1:2vVCsqiB+GpV/qBKCQ0lKRrJhlKUPdI83SnaFKwJyNo=
 github.com/creachadair/getpass v0.2.1 h1:ZtLVMUa5HdBStZsvSoYv4+G+RxQM1vNrfCUc0/xIJW8=
 github.com/creachadair/getpass v0.2.1/go.mod h1:nz1KzZI7LDzvc3d8CmJfGC1Hkiu6zw1iPuevAFiBJ+Y=
-github.com/creachadair/mds v0.14.5 h1:2amuO4yCbQkaAyDoLO5iCbwbTRQZz4EpRhOejQbf4+8=
-github.com/creachadair/mds v0.14.5/go.mod h1:4vrFYUzTXMJpMBU+OA292I6IUxKWCCfZkgXg+/kBZMo=
+github.com/creachadair/mds v0.14.6 h1:osJ9Ibmvv2nzLWOwNONDwxPEIHEgtNf4Y9UYSsO3JWE=
+github.com/creachadair/mds v0.14.6/go.mod h1:4vrFYUzTXMJpMBU+OA292I6IUxKWCCfZkgXg+/kBZMo=
 github.com/creachadair/otp v0.4.2 h1:ngNMaD6Tzd7UUNRFyed7ykZFn/Wr5sSs5ffqZWm9pu8=
 github.com/creachadair/otp v0.4.2/go.mod h1:DqV9hJyUbcUme0pooYfiFvvMe72Aua5sfhNzwfZvk40=
 github.com/fsnotify/fsnotify v1.7.0 h1:8JEhPFa5W2WU7YfeZzPNqzMP6Lwt7L2715Ggo0nosvA=
