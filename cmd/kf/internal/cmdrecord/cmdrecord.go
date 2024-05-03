@@ -26,10 +26,11 @@ var Command = &command.C{
 			Run:      command.Adapt(runRecordAdd),
 		},
 		{
-			Name:  "show",
-			Usage: "<query>",
-			Help:  "Print the config record for the specified query.",
-			Run:   command.Adapt(runRecordShow),
+			Name:     "show",
+			Usage:    "<query>",
+			Help:     "Print the config record for the specified query.",
+			SetFlags: command.Flags(flax.MustBind, &showFlags),
+			Run:      command.Adapt(runRecordShow),
 		},
 		{
 			Name:  "edit",
@@ -96,6 +97,10 @@ func runRecordAdd(env *command.Env, label string) error {
 	return nil
 }
 
+var showFlags struct {
+	All bool `flag:"a,Show all fields including secrets"`
+}
+
 // runRecordShow implements the "record show" subcommand.
 func runRecordShow(env *command.Env, query string) error {
 	s, err := config.LoadDB(env)
@@ -105,6 +110,24 @@ func runRecordShow(env *command.Env, query string) error {
 	res, err := kflib.FindRecord(s.DB(), query, true)
 	if err != nil {
 		return err
+	}
+	rec := res.Record
+	if !showFlags.All {
+		if rec.Password != "" {
+			rec.Password = "(hidden)"
+		}
+		if rec.Hashpass != nil && rec.Hashpass.SecretKey != "" {
+			rec.Hashpass.SecretKey = "(hidden)"
+		}
+		if rec.OTP != nil {
+			rec.OTP.RawSecret = " HIDDEN "
+		}
+		for _, d := range rec.Details {
+			if d.Hidden {
+				d.Hidden = false
+				d.Value = "(hidden)"
+			}
+		}
 	}
 
 	enc := json.NewEncoder(os.Stdout)
@@ -116,7 +139,7 @@ func runRecordShow(env *command.Env, query string) error {
 	}{
 		Q: query,
 		I: res.Index,
-		R: res.Record,
+		R: rec,
 	})
 	return nil
 }
