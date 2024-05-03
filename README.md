@@ -139,3 +139,96 @@ little nicer.
 
 Hopefully this will hold me for a few more years. Come back in another decade,
 and we'll see what's become of it all.
+
+## Usage Outline
+
+1. Create a new empty database.
+
+    ```shell
+    % kf db create example.db
+    New database passphrase: ........
+    Confirm new database passphrase: ........
+    Created database "example.db"
+    ```
+
+2. (Optional) Set the database location in the environment:
+
+    ```shell
+    export KEYFISH_DB=$PWD/example.db
+    ```
+
+3. Add a record:
+
+    ```shell
+    % kf record add -edit email
+    Passphrase: ........
+    ```
+
+  The editor will run to edit the record in YAML format.
+  For this example:
+
+    ```yaml
+    label: email
+    title: Personal email account
+    hosts: mail.example.com
+    username: aloysius
+    ```
+
+  Save and exit the editor, then:
+
+    ```shell
+    ▷ Keep changes? (y/n) y
+    <saved>
+    Created new record "email"
+    ```
+
+4. Set the password on a record:
+
+    ```shell
+    $ kf random -n 20 -set email
+    Passphrase: ........
+    Setting password on record "email"
+    <saved>
+    JfYN2JpcVP70Se2VMXxW
+    ```
+
+   Your output will be different, as the password is generated randomly.
+   Use `--copy` if you want to copy the password to the clipboard instead of
+   printing it. When you do this, it will print a human-readable confirmation
+   nonce instead, e.g.,
+
+    ```shell
+    % kf random -n 20 -set email -copy
+    Passphrase:
+    Setting password on record "email"
+    <saved>
+    ovary-heath-waist-zebra
+    ```
+
+5. Run a local web app to access the database:
+
+    ```shell
+    % kf web -addr localhost:8422
+    Passphrase: ........
+    2024/05/03 12:24:58 Serving at "localhost:8422"
+    2024/05/03 12:24:58 Watching for updates at "/home/aloysius/example.db"
+    ```
+
+   Visit `http://localhost:8422/` in a browser to use the app.
+
+   If you want to access it from anywhere but localhost you will need to set up
+   access control separately. I use [`tailscale serve`][tss] to expose mine to
+   just the computers on my home tailnet, e.g.,
+
+     ```shell
+     % tailscale serve --bg --https 8422 localhost:8422
+     Available within your tailnet:
+
+     https://example.tail1234.ts.net:8422/
+     |-- proxy http://127.0.0.1:8422
+
+     Serve started and running in the background.
+     To disable the proxy, run: tailscale serve --https=8422 off
+     ```
+
+[tss]: https://tailscale.com/kb/1242/tailscale-serve
