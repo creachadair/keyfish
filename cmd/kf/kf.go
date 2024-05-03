@@ -13,7 +13,7 @@ import (
 	"github.com/creachadair/keyfish/cmd/kf/internal/cmddb"
 	"github.com/creachadair/keyfish/cmd/kf/internal/cmddebug"
 	"github.com/creachadair/keyfish/cmd/kf/internal/cmdrecord"
-	"github.com/creachadair/keyfish/cmd/kf/internal/cmdserver"
+	"github.com/creachadair/keyfish/cmd/kf/internal/cmdweb"
 )
 
 // defaultDBPath, if set, defines a default database path to use when one is
@@ -51,7 +51,7 @@ the KEYFISH_DB environment variable.`,
 			cmdcli.Commands,
 			cmddb.Command,
 			cmdrecord.Command,
-			cmdserver.Command,
+			cmdweb.Command,
 			command.HelpCommand([]command.HelpTopic{{
 				Name: "query",
 				Help: `Syntax of query arguments.

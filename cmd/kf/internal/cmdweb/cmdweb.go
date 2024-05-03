@@ -1,5 +1,5 @@
-// Package cmdserver implements the web application server subcommand.
-package cmdserver
+// Package cmdweb implements the "web" subcommand.
+package cmdweb
 
 import (
 	"context"
@@ -20,7 +20,7 @@ import (
 )
 
 var Command = &command.C{
-	Name:     "server",
+	Name:     "web",
 	Help:     "Run a server for the keyfish web app.",
 	SetFlags: command.Flags(flax.MustBind, &serverFlags),
 	Run:      command.Adapt(runServer),

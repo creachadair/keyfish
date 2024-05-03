@@ -1,4 +1,4 @@
-package cmdserver
+package cmdweb
 
 import (
 	"bytes"
