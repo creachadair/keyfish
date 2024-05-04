@@ -58,11 +58,12 @@ func DBPath(env *command.Env) string {
 }
 
 func openDBInternal(env *command.Env) (_ *kfdb.Store, path, pp string, err error) {
-	set := env.Config.(*Settings)
-	if set.DBPath == "" {
+	path = DBPath(env)
+	if path == "" {
 		return nil, "", "", errors.New("no database path specified (set --db or KEYFISH_DB)")
 	}
 
+	set := env.Config.(*Settings)
 	if set.PFile != "" {
 		var data []byte
 		data, err = os.ReadFile(set.PFile)
@@ -74,9 +75,9 @@ func openDBInternal(env *command.Env) (_ *kfdb.Store, path, pp string, err error
 		return nil, "", "", fmt.Errorf("read passphrase: %w", err)
 	}
 
-	st, err := kflib.OpenDBWithPassphrase(set.DBPath, pp)
+	st, err := kflib.OpenDBWithPassphrase(path, pp)
 	if err != nil {
 		return nil, "", "", err
 	}
-	return st, set.DBPath, pp, nil
+	return st, path, pp, nil
 }
