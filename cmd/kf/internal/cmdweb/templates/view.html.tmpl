@@ -31,8 +31,8 @@
         <button class="tab copyable"
                 hx-get="/password/{{$id}}"
                 hx-target="#pwval"
-                hx-swap="outerHTML"
-                hx-include='select[name="tag"]'>
+                hx-swap="outerHTML"{{if $r.Tags}}
+                hx-include='select[name="tag"]'{{end}}>
           Copy
         </button>
         <input id="pwval" type="hidden" value="" />
@@ -52,7 +52,13 @@
                 hx-get="/totp/{{$id}}"
                 hx-target="#otpval"
                 hx-swap="outerHTML">
-          Copy
+          Code
+        </button>
+        <button class="tab copyable"
+                hx-get="/totp/{{$id}}?key=1"
+                hx-target="#otpval"
+                hx-swap="outerHTML">
+          Key
         </button>
         <input id="otpval" type="hidden" value="" />
       </td>

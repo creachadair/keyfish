@@ -212,8 +212,11 @@ func (s *UI) totp(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "no OTP configuration", http.StatusNotFound)
 		return
 	}
-	otp, err := kflib.GenerateOTP(u, 0)
-	if err != nil {
+
+	var otp string
+	if parseBool(r, "key", false) {
+		otp = u.RawSecret
+	} else if otp, err = kflib.GenerateOTP(u, 0); err != nil {
 		http.Error(w, "unable to generate OTP", http.StatusInternalServerError)
 		return
 	}
@@ -269,6 +272,18 @@ func searchRecords(recs []*kfdb.Record, query string) []kflib.FoundRecord {
 	return slice.Partition(kflib.FindRecords(recs, query), func(fr kflib.FoundRecord) bool {
 		return !fr.Record.Archived
 	})
+}
+
+func parseBool(r *http.Request, name string, dflt bool) bool {
+	v := r.FormValue(name)
+	if v == "" {
+		return dflt
+	}
+	b, err := strconv.ParseBool(v)
+	if err != nil {
+		return dflt
+	}
+	return b
 }
 
 type uiData struct {
