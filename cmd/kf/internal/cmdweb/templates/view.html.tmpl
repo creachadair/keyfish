@@ -1,4 +1,8 @@
-<div id=view>{{with .TargetRecord}}{{$id := .Index}}{{$r := .Record}}
+<div id=view>
+  {{- $exp := .Expert}}
+  {{- with .TargetRecord}}
+  {{- $id := .Index}}
+  {{- $r := .Record}}
   <button class="ctrl" hx-get="/" hx-target="body">
     Close
   </button>
@@ -53,13 +57,13 @@
                 hx-target="#otpval"
                 hx-swap="outerHTML">
           Code
-        </button>
+        </button>{{if $exp}}
         <button class="tab copyable"
                 hx-get="/totp/{{$id}}?key=1"
                 hx-target="#otpval"
                 hx-swap="outerHTML">
           Key
-        </button>
+        </button>{{end}}
         <input id="otpval" type="hidden" value="" />
       </td>
     </tr>{{end}}

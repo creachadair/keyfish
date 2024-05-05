@@ -31,6 +31,9 @@ type UI struct {
 
 	// Locked, if true, is whether the UI is (currently) locked.
 	Locked bool
+
+	// Expert, if true, enables expert settings.
+	Expert bool
 }
 
 // ServeMux returns a router for the UI endpoints:
@@ -75,7 +78,7 @@ func (s *UI) runTemplate(w http.ResponseWriter, r *http.Request, name string, va
 
 // ui serves the main UI page.
 func (s *UI) ui(w http.ResponseWriter, r *http.Request) {
-	u := uiData{CanLock: s.LockPIN != "", Locked: s.Locked}
+	u := uiData{CanLock: s.LockPIN != "", Locked: s.Locked, Expert: s.Expert}
 	if query := strings.TrimSpace(r.FormValue("q")); query != "" {
 		if query != "*" && query != "?" {
 			u.Query = query
@@ -97,6 +100,7 @@ func (s *UI) search(w http.ResponseWriter, r *http.Request) {
 	}
 	s.runTemplate(w, r, "search.html.tmpl", uiData{
 		SearchResult: searchRecords(s.Store().DB().Records, query),
+		Expert:       s.Expert,
 	})
 }
 
@@ -116,6 +120,7 @@ func (s *UI) view(w http.ResponseWriter, r *http.Request) {
 			Index:  index,
 			Record: st.DB().Records[index],
 		},
+		Expert: s.Expert,
 	})
 }
 
@@ -149,6 +154,7 @@ func (s *UI) detail(w http.ResponseWriter, r *http.Request) {
 		ID:       tag,
 		Label:    det.Label,
 		Value:    det.Value,
+		Expert:   s.Expert,
 	})
 }
 
@@ -292,6 +298,7 @@ type uiData struct {
 	TargetRecord *uiRecord
 	CanLock      bool // whether locking is enabled
 	Locked       bool // whether the UI is locked now
+	Expert       bool // whether to enable expert features
 }
 
 type uiRecord struct {
@@ -305,4 +312,5 @@ type uiDetail struct {
 	ID       string
 	Label    string
 	Value    string
+	Expert   bool // whether to enable expert features
 }

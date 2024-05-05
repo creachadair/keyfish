@@ -30,6 +30,7 @@ var serverFlags struct {
 	Addr   string `flag:"addr,Service address (host:port)"`
 	PIN    string `flag:"pin,PIN to unlock the UI"`
 	Locked bool   `flag:"locked,Set the UI to initially locked"`
+	Expert bool   `flag:"expert,Enable expert UI"`
 }
 
 func runServer(env *command.Env) error {
@@ -46,6 +47,7 @@ func runServer(env *command.Env) error {
 		Templates: ui,
 		LockPIN:   serverFlags.PIN,
 		Locked:    serverFlags.Locked && serverFlags.PIN != "",
+		Expert:    serverFlags.Expert,
 	}
 	srv := &http.Server{
 		Addr:    serverFlags.Addr,
