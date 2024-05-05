@@ -22,7 +22,9 @@ func TestDB(t *testing.T) {
 		t.Fatalf("New: unexpected error: %v", err)
 	}
 	s.DB().Defaults = &kfdb.Defaults{
-		Username: "Minsc & Boo together again",
+		Hashpass: &kfdb.Hashpass{
+			SecretKey: "Minsc & Boo together again",
+		},
 	}
 
 	var buf bytes.Buffer

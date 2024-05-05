@@ -31,14 +31,6 @@ type DB struct {
 // Defaults are default values applied to records that do not define their own
 // values for certain fields.
 type Defaults struct {
-	// Username, if set, is used as the default username for records that do not
-	// provide one.
-	Username string `json:"username,omitempty" yaml:"username,omitempty"`
-
-	// Addr, if set, is used as the default e-mail address for records that do
-	// not provide one.
-	Addr string `json:"addr,omitempty" yaml:"addr,omitempty"`
-
 	// Hashpass, if set, contains defaults for the hashpass generator.
 	Hashpass *Hashpass `json:"hashpass,omitempty" yaml:"hashpass,omitempty"`
 }
