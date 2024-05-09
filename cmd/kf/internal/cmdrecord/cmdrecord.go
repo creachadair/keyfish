@@ -11,6 +11,7 @@ import (
 	"github.com/creachadair/keyfish/cmd/kf/config"
 	"github.com/creachadair/keyfish/kfdb"
 	"github.com/creachadair/keyfish/kflib"
+	yaml "gopkg.in/yaml.v3"
 )
 
 var Command = &command.C{
@@ -98,7 +99,8 @@ func runRecordAdd(env *command.Env, label string) error {
 }
 
 var showFlags struct {
-	All bool `flag:"a,Show all fields including secrets"`
+	All  bool `flag:"a,Show all fields including secrets"`
+	YAML bool `flag:"yaml,Show value as YAML instead of JSON"`
 }
 
 // runRecordShow implements the "record show" subcommand.
@@ -130,12 +132,20 @@ func runRecordShow(env *command.Env, query string) error {
 		}
 	}
 
-	enc := json.NewEncoder(os.Stdout)
-	enc.SetIndent("", "  ")
-	enc.Encode(struct {
-		Q string       `json:"query"`
-		I int          `json:"index"`
-		R *kfdb.Record `json:"record"`
+	var encode func(any) error
+	if showFlags.YAML {
+		enc := yaml.NewEncoder(os.Stdout)
+		enc.SetIndent(3)
+		encode = yaml.NewEncoder(os.Stdout).Encode
+	} else {
+		enc := json.NewEncoder(os.Stdout)
+		enc.SetIndent("", "  ")
+		encode = enc.Encode
+	}
+	encode(struct {
+		Q string       `json:"query" yaml:"query"`
+		I int          `json:"index" yaml:"index"`
+		R *kfdb.Record `json:"record" yaml:"record"`
 	}{
 		Q: query,
 		I: res.Index,
