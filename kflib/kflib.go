@@ -122,6 +122,14 @@ const (
 	// MatchHostPartial means the query is a partial host match for the record.
 	MatchHostPartial
 
+	// MatchTitle means the query is a case-insensitive substring match for the
+	// title or label of the record.
+	MatchTitle
+
+	// MatchDetail means the query is a case-insensitive substring match for the
+	// label of one of the details of the record.
+	MatchDetail
+
 	// MatchSubstring means the query is a case-insensitive substring match for
 	// one of the text fields or host entries of the record.
 	MatchSubstring
@@ -147,11 +155,15 @@ func MatchRecord(query string, r *kfdb.Record) MatchQuality {
 	}
 
 	sub := strings.ToLower(query)
-	if strings.Contains(r.Label, sub) {
-		return MatchSubstring
+	if strings.Contains(r.Label, sub) || strings.Contains(strings.ToLower(r.Title), sub) {
+		return MatchTitle
 	}
-	if strings.Contains(strings.ToLower(r.Notes), sub) ||
-		strings.Contains(strings.ToLower(r.Title), sub) {
+	for _, d := range r.Details {
+		if strings.Contains(strings.ToLower(d.Label), sub) {
+			return MatchDetail
+		}
+	}
+	if strings.Contains(strings.ToLower(r.Notes), sub) {
 		return MatchSubstring
 	}
 	for _, h := range r.Hosts {
