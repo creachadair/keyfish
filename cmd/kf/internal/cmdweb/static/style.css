@@ -143,6 +143,7 @@ button {
 
 button:hover {
     background: var(--c-med-light);
+    color: var(--c-link);
 }
 
 button.tab {
