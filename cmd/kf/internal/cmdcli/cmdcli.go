@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"slices"
+	"strconv"
 	"text/tabwriter"
 
 	"github.com/creachadair/command"
@@ -52,7 +53,8 @@ generate a code instead of the base record's code.`,
 		Run:      command.Adapt(runOTP),
 	},
 	{
-		Name: "random",
+		Name:  "random",
+		Usage: "[flags] <length>",
 		Help: `Generate a cryptographically random password.
 
 By default, a password is output as ASCII letters and digits.
@@ -185,7 +187,6 @@ func runOTP(env *command.Env, query string) error {
 }
 
 var randFlags struct {
-	Length  int    `flag:"n,The length of the password to generate"`
 	Words   bool   `flag:"words,Generate words instead of characters"`
 	Copy    bool   `flag:"copy,Copy the generated password to the clipboard"`
 	NoDigit bool   `flag:"no-digits,Omit digits from the generated password"`
@@ -194,8 +195,11 @@ var randFlags struct {
 	Set     string `flag:"set,Store the generated password in this record"`
 }
 
-func runRandom(env *command.Env) error {
-	if randFlags.Length <= 0 {
+func runRandom(env *command.Env, length string) error {
+	n, err := strconv.Atoi(length)
+	if err != nil {
+		return fmt.Errorf("invalid length: %w", err)
+	} else if n <= 0 {
 		return env.Usagef("the length (-n) must be positive")
 	}
 
@@ -216,7 +220,7 @@ func runRandom(env *command.Env) error {
 
 	var pw string
 	if randFlags.Words {
-		pw = kflib.RandomWords(randFlags.Length, randFlags.WordSep)
+		pw = kflib.RandomWords(n, randFlags.WordSep)
 	} else {
 		cs := kflib.Letters
 		if !randFlags.NoDigit {
@@ -225,7 +229,7 @@ func runRandom(env *command.Env) error {
 		if randFlags.Symbols {
 			cs |= kflib.Symbols
 		}
-		pw = kflib.RandomChars(randFlags.Length, cs)
+		pw = kflib.RandomChars(n, cs)
 	}
 
 	if r != nil {
