@@ -126,6 +126,7 @@ var otpFlags struct {
 	Account string `flag:"account,The name of the account"`
 	Issuer  string `flag:"issuer,The issuer of the TOTP secret"`
 	Digits  int    `flag:"digits,Number of code digits to generate"`
+	Codes   int    `flag:"codes,default=1,NUmber of codes to generate"`
 }
 
 // runDebugTOTP implements the "debug totp" subcommand.
@@ -142,12 +143,14 @@ func runDebugTOTP(env *command.Env, secret []string) error {
 		Period:    30,
 		RawSecret: key,
 	}
-	code, err := kflib.GenerateOTP(u, 0)
-	if err != nil {
-		return fmt.Errorf("generate OTP code: %w", err)
-	}
 	fmt.Println("URL:", u)
-	fmt.Println("OTP:", code)
+	for i := range otpFlags.Codes {
+		code, err := kflib.GenerateOTP(u, i)
+		if err != nil {
+			return fmt.Errorf("generate OTP code: %w", err)
+		}
+		fmt.Println("OTP:", code)
+	}
 	return nil
 }
 
