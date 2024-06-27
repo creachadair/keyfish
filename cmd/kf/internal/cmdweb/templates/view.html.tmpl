@@ -15,7 +15,7 @@
       <td>{{$r.Title}}</td>
     </tr>{{end}}{{if $r.Hosts}}{{$h := index $r.Hosts 0}}
     <tr><th>Host:</th>
-      <td class="copyable"><a href="{{toURL $h}}" target="_blank">{{$h}}</a></td>
+      <td class="copyable"><a href="{{toURL $h}}" tabindex=1 target="_blank">{{$h}}</a></td>
     </tr>{{end}}{{if $r.Username}}
     <tr><th>Username:</th>
       <td class="copyable">{{$r.Username}}</td>
