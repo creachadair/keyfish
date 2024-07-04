@@ -69,7 +69,7 @@ func runRecordAdd(env *command.Env, label string) error {
 		return err
 	}
 	db := s.DB()
-	if _, err := kflib.FindRecord(db, label, true); err == nil {
+	if r, err := kflib.FindRecord(db, label, true); err == nil && r.Record.Label == label {
 		return fmt.Errorf("label %q already exists", label)
 	}
 
