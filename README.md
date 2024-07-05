@@ -185,7 +185,7 @@ and we'll see what's become of it all.
 4. Set the password on a record:
 
     ```shell
-    $ kf random -n 20 -set email
+    $ kf random 20 -set email
     Passphrase: ........
     Setting password on record "email"
     <saved>
@@ -198,7 +198,7 @@ and we'll see what's become of it all.
     nonce instead, e.g.,
 
     ```shell
-    % kf random -n 20 -set email -copy
+    % kf random 20 -set email -copy
     Passphrase:
     Setting password on record "email"
     <saved>
