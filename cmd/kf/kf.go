@@ -53,16 +53,27 @@ the KEYFISH_DB environment variable.`,
 			cmdrecord.Command,
 			cmdweb.Command,
 			command.HelpCommand([]command.HelpTopic{{
-				Name: "query",
+				Name: "query-syntax",
 				Help: `Syntax of query arguments.
 
-A query has the form [tag@]label. The label is either the unique label
-assigned to the record, a full or partial match for one of the host names
+Various commands accept a query to identify which record or records to
+operate on. A query has the form [tag@]label. The label is either the unique
+label assigned to a record, a full or partial match for one of the hostnames
 associated with the record, or a substring match for the title or notes
 field of the record.
 
-A query that matches multiple records will report an error listing the
-multiple candidate records that could be selected.`,
+Matching records are ranked from most to least specific:
+
+ 1. An exact match on the record label.
+ 2. An exact match on a hostname of the record.
+ 3. A partial (suffix) match on a hostname of the record.
+ 4. A substring match on the title.
+ 5. A substring match on the label of a detail.
+ 6. A substring match in some other text field.
+
+A command that requires a single record will select the highest-ranked
+unique result. If no such record exists, the command will report an error
+listing the candidate records that could have been chosen.`,
 			}}),
 			command.VersionCommand(),
 			cmddebug.Command,
