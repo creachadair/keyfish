@@ -6,6 +6,7 @@ import (
 	"os"
 	"slices"
 	"strconv"
+	"strings"
 	"text/tabwriter"
 
 	"github.com/creachadair/command"
@@ -118,7 +119,8 @@ func runList(env *command.Env, optQuery ...string) error {
 }
 
 var pwFlags struct {
-	OTP bool `flag:"otp,Also generate a TOTP code if available"`
+	OTP    bool   `flag:"otp,Also generate a TOTP code if available"`
+	Detail string `flag:"d,Use the value of the specified detail"`
 }
 
 // runPW implements the "print" and "copy" subcommands.
@@ -133,7 +135,15 @@ func runPW(env *command.Env, query string) error {
 	}
 
 	var pw string
-	if res.Record.Password != "" {
+	if pwFlags.Detail != "" {
+		dv := slices.IndexFunc(res.Record.Details, func(d *kfdb.Detail) bool {
+			return strings.EqualFold(d.Label, pwFlags.Detail)
+		})
+		if dv < 0 {
+			return fmt.Errorf("no detail matching %q", pwFlags.Detail)
+		}
+		pw = res.Record.Details[dv].Value
+	} else if res.Record.Password != "" {
 		pw = res.Record.Password
 	} else if pw, err = kflib.GenerateHashpass(s.DB(), res.Record, res.Tag); err != nil {
 		return err
