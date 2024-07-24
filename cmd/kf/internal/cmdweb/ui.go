@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/creachadair/keyfish/kfdb"
 	"github.com/creachadair/keyfish/kflib"
@@ -18,7 +19,8 @@ import (
 
 // UI implements the HTTP endpoints for the Keyfish web UI.
 type UI struct {
-	μ sync.Mutex // guards the fields below in server handlers
+	μ         sync.Mutex // guards the fields below in server handlers
+	lockReset time.Time  // last unlock time
 
 	// Store returns the active instance of the store to serve.
 	Store func() *kfdb.Store
@@ -34,6 +36,10 @@ type UI struct {
 
 	// Locked, if true, is whether the UI is (currently) locked.
 	Locked bool
+
+	// LockTimeout is the duration after unlocking the UI before it will be
+	// automatically locked. If zero, the UI will not auto-lock.
+	LockTimeout time.Duration
 
 	// Expert, if true, enables expert settings.
 	Expert bool
@@ -81,6 +87,8 @@ func (s *UI) runTemplate(w http.ResponseWriter, r *http.Request, name string, va
 
 // ui serves the main UI page.
 func (s *UI) ui(w http.ResponseWriter, r *http.Request) {
+	s.updateLockLocked()
+
 	u := uiData{CanLock: s.LockPIN != "", Locked: s.Locked, Expert: s.Expert}
 	if query := strings.TrimSpace(r.FormValue("q")); query != "" {
 		if query != "*" && query != "?" {
@@ -248,16 +256,31 @@ func (s *UI) unlock(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	s.Locked = false
+	s.lockReset = time.Now()
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
 func (s *UI) checkLock(h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		s.updateLockLocked()
 		if s.Locked {
 			http.Error(w, "UI is locked", http.StatusForbidden)
 			return
 		}
 		h.ServeHTTP(w, r)
+	}
+}
+
+// updateLockLocked updates the UI lock if it is enabled and longer than the
+// lock timeout has elapsed since the last reset.
+func (s *UI) updateLockLocked() {
+	if s.LockTimeout <= 0 {
+		return // no lock timeout, don't auto-lock
+	} else if s.LockPIN == "" {
+		return // locking is not enabled, don't auto-lock
+	}
+	if !s.Locked && time.Since(s.lockReset) > s.LockTimeout {
+		s.Locked = true
 	}
 }
 
