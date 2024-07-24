@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/creachadair/keyfish/kfdb"
 	"github.com/creachadair/keyfish/kflib"
@@ -17,6 +18,8 @@ import (
 
 // UI implements the HTTP endpoints for the Keyfish web UI.
 type UI struct {
+	μ sync.Mutex // guards the fields below in server handlers
+
 	// Store returns the active instance of the store to serve.
 	Store func() *kfdb.Store
 
@@ -51,15 +54,15 @@ func (s *UI) ServeMux() http.Handler {
 	if s.Static != nil {
 		mux.Handle("GET /static/", http.FileServer(http.FS(s.Static)))
 	}
-	mux.HandleFunc("GET /{$}", addCSP(s.ui))
-	mux.HandleFunc("GET /search", addCSP(s.checkLock(s.search)))
-	mux.HandleFunc("GET /view/{id}", addCSP(s.checkLock(s.view)))
-	mux.HandleFunc("GET /detail/{id}/{index}", addCSP(s.checkLock(s.detail)))
-	mux.HandleFunc("GET /password/{id}", addCSP(s.checkLock(s.password)))
-	mux.HandleFunc("GET /totp/{id}", addCSP(s.checkLock(s.totp)))
+	mux.HandleFunc("GET /{$}", wrap(s, s.ui))
+	mux.HandleFunc("GET /search", wrap(s, s.checkLock(s.search)))
+	mux.HandleFunc("GET /view/{id}", wrap(s, s.checkLock(s.view)))
+	mux.HandleFunc("GET /detail/{id}/{index}", wrap(s, s.checkLock(s.detail)))
+	mux.HandleFunc("GET /password/{id}", wrap(s, s.checkLock(s.password)))
+	mux.HandleFunc("GET /totp/{id}", wrap(s, s.checkLock(s.totp)))
 	if s.LockPIN != "" {
-		mux.HandleFunc("GET /lock", addCSP(s.lock))
-		mux.HandleFunc("GET /unlock", addCSP(s.unlock))
+		mux.HandleFunc("GET /lock", wrap(s, s.lock))
+		mux.HandleFunc("GET /unlock", wrap(s, s.unlock))
 	}
 	return mux
 }
@@ -267,8 +270,11 @@ var contentSecurityPolicy = strings.Join([]string{
 	`frame-ancestors 'none'`,
 }, "; ")
 
-func addCSP(h http.HandlerFunc) http.HandlerFunc {
+func wrap(s *UI, h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		s.μ.Lock()
+		defer s.μ.Unlock()
+
 		w.Header().Set("Content-Security-Policy", contentSecurityPolicy)
 		h.ServeHTTP(w, r)
 	}
