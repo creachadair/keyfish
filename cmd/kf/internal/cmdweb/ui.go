@@ -87,7 +87,7 @@ func (s *UI) runTemplate(w http.ResponseWriter, r *http.Request, name string, va
 
 // ui serves the main UI page.
 func (s *UI) ui(w http.ResponseWriter, r *http.Request) {
-	s.updateLockLocked()
+	s.updateLockLocked(false)
 
 	u := uiData{CanLock: s.LockPIN != "", Locked: s.Locked, Expert: s.Expert}
 	if query := strings.TrimSpace(r.FormValue("q")); query != "" {
@@ -262,7 +262,7 @@ func (s *UI) unlock(w http.ResponseWriter, r *http.Request) {
 
 func (s *UI) checkLock(h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		s.updateLockLocked()
+		s.updateLockLocked(true)
 		if s.Locked {
 			http.Error(w, "UI is locked", http.StatusForbidden)
 			return
@@ -272,15 +272,20 @@ func (s *UI) checkLock(h http.HandlerFunc) http.HandlerFunc {
 }
 
 // updateLockLocked updates the UI lock if it is enabled and longer than the
-// lock timeout has elapsed since the last reset.
-func (s *UI) updateLockLocked() {
+// lock timeout has elapsed since the last reset.  If poll is true, and the
+// lock was not set, update the timer.
+func (s *UI) updateLockLocked(poll bool) {
 	if s.LockTimeout <= 0 {
 		return // no lock timeout, don't auto-lock
 	} else if s.LockPIN == "" {
 		return // locking is not enabled, don't auto-lock
 	}
-	if !s.Locked && time.Since(s.lockReset) > s.LockTimeout {
-		s.Locked = true
+	if !s.Locked {
+		if time.Since(s.lockReset) > s.LockTimeout {
+			s.Locked = true
+		} else if poll {
+			s.lockReset = time.Now()
+		}
 	}
 }
 
