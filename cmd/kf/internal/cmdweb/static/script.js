@@ -79,6 +79,7 @@
         setTimeout(() => { elt.classList.toggle(cls); }, time);
     }
 
+    // Give the user feedback on lock status.
     function setLockPin() {
         const lockPin = document.getElementById('lockpin');
         if (lockPin) {
@@ -87,6 +88,15 @@
                 console.log("Error: "+evt.detail.xhr.response);
                 lockPin.value = '';
             })
+        }
+        const queryText = document.getElementById('query');
+        if (queryText) {
+            // If a query fails with status 403, go back to the lock page.
+            queryText.addEventListener('htmx:responseError', (evt) => {
+                if (evt.detail.xhr.status == 403) {
+                    document.getElementById('lockbtn').click();
+                }
+            }, {once: true})
         }
     }
 
@@ -97,17 +107,9 @@
             elt.addEventListener('click', (ign) => {
                 pulse(elt, 'copying', 300); // match transition timing
                 copyToClipboard(elt.innerText);
-            });
+            }, {once: true});
         });
-
-        // Give the user an indication if they enter the wrong lock PIN.
-        setLockPin();
-
-        // If a query fails with status 403, go back to the lock page.
-        window.addEventListener('htmx:responseError', (evt) => {
-            if (evt.detail.xhr.status == 403) {
-                document.getElementById('lockbtn').click();
-            }
-        }, {once: true})
     });
+    window.addEventListener('htmx:afterSettle', setLockPin);
+    window.addEventListener('load', setLockPin);
 })()
