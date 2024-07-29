@@ -99,6 +99,15 @@
                 copyToClipboard(elt.innerText);
             });
         });
+
+        // Give the user an indication if they enter the wrong lock PIN.
         setLockPin();
+
+        // If a query fails with status 403, go back to the lock page.
+        window.addEventListener('htmx:responseError', (evt) => {
+            if (evt.detail.xhr.status == 403) {
+                document.getElementById('lockbtn').click();
+            }
+        }, {once: true})
     });
 })()
