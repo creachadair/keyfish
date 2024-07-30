@@ -292,7 +292,6 @@ func (s *UI) updateLockLocked(poll bool) {
 // contentSecurityPolicy is the CSP header we send to client browsers.
 var contentSecurityPolicy = strings.Join([]string{
 	`base-uri 'self'`,
-	`block-all-mixed-content`,
 	`default-src 'self'`,
 	`form-action 'self'`,
 	`frame-ancestors 'none'`,
