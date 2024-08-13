@@ -107,7 +107,7 @@
             elt.addEventListener('click', (ign) => {
                 pulse(elt, 'copying', 300); // match transition timing
                 copyToClipboard(elt.innerText);
-            }, {once: true});
+            });
         });
     });
     window.addEventListener('htmx:afterSettle', setLockPin);
