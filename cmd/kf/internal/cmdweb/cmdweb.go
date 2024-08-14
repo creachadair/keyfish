@@ -74,7 +74,8 @@ func runServer(env *command.Env) error {
 	return srv.Shutdown(context.Background())
 }
 
-//go:generate curl -sL -o static/htmx.min.js https://unpkg.com/htmx.org/dist/htmx.min.js
+// To update the HTMX version, edit the URL here.
+//go:generate curl -sL -o static/htmx.min.js https://unpkg.com/htmx.org@1.9.12/dist/htmx.min.js
 
 //go:embed static
 var staticFS embed.FS
