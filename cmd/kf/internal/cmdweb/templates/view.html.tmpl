@@ -15,13 +15,13 @@
       <td>{{$r.Title}}</td>
     </tr>{{end}}{{if $r.Hosts}}{{$h := index $r.Hosts 0}}
     <tr><th>Host:</th>
-      <td class="copyable"><a href="{{toURL $h}}" tabindex=1 target="_blank">{{$h}}</a></td>
+      <td class="pulseable copyable"><a href="{{toURL $h}}" tabindex=1 target="_blank">{{$h}}</a></td>
     </tr>{{end}}{{if $r.Username}}
     <tr><th>Username:</th>
-      <td class="copyable">{{$r.Username}}</td>
+      <td class="pulseable copyable">{{$r.Username}}</td>
     </tr>{{end}}{{if $r.Addrs}}
     <tr><th>Address:</th>
-      <td class="copyable">{{index $r.Addrs 0}}</td>
+      <td class="pulseable copyable">{{index $r.Addrs 0}}</td>
     </tr>{{end}}{{if $r.Notes}}
     <tr>
       <th>Notes:</th>
@@ -32,7 +32,7 @@
     {{- if or $r.Password $r.Hashpass}}
     <tr><th>{{if $r.Password}}Password:{{else}}Hashpass:{{end}}</th>
       <td>
-        <button class="tab copyable"
+        <button class="tab"
                 hx-get="/password/{{$id}}"
                 hx-target="#pwval"
                 hx-swap="outerHTML"{{if $r.Tags}}
@@ -52,13 +52,13 @@
     </tr>{{end}}{{if $r.OTP}}
     <tr><th>OTP:</th>
       <td>
-        <button class="tab copyable"
+        <button class="tab"
                 hx-get="/totp/{{$id}}"
                 hx-target="#otpval"
                 hx-swap="outerHTML">
           Code
         </button>{{if $exp}}
-        <button class="tab copyable"
+        <button class="tab"
                 hx-get="/totp/{{$id}}?key=1"
                 hx-target="#otpval"
                 hx-swap="outerHTML">
@@ -79,7 +79,7 @@
         <button class="tab" hx-get="/detail/{{$id}}/{{$index}}" hx-target="closest tr">
           Show
         </button>{{if isOTP .Value}}
-        <button class="tab copyable"
+        <button class="tab"
                 hx-get="/totp/{{$id}}?detail={{$index}}"
                 hx-target="#r{{$id}}d{{$index}}otp"
                 hx-swap="outerHTML">
@@ -87,9 +87,11 @@
         </button>
         <input id="r{{$id}}d{{$index}}otp" type="hidden" value="" />{{end}}
       </td>
-      <td>(hidden)</td>{{else}}{{- if isOTP .Value}}
+      <td class="pulseable copyish copyclick" copy-value="{{.Value}}">
+        (hidden)
+      </td>{{else}}{{- if isOTP .Value}}
       <td>
-        <button class="tab copyable"
+        <button class="tab"
                 hx-get="/totp/{{$id}}?detail={{$index}}"
                 hx-target="#r{{$id}}d{{$index}}otp"
                 hx-swap="outerHTML">
@@ -97,7 +99,7 @@
         </button>
         <input id="r{{$id}}d{{$index}}otp" type="hidden" value="" />
       </td>{{end}}
-      <td class="notes copyable" colspan="2">
+      <td class="notes pulseable copyable" colspan="2">
         <span class="mono">{{formatText .Value}}</span>
       </td>{{end}}
     </tr>{{end}}

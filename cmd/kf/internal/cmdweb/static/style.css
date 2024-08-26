@@ -215,7 +215,7 @@ div#view td.nvis {
     color: var(--c-high);
 }
 
-td.copyable {
+td.copyable, td.copyish {
     background-image: url('/static/copy.svg');
     background-position: right center;
     background-repeat: no-repeat;
@@ -223,12 +223,12 @@ td.copyable {
     background-size: 32px;
 }
 
-.copyable {
+.pulseable {
     cursor: grab;
     transition: background-color 0.3s ease-out;
 }
 
-.copying {
+.pulsing {
     background-color: var(--c-pulse);
 }
 

@@ -2,7 +2,7 @@
 <td class="tab">
     <button class="tab" id="{{.ID}}btn">Hide</button>
     {{- if isOTP .Value}}
-    <button class="tab copyable"
+    <button class="tab"
             hx-get="/totp/{{.RecordID}}?detail={{.DetailID}}"
             hx-target="#{{.ID}}otp"
             hx-swap="outerHTML">
@@ -10,9 +10,11 @@
     </button>
     <input id="{{.ID}}otp" type="hidden" value="" />{{end}}
 </td>
-<td id="{{.ID}}vis" class="notes copyable">
+<td id="{{.ID}}vis" class="notes pulseable copyable">
   <span class="mono">{{formatText .Value}}</span>
 </td>
-<td class="nvis" id="{{.ID}}nvis">
+<td id="{{.ID}}nvis"
+    class="nvis pulseable copyish copyclick"
+    copy-value="{{.Value}}">
   (hidden)
 </td>

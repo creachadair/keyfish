@@ -55,7 +55,7 @@
         const nvis = document.getElementById(base+'nvis');
         let ndisp = nvis.style.display; // save original display style
         nvis.style.display = 'none';
-        nvis.className = '';
+        nvis.classList.remove('nvis');
 
         const btn = document.getElementById(base+'btn');
 
@@ -103,11 +103,22 @@
     // After htmx is done settling the DOM, attach click handlers to copyable
     // things so that the user can click to copy their contents.
     window.addEventListener('htmx:afterSettle', (evt) => {
+        evt.target.querySelectorAll('.pulseable').forEach((elt) => {
+            // Match the transition timing.
+            elt.addEventListener('click', (ign) => { pulse(elt, 'pulsing', 300); });
+        });
         evt.target.querySelectorAll('.copyable').forEach((elt) => {
             elt.addEventListener('click', (ign) => {
-                pulse(elt, 'copying', 300); // match transition timing
                 copyToClipboard(elt.innerText);
             });
+        });
+        evt.target.querySelectorAll('.copyclick').forEach((elt) => {
+            const cpText = elt.getAttribute('copy-value');
+            if (cpText) {
+                elt.addEventListener('click', (ign) => {
+                    copyToClipboard(cpText);
+                });
+            }
         });
     });
     window.addEventListener('htmx:afterSettle', setLockPin);
