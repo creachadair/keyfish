@@ -221,10 +221,10 @@ td.copyable, td.copyish {
     background-repeat: no-repeat;
     background-origin: content-box;
     background-size: 32px;
+    cursor: grab;
 }
 
 .pulseable {
-    cursor: grab;
     transition: background-color 0.3s ease-out;
 }
 
