@@ -57,13 +57,13 @@
                 hx-target="#otpval"
                 hx-swap="outerHTML">
           Code
-        </button>{{if $exp}}
+        </button>
         <button class="tab"
                 hx-get="/totp/{{$id}}?key=1"
                 hx-target="#otpval"
                 hx-swap="outerHTML">
           Key
-        </button>{{end}}
+        </button>
         <input id="otpval" type="hidden" value="" />
       </td>
     </tr>{{end}}
