@@ -80,9 +80,9 @@
           Show
         </button>{{if isOTP .Value}}
         <button class="tab copyable"
-                      hx-get="/totp/{{$id}}?detail={{$index}}"
-                      hx-target="#r{{$id}}d{{$index}}otp"
-                      hx-swap="outerHTML">
+                hx-get="/totp/{{$id}}?detail={{$index}}"
+                hx-target="#r{{$id}}d{{$index}}otp"
+                hx-swap="outerHTML">
           TOTP
         </button>
         <input id="r{{$id}}d{{$index}}otp" type="hidden" value="" />{{end}}
