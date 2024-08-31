@@ -126,7 +126,8 @@ var otpFlags struct {
 	Account string `flag:"account,The name of the account"`
 	Issuer  string `flag:"issuer,The issuer of the TOTP secret"`
 	Digits  int    `flag:"digits,Number of code digits to generate"`
-	Codes   int    `flag:"codes,default=1,NUmber of codes to generate"`
+	Codes   int    `flag:"codes,default=1,Number of codes to generate"`
+	Period  int    `flag:"period,default=30,Code generation interval in seconds"`
 }
 
 // runDebugTOTP implements the "debug totp" subcommand.
@@ -140,7 +141,7 @@ func runDebugTOTP(env *command.Env, secret []string) error {
 		Issuer:    otpFlags.Issuer,
 		Account:   otpFlags.Account,
 		Digits:    otpFlags.Digits,
-		Period:    30,
+		Period:    otpFlags.Period,
 		RawSecret: key,
 	}
 	fmt.Println("URL:", u)
