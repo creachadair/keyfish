@@ -1,3 +1,4 @@
+// Package cmddb implements the "kf db" subcommand.
 package cmddb
 
 import (

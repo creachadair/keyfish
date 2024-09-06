@@ -1,3 +1,4 @@
+// Package cmdrecord implements the "kf record" subcommand.
 package cmdrecord
 
 import (

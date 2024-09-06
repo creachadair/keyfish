@@ -1,3 +1,4 @@
+// Package cmddebug implements the "kf debug" subcommand.
 package cmddebug
 
 import (

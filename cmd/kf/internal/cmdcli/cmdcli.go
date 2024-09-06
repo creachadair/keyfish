@@ -1,3 +1,4 @@
+// Package cmdcli implements the "kf cli" subcommand.
 package cmdcli
 
 import (
