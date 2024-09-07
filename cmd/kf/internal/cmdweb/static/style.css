@@ -129,6 +129,7 @@ table#sr tr td {
 
 table#sr tr td.label {
     width: 10%;
+    height: 100%;  /* so enclosed button.sr can fill vertically */
     padding: 0.1rem;
 }
 
@@ -140,6 +141,7 @@ button.sr {
     padding: 0.5rem;
     text-align: left;
     width: 100%;
+    height: 100%;
 }
 
 button.sr:hover, button.sr:focus {
