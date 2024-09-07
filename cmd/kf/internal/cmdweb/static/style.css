@@ -1,6 +1,7 @@
 :root {
     --c-base: #1b262c;
     --c-low: #0f4c75;
+    --c-low-light: #0f4c7580;
     --c-med: #3282b8;
     --c-med-light: #3282b880;
     --c-high: #bbe1fa;
@@ -110,7 +111,13 @@ div.sr-tag {
     padding: 0.5rem;
 }
 
+td.tab {
+    width: 7%;
+}
+
 table#sr {
+    font-family: var(--font-mono);
+
     border: 1px dotted var(--c-med);
     margin-top: 1rem;
 }
@@ -120,14 +127,23 @@ table#sr tr td {
     padding: 0.5rem;
 }
 
-table#sr tr td:first-of-type {
-    background: none;
-    border: none;
-    padding: 0 0.1rem;
+table#sr tr td.label {
+    width: 10%;
+    padding: 0.1rem;
 }
 
-table#sr td.label {
-    font-family: var(--font-mono);
+button.sr {
+    font-family: inherit;
+
+    background: var(--c-base);
+    margin: 0;
+    padding: 0.5rem;
+    text-align: left;
+    width: 100%;
+}
+
+button.sr:hover, button.sr:focus {
+    background: var(--c-low-light);
 }
 
 button {
@@ -135,8 +151,8 @@ button {
 
     color: var(--c-high);
     background: var(--c-low);
-    border-radius: 5px;
-    border-width: 1px;
+    border: 1px ridge var(--c-high);
+    border-radius: 0px;
     padding: 0.25rem;
     margin: 0.1rem 0;
 }
@@ -149,10 +165,6 @@ button:hover {
 button.tab {
     width: 100%;
     height: 100%;
-}
-
-td.tab {
-    width: 7%;
 }
 
 button.ctrl {
