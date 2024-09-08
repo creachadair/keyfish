@@ -79,5 +79,5 @@ listing the candidate records that could have been chosen.`,
 			cmddebug.Command,
 		),
 	}
-	command.RunOrFail(root.NewEnv(nil).MergeFlags(true), os.Args[1:])
+	command.RunOrFail(root.NewEnv(nil), os.Args[1:])
 }
