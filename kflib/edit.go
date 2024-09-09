@@ -80,7 +80,7 @@ func Edit[T any](ctx context.Context, value T) (T, error) {
 	defer term.Restore(int(os.Stdin.Fd()), oldst)
 	vt := term.NewTerminal(os.Stdin, "")
 
-	mdiff.FormatUnified(vt, diff.AddContext(3).Unify(), nil)
+	diff.AddContext(3).Unify().Format(vt, mdiff.Unified, nil)
 
 confirm:
 	for {
