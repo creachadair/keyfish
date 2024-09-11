@@ -239,4 +239,6 @@ and we'll see what's become of it all.
      To disable the proxy, run: tailscale serve --https=8422 off
      ```
 
+     For example screenshots of the UI, see [docs](./docs/web.md).
+
 [tss]: https://tailscale.com/kb/1242/tailscale-serve
