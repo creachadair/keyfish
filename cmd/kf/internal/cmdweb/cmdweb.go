@@ -2,6 +2,7 @@
 package cmdweb
 
 import (
+	"cmp"
 	"context"
 	"embed"
 	"errors"
@@ -17,6 +18,7 @@ import (
 	"github.com/creachadair/command"
 	"github.com/creachadair/flax"
 	"github.com/creachadair/keyfish/cmd/kf/config"
+	"github.com/creachadair/mds/value"
 	"github.com/creachadair/otp/otpauth"
 )
 
@@ -28,11 +30,9 @@ var Command = &command.C{
 }
 
 var serverFlags struct {
-	Addr        string        `flag:"addr,Service address (host:port)"`
-	PIN         string        `flag:"pin,PIN to unlock the UI"`
-	Locked      bool          `flag:"locked,Set the UI to initially locked"`
-	LockTimeout time.Duration `flag:"autolock,default=2m,Automatically lock after this timeout"`
-	Expert      bool          `flag:"expert,Enable expert UI"`
+	Addr     string `flag:"addr,Service address (host:port)"`
+	AutoLock bool   `flag:"autolock,Automatically lock the UI when idle"`
+	Expert   bool   `flag:"expert,PRIVATE:Enable expert UI"`
 }
 
 func runServer(env *command.Env) error {
@@ -43,13 +43,18 @@ func runServer(env *command.Env) error {
 	if err != nil {
 		return err
 	}
+	dbDefaults := value.At(w.Store().DB().Defaults)
+	webConfig := value.At(dbDefaults.Web)
+	if serverFlags.AutoLock && webConfig.LockPIN == "" {
+		return env.Usagef("no lock PIN is defined for --autolock")
+	}
 	ui := &UI{
 		Store:       w.Store,
 		Static:      staticFS,
 		Templates:   ui,
-		LockPIN:     serverFlags.PIN,
-		Locked:      serverFlags.Locked && serverFlags.PIN != "",
-		LockTimeout: serverFlags.LockTimeout,
+		LockPIN:     webConfig.LockPIN,
+		Locked:      serverFlags.AutoLock,
+		LockTimeout: cmp.Or(webConfig.LockTimeout.Get(), 5*time.Minute),
 		Expert:      serverFlags.Expert,
 	}
 	srv := &http.Server{
