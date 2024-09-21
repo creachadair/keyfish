@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"time"
 
 	"github.com/creachadair/keyfish/kfstore"
 	"github.com/creachadair/otp/otpauth"
@@ -33,6 +34,9 @@ type DB struct {
 type Defaults struct {
 	// Hashpass, if set, contains defaults for the hashpass generator.
 	Hashpass *Hashpass `json:"hashpass,omitempty" yaml:"hashpass,omitempty"`
+
+	// WebUI, if set, contains defaults for the web UI.
+	Web *WebConfig `json:"webConfig,omitempty" yaml:"web-config,omitempty"`
 }
 
 // A Record records an item of interest such as a login account.
@@ -194,3 +198,39 @@ func deriveKey(passphrase string) kfstore.KeyFunc {
 		return key
 	}
 }
+
+// WebConfig is a collection of settings for the web UI.
+type WebConfig struct {
+	// LockPIN is the code used to unlock the web UI.
+	LockPIN string `json:"lockPIN,omitempty" yaml:"lock-pin,omitempty"`
+
+	// LockTimeout, if set, is the timeout after which the web UI will
+	// automatically lock itself if not accessed.
+	LockTimeout Duration `json:"lockTimeout,omitempty" yaml:"lock-timeout,omitempty"`
+}
+
+// A Duration represents the encoding of a [time.Duration] in JSON using a
+// string representation compatible with [time.ParseDuration].
+//
+// TODO(creachadair): Move this somewhere more common.
+type Duration int64
+
+// MarshalText implements [encoding.TextMarshaler], to encode d as a string in
+// the standard [time.Duration] format. It never reports an error.
+func (d Duration) MarshalText() ([]byte, error) {
+	return []byte(time.Duration(d).String()), nil
+}
+
+// UnmarshalText implements [encoding.TextUnmarshaler], to decode d from a
+// string in the standard [time.Duration] format.
+func (d *Duration) UnmarshalText(text []byte) error {
+	dur, err := time.ParseDuration(string(text))
+	if err != nil {
+		return err
+	}
+	*d = Duration(dur)
+	return nil
+}
+
+// Get returns d as a [time.Duration].
+func (d Duration) Get() time.Duration { return time.Duration(d) }
