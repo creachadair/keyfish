@@ -1,11 +1,22 @@
 # Keyfish Web UI
 
 To start the web UI, run `kf web`. In most cases, you will probably want to
-enable a PIN lock to access the server, and have it auto-lock after some time:
-
+enable a PIN lock to access the server, and have it auto-lock after some time.
+Set the PIN and lock timeout in the `web-config` section of the defaults:
 
 ```sh
-kf web --addr localhost:8422 --pin abc123 --autolock 5m
+kf db edit
+# ...
+defaults:
+   web-config:
+      lock-pin: 12345
+      lock-timeout: 5m
+```
+
+Then add the `--autolock` flag:
+
+```sh
+kf web --addr localhost:8422 --autolock
 ```
 
 The PIN is not a primary security measure, it just prevents someone who comes
@@ -40,4 +51,5 @@ the value directly:
 
 Select "Close" at the top to close the view, or simply select the search bar
 again to initiate a new search. Select the lock icon to explicitly lock the UI,
-requiring the PIN to be re-entered before further use.
+requiring the PIN to be re-entered before further use.  Or, after the specified
+timeout with no activity, the UI will revert to the locked state automatically.
