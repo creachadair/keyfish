@@ -1,6 +1,5 @@
 <th>{{.Label}}</th>
 <td class="tab">
-    <button class="tab" id="{{.ID}}btn">Hide</button>
     {{- if isOTP .Value}}
     <button class="tab"
             hx-get="/totp/{{.RecordID}}?detail={{.DetailID}}"
@@ -9,6 +8,7 @@
       TOTP
     </button>
     <input id="{{.ID}}otp" type="hidden" value="" />{{end}}
+    <button class="tab" id="{{.ID}}btn">Hide</button>
 </td>
 <td id="{{.ID}}vis" class="notes pulseable copyable">
   <span class="mono">{{formatText .Value}}</span>

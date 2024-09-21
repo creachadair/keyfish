@@ -75,10 +75,7 @@
     {{range $index, $d := $r.Details}}<tr>
       <th>{{$d.Label}}</th>
       {{if $d.Hidden -}}
-      <td class="tab">
-        <button class="tab" hx-get="/detail/{{$id}}/{{$index}}" hx-target="closest tr">
-          Show
-        </button>{{if isOTP .Value}}
+      <td class="tab">{{if isOTP .Value}}
         <button class="tab"
                 hx-get="/totp/{{$id}}?detail={{$index}}"
                 hx-target="#r{{$id}}d{{$index}}otp"
@@ -86,6 +83,9 @@
           TOTP
         </button>
         <input id="r{{$id}}d{{$index}}otp" type="hidden" value="" />{{end}}
+        <button class="tab" hx-get="/detail/{{$id}}/{{$index}}" hx-target="closest tr">
+          Show
+        </button>
       </td>
       <td class="pulseable copyish copyclick" copy-value="{{.Value}}">
         (hidden)
