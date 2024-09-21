@@ -45,17 +45,19 @@ func runServer(env *command.Env) error {
 	}
 	dbDefaults := value.At(w.Store().DB().Defaults)
 	webConfig := value.At(dbDefaults.Web)
-	if serverFlags.AutoLock && webConfig.LockPIN == "" {
-		return env.Usagef("no lock PIN is defined for --autolock")
-	}
 	ui := &UI{
 		Store:       w.Store,
 		Static:      staticFS,
 		Templates:   ui,
-		LockPIN:     webConfig.LockPIN,
-		Locked:      serverFlags.AutoLock,
-		LockTimeout: cmp.Or(webConfig.LockTimeout.Get(), 5*time.Minute),
+		LockTimeout: cmp.Or(webConfig.LockTimeout.Get(), 2*time.Minute),
 		Expert:      serverFlags.Expert,
+	}
+	if serverFlags.AutoLock {
+		if webConfig.LockPIN == "" {
+			return env.Usagef("no lock PIN is defined for --autolock")
+		}
+		ui.Locked = true
+		ui.LockPIN = webConfig.LockPIN
 	}
 	srv := &http.Server{
 		Addr:    serverFlags.Addr,
