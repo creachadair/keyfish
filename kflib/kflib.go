@@ -273,34 +273,62 @@ func FindRecords(recs []*kfdb.Record, query string) []FoundRecord {
 	return out
 }
 
+type hashpassConfig struct {
+	Secret  string
+	Tag     string
+	Seed    string
+	Length  int
+	Charset Charset
+}
+
+func (h hashpassConfig) Generate() string {
+	return HashedChars(h.Length, h.Charset, h.Secret, h.Seed, h.Tag)
+}
+
+func getHashpassConfig(db *kfdb.DB, rec *kfdb.Record, tag string) (out hashpassConfig, _ error) {
+	out.Tag = tag
+
+	h, d := value.At(rec.Hashpass), value.At(db.Defaults)
+	dh := value.At(d.Hashpass)
+
+	// Length
+	out.Length = cmp.Or(h.Length, dh.Length)
+
+	// Secret
+	out.Secret = cmp.Or(h.SecretKey, dh.SecretKey)
+	if out.Secret == "" {
+		return out, errors.New("no hashpass secret is available")
+	}
+
+	// Seed
+	out.Seed = h.Seed
+	if out.Seed == "" && len(rec.Hosts) != 0 {
+		out.Seed = rec.Hosts[0]
+	}
+	if out.Seed == "" {
+		return out, fmt.Errorf("no hashpass seed is available")
+	}
+
+	// Charset
+	out.Charset = AllChars
+	if h.Punct != nil {
+		if !*h.Punct {
+			out.Charset &^= Symbols // punctuation is disabled for this record
+		}
+	} else if dh.Punct != nil && !*dh.Punct {
+		out.Charset &^= Symbols // punctuation is disabled by default
+	}
+	return out, nil
+}
+
 // GenerateHashpass hashpass password for the specified record in the given
 // database. It reports an error if no hashpass secret is available.  will be
 func GenerateHashpass(db *kfdb.DB, rec *kfdb.Record, tag string) (string, error) {
-	h, d := value.At(rec.Hashpass), value.At(db.Defaults)
-	dh := value.At(d.Hashpass)
-	secret := cmp.Or(h.SecretKey, dh.SecretKey)
-	if secret == "" {
-		return "", errors.New("no hashpass secret is available")
+	hc, err := getHashpassConfig(db, rec, tag)
+	if err != nil {
+		return "", err
 	}
-
-	length := cmp.Or(h.Length, dh.Length)
-	seed := h.Seed
-	if seed == "" && len(rec.Hosts) != 0 {
-		seed = rec.Hosts[0]
-	}
-	if seed == "" {
-		return "", fmt.Errorf("no hashpass seed is available")
-	}
-
-	cs := AllChars
-	if h.Punct != nil {
-		if !*h.Punct {
-			cs &^= Symbols // punctuation is disabled for this record
-		}
-	} else if dh.Punct != nil && !*dh.Punct {
-		cs &^= Symbols // punctuation is disabled by default
-	}
-	return HashedChars(length, cs, secret, seed, tag), nil
+	return hc.Generate(), nil
 }
 
 // DBWatcher is a database connected with a file path watcher, that reloads the
