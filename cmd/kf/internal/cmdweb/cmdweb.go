@@ -82,7 +82,7 @@ func runServer(env *command.Env) error {
 }
 
 // To update the HTMX version, edit the URL here.
-//go:generate curl -sL -o static/htmx.min.js https://unpkg.com/htmx.org@v2.0.2/dist/htmx.min.js
+//go:generate curl -sL -o static/htmx.min.js https://unpkg.com/htmx.org@v2.0.3/dist/htmx.min.js
 
 //go:embed static
 var staticFS embed.FS
