@@ -1,5 +1,8 @@
 # keyfish
 
+[![GoDoc](https://img.shields.io/static/v1?label=godoc&message=reference&color=teal)](https://pkg.go.dev/github.com/creachadair/keyfish)
+[![CI](https://github.com/creachadair/keyfish/actions/workflows/go-presubmit.yml/badge.svg?event=push&branch=main)](https://github.com/creachadair/keyfish/actions/workflows/go-presubmit.yml)
+
 Keyfish is a site-specific password generator and manager.  It is very much a
 personal project, and if you are looking for such a tool for your own use, I
 strongly recommend instead using one of the many more mature open source and
