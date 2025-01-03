@@ -2,10 +2,10 @@ module github.com/creachadair/keyfish
 
 require (
 	github.com/creachadair/atomicfile v0.3.6
-	github.com/creachadair/command v0.1.19
+	github.com/creachadair/command v0.1.20
 	github.com/creachadair/flax v0.0.4
 	github.com/creachadair/getpass v0.2.1
-	github.com/creachadair/mds v0.22.0
+	github.com/creachadair/mds v0.22.1
 	github.com/creachadair/otp v0.5.0
 	github.com/fsnotify/fsnotify v1.8.0
 	github.com/google/go-cmp v0.6.0
