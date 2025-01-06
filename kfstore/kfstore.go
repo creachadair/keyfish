@@ -41,8 +41,8 @@ import (
 // same construction) with a caller-provided access key, and stored alongside
 // the data.
 type Store[DB any] struct {
-	dataKeyEncrypted []byte // enceypted data key
-	dataKeyPlain     []byte // plaintext data key
+	dataKeyEncrypted []byte // encrypted data key (used when writing updates)
+	dataKeyPlain     []byte // plaintext data key (in-memory only)
 	accessKeySalt    []byte // access key generation salt (optional)
 	db               *DB    // the unencrypted database
 }
