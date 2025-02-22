@@ -5,11 +5,11 @@ require (
 	github.com/creachadair/command v0.1.22
 	github.com/creachadair/flax v0.0.4
 	github.com/creachadair/getpass v0.2.2
-	github.com/creachadair/mds v0.23.0
+	github.com/creachadair/mds v0.24.0
 	github.com/creachadair/otp v0.5.0
 	github.com/fsnotify/fsnotify v1.8.0
-	github.com/google/go-cmp v0.6.0
-	golang.org/x/crypto v0.32.0
+	github.com/google/go-cmp v0.7.0
+	golang.org/x/crypto v0.34.0
 	golang.org/x/term v0.29.0
 	gopkg.in/yaml.v3 v3.0.1
 	honnef.co/go/tools v0.5.1
@@ -24,6 +24,6 @@ require (
 	golang.org/x/tools v0.21.1-0.20240531212143-b6235391adb3 // indirect
 )
 
-go 1.23
+go 1.23.0
 
-toolchain go1.23.1
+toolchain go1.24.0
