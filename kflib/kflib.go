@@ -46,7 +46,11 @@ func OpenDBWithPassphrase(dbPath, passphrase string) (*kfdb.Store, error) {
 		return nil, fmt.Errorf("open database: %w", err)
 	}
 	defer f.Close()
-	return kfdb.Open(f, passphrase)
+	db, err := kfdb.Open(f, passphrase)
+	if err != nil {
+		return nil, fmt.Errorf("open database %q: %w", dbPath, err)
+	}
+	return db, nil
 }
 
 // SaveDB writes the specified database store to dbPath.
