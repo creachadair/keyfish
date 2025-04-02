@@ -175,6 +175,11 @@ func MatchRecord(query string, r *kfdb.Record) MatchQuality {
 			return MatchSubstring
 		}
 	}
+	for _, h := range r.Addrs {
+		if strings.Contains(h, query) {
+			return MatchSubstring
+		}
+	}
 	return MatchNone
 }
 
