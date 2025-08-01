@@ -94,8 +94,8 @@ func ConfirmPassphrase(prompt string) (string, error) {
 // offset steps (based on the size of the window specified by url).
 func GenerateOTP(url *otpauth.URL, offset int) (string, error) {
 	step := (time.Now().Unix() / int64(url.Period)) + int64(offset)
-	cfg := otp.Config{Digits: url.Digits}
-	if err := cfg.ParseKey(url.RawSecret); err != nil {
+	cfg, err := otp.Config{Digits: url.Digits}.WithKey(url.RawSecret)
+	if err != nil {
 		return "", err
 	}
 	return cfg.HOTP(uint64(step)), nil
