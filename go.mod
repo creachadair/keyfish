@@ -2,7 +2,7 @@ module github.com/creachadair/keyfish
 
 require (
 	github.com/creachadair/atomicfile v0.3.8
-	github.com/creachadair/command v0.1.25
+	github.com/creachadair/command v0.2.0
 	github.com/creachadair/flax v0.0.5
 	github.com/creachadair/getpass v0.3.0
 	github.com/creachadair/mds v0.25.2
@@ -24,6 +24,6 @@ require (
 	honnef.co/go/tools v0.6.1 // indirect
 )
 
-go 1.23.0
+go 1.24
 
 tool honnef.co/go/tools/staticcheck
