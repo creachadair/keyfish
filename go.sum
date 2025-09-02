@@ -12,8 +12,8 @@ github.com/creachadair/mds v0.25.2 h1:xc0S0AfDq5GX9KUR5sLvi5XjA61/P6S5e0xFs1vA18
 github.com/creachadair/mds v0.25.2/go.mod h1:+s4CFteFRj4eq2KcGHW8Wei3u9NyzSPzNV32EvjyK/Q=
 github.com/creachadair/otp v0.5.2 h1:3krOkIHA8X1YAnv9lGZi2NlyCZepcsAQkZwKGK5L+9c=
 github.com/creachadair/otp v0.5.2/go.mod h1:0cUM4kl9cQmePbIEy1J1O+esh+S3zDM9s2Foo71KzKA=
-github.com/creachadair/wirepb v0.0.0-20241211162510-f7f2e8a40ddc h1:eEmY60ZlUMsvNX1AiVR6WdVY5b+WhAATf3opftu6LP0=
-github.com/creachadair/wirepb v0.0.0-20241211162510-f7f2e8a40ddc/go.mod h1:dHvCVZSsk3Y/fhY0mUex0U2XBZszomOe7PzlghOtHnQ=
+github.com/creachadair/wirepb v0.0.0-20250901153213-2c07a79e121e h1:pSYRCHf2VlBqdNPbM3oHPpxcR3qfzMvA9a1f8D7+q20=
+github.com/creachadair/wirepb v0.0.0-20250901153213-2c07a79e121e/go.mod h1:dHvCVZSsk3Y/fhY0mUex0U2XBZszomOe7PzlghOtHnQ=
 github.com/fsnotify/fsnotify v1.9.0 h1:2Ml+OJNzbYCTzsxtv8vKSFD9PbJjmhYF14k/jKC7S9k=
 github.com/fsnotify/fsnotify v1.9.0/go.mod h1:8jBTzvmWwFyi3Pb8djgCCO5IBqzKJ/Jwo8TRcHyHii0=
 github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=

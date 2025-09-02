@@ -15,7 +15,7 @@ require (
 )
 
 require (
-	github.com/creachadair/wirepb v0.0.0-20241211162510-f7f2e8a40ddc // indirect
+	github.com/creachadair/wirepb v0.0.0-20250901153213-2c07a79e121e // indirect
 	golang.org/x/exp/typeparams v0.0.0-20231108232855-2478ac86f678 // indirect
 	golang.org/x/mod v0.23.0 // indirect
 	golang.org/x/sync v0.11.0 // indirect
