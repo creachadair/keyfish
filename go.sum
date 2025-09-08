@@ -10,6 +10,8 @@ github.com/creachadair/getpass v0.3.0 h1:phkNCSJK3E7z00K61fJN6FVeK7QVB544TfMwrv4
 github.com/creachadair/getpass v0.3.0/go.mod h1:uP4qBITSjhKDM0aiWxxkKXo4CbF289NQeqJYKUJPlzk=
 github.com/creachadair/mds v0.25.2 h1:xc0S0AfDq5GX9KUR5sLvi5XjA61/P6S5e0xFs1vA18Q=
 github.com/creachadair/mds v0.25.2/go.mod h1:+s4CFteFRj4eq2KcGHW8Wei3u9NyzSPzNV32EvjyK/Q=
+github.com/creachadair/mds v0.25.3 h1:eE9+aMAV+CooBl5XZKcUuDgQxm7+/f2Of+JT1cX6plM=
+github.com/creachadair/mds v0.25.3/go.mod h1:4hatI3hRM+qhzuAmqPRFvaBM8mONkS7nsLxkcuTYUIs=
 github.com/creachadair/otp v0.5.2 h1:3krOkIHA8X1YAnv9lGZi2NlyCZepcsAQkZwKGK5L+9c=
 github.com/creachadair/otp v0.5.2/go.mod h1:0cUM4kl9cQmePbIEy1J1O+esh+S3zDM9s2Foo71KzKA=
 github.com/creachadair/wirepb v0.0.0-20250901153213-2c07a79e121e h1:pSYRCHf2VlBqdNPbM3oHPpxcR3qfzMvA9a1f8D7+q20=
