@@ -122,6 +122,7 @@ func runList(env *command.Env, optQuery ...string) error {
 var pwFlags struct {
 	OTP    bool   `flag:"otp,Also generate a TOTP code if available"`
 	Detail string `flag:"d,Use the value of the specified detail"`
+	Old    bool   `flag:"old,Print the previous password version, if saved"`
 }
 
 // runPW implements the "print" and "copy" subcommands.
@@ -144,6 +145,11 @@ func runPW(env *command.Env, query string) error {
 			return fmt.Errorf("no detail matching %q", pwFlags.Detail)
 		}
 		pw = res.Record.Details[dv].Value
+	} else if pwFlags.Old {
+		pw = res.Record.OldPassword
+		if pw == "" {
+			return fmt.Errorf("no previous password is saved for %q", res.Record.Label)
+		}
 	} else if res.Record.Password != "" {
 		pw = res.Record.Password
 	} else if pw, err = kflib.GenerateHashpass(s.DB(), res.Record, res.Tag); err != nil {
@@ -244,7 +250,7 @@ func runRandom(env *command.Env, length string) error {
 	}
 
 	if r != nil {
-		r.Password = pw
+		r.OldPassword, r.Password = r.Password, pw
 		fmt.Fprintf(env, "Setting password on record %q\n", r.Label)
 		if err := config.SaveDB(env, s); err != nil {
 			return err
