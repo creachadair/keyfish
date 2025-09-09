@@ -27,3 +27,5 @@ require (
 go 1.24
 
 tool honnef.co/go/tools/staticcheck
+
+retract v0.13.14 // published mistakenly
