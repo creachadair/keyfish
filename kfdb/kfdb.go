@@ -23,7 +23,7 @@ type Store = kfstore.Store[DB]
 // A DB is a database of sensitive data managed by keyfish.
 type DB struct {
 	// Defaults are default values for certain record fields.
-	Defaults *Defaults `json:"defaults,omitempty" yaml:"defaults,omitempty"`
+	Defaults *Defaults `json:"defaults,omitzero" yaml:"defaults,omitempty"`
 
 	// Records are the data records contained in the database.
 	Records []*Record `json:"records,omitempty" yaml:"records,omitempty"`
@@ -33,47 +33,51 @@ type DB struct {
 // values for certain fields.
 type Defaults struct {
 	// Hashpass, if set, contains defaults for the hashpass generator.
-	Hashpass *Hashpass `json:"hashpass,omitempty" yaml:"hashpass,omitempty"`
+	Hashpass *Hashpass `json:"hashpass,omitzero" yaml:"hashpass,omitempty"`
 
 	// WebUI, if set, contains defaults for the web UI.
-	Web *WebConfig `json:"webConfig,omitempty" yaml:"web-config,omitempty"`
+	Web *WebConfig `json:"webConfig,omitzero" yaml:"web-config,omitempty"`
 }
 
 // A Record records an item of interest such as a login account.
 type Record struct {
 	// Label is a short identifier for this record.
-	Label string `json:"label,omitempty" yaml:"label,omitempty"`
+	Label string `json:"label,omitzero" yaml:"label,omitempty"`
 
 	// Title is a human-readable title for this record.
-	Title string `json:"title,omitempty" yaml:"title,omitempty"`
+	Title string `json:"title,omitzero" yaml:"title,omitempty"`
 
 	// Archived, if true, indicates the record is archived and should not be
 	// shown in default listings and search results.
-	Archived bool `json:"archived,omitempty" yaml:"archived,omitempty"`
+	Archived bool `json:"archived,omitzero" yaml:"archived,omitempty"`
 
 	// Username is the user name or login associated with this record.
-	Username string `json:"username,omitempty" yaml:"username,omitempty"`
+	Username string `json:"username,omitzero" yaml:"username,omitempty"`
 
 	// Hosts are optional hostnames associated with this record.
-	Hosts Strings `json:"hosts,omitempty" yaml:"hosts,flow,omitempty"`
+	Hosts Strings `json:"hosts,omitzero" yaml:"hosts,flow,omitempty"`
 
 	// Addrs are e-mail addresses associated with this record.
-	Addrs Strings `json:"addrs,omitempty" yaml:"addrs,flow,omitempty"`
+	Addrs Strings `json:"addrs,omitzero" yaml:"addrs,flow,omitempty"`
 
 	// Tags are optional query tags associated with this record.
 	Tags []string `json:"tags,omitempty" yaml:"tags,flow,omitempty"`
 
 	// Notes are optional human-readable notes.
-	Notes string `json:"notes,omitempty" yaml:"notes,omitempty"`
+	Notes string `json:"notes,omitzero" yaml:"notes,omitempty"`
 
 	// Hashpass, if non-nil, is a configuration for a hashed password.
-	Hashpass *Hashpass `json:"hashpass,omitempty" yaml:"hashpass,omitempty"`
+	Hashpass *Hashpass `json:"hashpass,omitzero" yaml:"hashpass,omitempty"`
 
 	// Password, if non-empty, is a generated password.
-	Password string `json:"password,omitempty" yaml:"password,omitempty"`
+	Password string `json:"password,omitzero" yaml:"password,omitempty"`
+
+	// OldPassword, if non-empty, is a previous generated password.  It is
+	// stored so password rotation can preserve the previous value.
+	OldPassword string `json:"oldPassword,omitzero" yaml:"old-password,omitempty"`
 
 	// OTP, if non-nil, is used to generate one-time 2FA codes.
-	OTP *otpauth.URL `json:"otp,omitempty" yaml:"otp,omitempty"`
+	OTP *otpauth.URL `json:"otp,omitzero" yaml:"otp,omitempty"`
 
 	// Details are optional labelled data annotations.
 	Details []*Detail `json:"details,omitempty" yaml:"details,omitempty"`
@@ -86,7 +90,7 @@ type Detail struct {
 
 	// Hidden, if true, indicates the value is sensitive and should not be
 	// displayed plainly unless the user requests it.
-	Hidden bool `json:"hidden,omitempty" yaml:"hidden,omitempty"`
+	Hidden bool `json:"hidden,omitzero" yaml:"hidden,omitempty"`
 
 	// Value is the display content of the detail.
 	Value string `json:"value" yaml:"value"`
@@ -95,19 +99,19 @@ type Detail struct {
 // Hashpass contains settings for a HKDF password generator.
 type Hashpass struct {
 	// SecretKey, if set, is used as the hashpass generator key.
-	SecretKey string `json:"secretKey,omitempty" yaml:"secret-key,omitempty"`
+	SecretKey string `json:"secretKey,omitzero" yaml:"secret-key,omitempty"`
 
 	// Seed is the seed used for password generation. If empty, the first
 	// element of the Hosts for the record is used.
-	Seed string `json:"seed,omitempty" yaml:"seed,omitempty"`
+	Seed string `json:"seed,omitzero" yaml:"seed,omitempty"`
 
 	// Length specifies the length of the generated password in characters.
 	// If zero, the default length is used.
-	Length int `json:"length,omitempty" yaml:"length,omitempty"`
+	Length int `json:"length,omitzero" yaml:"length,omitempty"`
 
 	// Punct, if non-nil, specifies whether punctuation should be included in
 	// the generated password.
-	Punct *bool `json:"punct,omitempty" yaml:"punct,omitempty"`
+	Punct *bool `json:"punct,omitzero" yaml:"punct,omitempty"`
 }
 
 // Strings is a convenience alias for an array of strings that decodes from
