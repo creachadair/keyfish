@@ -58,20 +58,22 @@
         nvis.classList.remove('nvis');
 
         const btn = document.getElementById(base+'btn');
-
+        if (btn.svtOK === undefined) {
         let visible = true;
-        btn.addEventListener('click', (evt) => {
-            visible = !visible;
-            if (visible) {
-                nvis.style.display = 'none';
-                vis.style.display = vdisp;
-                btn.innerHTML = 'Hide'
-            } else {
-                vis.style.display = 'none';
-                nvis.style.display = ndisp;
-                btn.innerHTML = 'Show'
-            }
-        });
+            btn.addEventListener('click', (evt) => {
+                visible = !visible;
+                if (visible) {
+                    nvis.style.display = 'none';
+                    vis.style.display = vdisp;
+                    btn.innerHTML = 'Hide'
+                } else {
+                    vis.style.display = 'none';
+                    nvis.style.display = ndisp;
+                    btn.innerHTML = 'Show'
+                }
+            });
+            btn.svtOK = true;
+        }
     });
 
     function pulse(elt, cls, time) {
@@ -104,20 +106,27 @@
     // things so that the user can click to copy their contents.
     window.addEventListener('htmx:afterSettle', (evt) => {
         document.querySelectorAll('.pulseable').forEach((elt) => {
-            // Match the transition timing.
-            elt.addEventListener('click', (ign) => { pulse(elt, 'pulsing', 300); });
+            if (elt.pevOK === undefined) {
+                // Match the transition timing.
+                elt.addEventListener('click', (ign) => { pulse(elt, 'pulsing', 300); });
+                elt.pevOK = true;
+            }
         });
         document.querySelectorAll('.copyable').forEach((elt) => {
-            elt.addEventListener('click', (ign) => {
-                copyToClipboard(elt.innerText);
-            });
+            if (elt.cpyOK === undefined) {
+                elt.addEventListener('click', (ign) => {
+                    copyToClipboard(elt.innerText);
+                });
+                elt.cpyOK = true;
+            }
         });
         document.querySelectorAll('.copyclick').forEach((elt) => {
             const cpText = elt.getAttribute('copy-value');
-            if (cpText) {
+            if (cpText && evt.txtOK === undefined) {
                 elt.addEventListener('click', (ign) => {
                     copyToClipboard(cpText);
                 });
+                elt.txtOK = true;
             }
         });
     });
