@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"slices"
@@ -55,8 +56,8 @@ func OpenDBWithPassphrase(dbPath, passphrase string) (*kfdb.Store, error) {
 
 // SaveDB writes the specified database store to dbPath.
 func SaveDB(s *kfdb.Store, dbPath string) error {
-	return atomicfile.Tx(dbPath, 0600, func(f *atomicfile.File) error {
-		_, err := s.WriteTo(f)
+	return atomicfile.Tx(dbPath, 0600, func(w io.Writer) error {
+		_, err := s.WriteTo(w)
 		return err
 	})
 }
