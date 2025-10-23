@@ -8,12 +8,12 @@
       TOTP
     </button>
     <input id="{{.ID}}otp" type="hidden" value="" />{{end}}
-    <button class="tab" id="{{.ID}}btn">Hide</button>
+    <button class="tab" tabindex="-1" id="{{.ID}}btn">Hide</button>
 </td>
-<td id="{{.ID}}vis" class="notes pulseable copyable">
+<td id="{{.ID}}vis" tabindex=4 class="notes pulseable copyable">
   <span class="mono">{{formatText .Value}}</span>
 </td>
-<td id="{{.ID}}nvis"
+<td id="{{.ID}}nvis" tabindex=4
     class="nvis pulseable copyish copyclick"
     copy-value="{{.Value}}">
   (hidden)

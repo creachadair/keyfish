@@ -33,6 +33,7 @@ var serverFlags struct {
 	Addr     string `flag:"addr,Service address (host:port)"`
 	AutoLock bool   `flag:"autolock,Automatically lock the UI when idle"`
 	Expert   bool   `flag:"expert,PRIVATE:Enable expert UI"`
+	Debug    bool   `flag:"debug,PRIVATE:Enable debug logging"`
 }
 
 func runServer(env *command.Env) error {

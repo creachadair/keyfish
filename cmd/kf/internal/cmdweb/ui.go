@@ -2,9 +2,11 @@ package cmdweb
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"io/fs"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -43,6 +45,9 @@ type UI struct {
 
 	// Expert, if true, enables expert settings.
 	Expert bool
+
+	// Debug, if true, enables debug logging.
+	Debug bool
 }
 
 // ServeMux returns a router for the UI endpoints:
@@ -78,6 +83,7 @@ func (s *UI) ServeMux() http.Handler {
 func (s *UI) runTemplate(w http.ResponseWriter, r *http.Request, name string, value any) {
 	var buf bytes.Buffer
 	if err := s.Templates.Lookup(name).Execute(&buf, value); err != nil {
+		s.dprintf("template error: %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -183,6 +189,7 @@ func (s *UI) password(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	preferHash, _ := strconv.ParseBool(r.FormValue("hashpass"))
+	visible, _ := strconv.ParseBool(r.FormValue("vis"))
 
 	rec := st.DB().Records[id]
 	var pw string
@@ -195,9 +202,13 @@ func (s *UI) password(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-
-	w.Header().Set("HX-Trigger-After-Settle", `{"copyText":"pwval"}`)
-	s.runTemplate(w, r, "pass.html.tmpl", uiDetail{ID: "pwval", Value: pw})
+	// N.B. Capitalization of HX matters here.
+	events := map[string]string{"copyText": "pwval"}
+	if visible {
+		events["setValueToggle"] = "pwval"
+	}
+	w.Header().Set("HX-Trigger-After-Settle", toJSON(events))
+	s.runTemplate(w, r, "pass.html.tmpl", uiDetail{ID: "pwval", Value: pw, Visible: visible})
 }
 
 // totp serves a record TOTP fragment (partial).
@@ -229,6 +240,7 @@ func (s *UI) totp(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "no OTP configuration", http.StatusNotFound)
 		return
 	}
+	visible, _ := strconv.ParseBool(r.FormValue("vis"))
 
 	var otp string
 	if parseBool(r, "key", false) {
@@ -238,8 +250,12 @@ func (s *UI) totp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("HX-Trigger-After-Settle", fmt.Sprintf(`{"copyText":"%s"}`, field))
-	s.runTemplate(w, r, "pass.html.tmpl", uiDetail{ID: field, Value: otp})
+	events := map[string]string{"copyText": field}
+	if visible {
+		events["setValueToggle"] = field
+	}
+	w.Header().Set("HX-Trigger-After-Settle", toJSON(events))
+	s.runTemplate(w, r, "pass.html.tmpl", uiDetail{ID: field, Value: otp, Visible: visible})
 }
 
 // lock requests a lock of the UI.  It redirects to the UI.
@@ -289,6 +305,12 @@ func (s *UI) updateLockLocked(poll bool) {
 	}
 }
 
+func (s *UI) dprintf(msg string, args ...any) {
+	if s.Debug {
+		log.Printf("[debug] "+msg, args...)
+	}
+}
+
 // contentSecurityPolicy is the CSP header we send to client browsers.
 var contentSecurityPolicy = strings.Join([]string{
 	`base-uri 'self'`,
@@ -325,6 +347,14 @@ func parseBool(r *http.Request, name string, dflt bool) bool {
 	return b
 }
 
+func toJSON(v any) string {
+	data, err := json.Marshal(v)
+	if err != nil {
+		panic(fmt.Sprintf("invalid JSON: %v", err))
+	}
+	return string(data)
+}
+
 type uiData struct {
 	Query        string
 	SearchResult []kflib.FoundRecord
@@ -345,5 +375,7 @@ type uiDetail struct {
 	ID       string
 	Label    string
 	Value    string
+	Aux      string
+	Visible  bool
 	Expert   bool // whether to enable expert features
 }

@@ -44,7 +44,7 @@
     // Add a listener to the button injected when a hidden detail value is
     // installed in the DOM, allowing the user to toggle it on and off without
     // another round trip to the server.
-    window.addEventListener('setValueToggle', (evt) => {
+    document.addEventListener('setValueToggle', (evt) => {
         const base = evt.detail.value;
         const vis = document.getElementById(base+'vis');
         let vdisp = vis.style.display; // save original display style
@@ -103,16 +103,16 @@
     // After htmx is done settling the DOM, attach click handlers to copyable
     // things so that the user can click to copy their contents.
     window.addEventListener('htmx:afterSettle', (evt) => {
-        evt.target.querySelectorAll('.pulseable').forEach((elt) => {
+        document.querySelectorAll('.pulseable').forEach((elt) => {
             // Match the transition timing.
             elt.addEventListener('click', (ign) => { pulse(elt, 'pulsing', 300); });
         });
-        evt.target.querySelectorAll('.copyable').forEach((elt) => {
+        document.querySelectorAll('.copyable').forEach((elt) => {
             elt.addEventListener('click', (ign) => {
                 copyToClipboard(elt.innerText);
             });
         });
-        evt.target.querySelectorAll('.copyclick').forEach((elt) => {
+        document.querySelectorAll('.copyclick').forEach((elt) => {
             const cpText = elt.getAttribute('copy-value');
             if (cpText) {
                 elt.addEventListener('click', (ign) => {
