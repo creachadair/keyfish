@@ -101,6 +101,10 @@ span.hint {
     padding: 0.5rem;
 }
 
+span.prose {
+    text-wrap: nowrap;
+}
+
 div#result {
     flex-direction: column;
     flex-basis: min-content;
@@ -159,18 +163,34 @@ button {
     margin: 0.1rem 0;
 }
 
-button:hover {
+button:not(.ctext):hover {
     background: var(--c-med-light);
     color: var(--c-link);
 }
 
+button.ctext {
+    font-family: inherit;
+    font-size: inherit;
+
+    color: var(--text-body);
+    background: var(--bg-body);
+    border: none;
+    padding: 0.75rem;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    text-align: left;
+}
+
 button.ctrl:active, button.tab:active {
     box-shadow: 0px 0px 12px 3px var(--c-pulse);
+
 }
 
 button.tab {
     width: 100%;
     height: 100%;
+    transition: box-shadow 0.3s ease-in-out;
 }
 
 button.ctrl {
@@ -179,6 +199,7 @@ button.ctrl {
     margin-top: 1em;
     padding: 0.2rem;
     border: none;
+    transition: box-shadow 0.3s ease-in-out;
 }
 
 button.lock {
@@ -206,6 +227,7 @@ div#view div.info div.tab {
 }
 
 div#view table {
+    table-layout: auto;
     min-width: 50%;
     margin-top: 1rem;
     font-size: 80%;
@@ -223,21 +245,24 @@ div#view th:first-of-type {
 div#view th, td {
     padding: 0.5rem;
 }
+div#view td.ctext {
+    padding: 0;
+}
 
-div#view td.nvis {
+div#view .nvis {
     display: none;
 }
 
-.notes {
+.notes, button.ctext.notes {
     background: var(--c-med-light);
     color: var(--c-high);
 }
 
-td.copyable, td.copyish {
+.copyable, .copyish, .ctext, button.ctext {
     background-image: url('/static/copy.svg');
     background-position: right center;
     background-repeat: no-repeat;
-    background-origin: content-box;
+    background-origin: padding-box;
     background-size: 32px;
     cursor: grab;
 }
@@ -246,7 +271,7 @@ td.copyable, td.copyish {
     transition: background-color 0.3s ease-out;
 }
 
-.pulsing {
+.pulsing, button.ctext.pulsing, button.pulsing {
     background-color: var(--c-pulse);
 }
 

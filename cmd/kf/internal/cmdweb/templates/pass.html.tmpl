@@ -1,14 +1,14 @@
 <input id="{{.ID}}" type="hidden" value="{{.Value}}" />{{if .Visible}}
 <button id="{{.ID}}btn" class="tab" tabindex=4 hx-swap-oob="true">Hide</button>
 <template>
-  <td id="{{.ID}}vis" class="notes pulseable copyable" tabindex=4 hx-swap-oob=true>
-    <span class="mono">{{formatText .Value}}</span>
-  </td>
+  <button id="{{.ID}}vis" class="ctext notes pulseable copyable" tabindex=4 hx-swap-oob=true>
+    {{formatText .Value}}
+  </button>
 </template>
 <template>
-  <td id="{{.ID}}nvis" tabindex=4
-      class="nvis pulseable copyish copyclick"
-      copy-value="{{.Value}}" hx-swap-oob=true>
+  <button id="{{.ID}}nvis" tabindex=4
+          class="nvis ctext pulseable copyish copyclick"
+          copy-value="{{.Value}}" hx-swap-oob=true>
     (hidden)
-  </td>
+  </button>
 </template>{{end}}

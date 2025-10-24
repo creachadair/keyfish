@@ -51,14 +51,16 @@
         </select>{{end}}
         <input id="pwval" type="hidden" value="" />
       </td>
-      <td id="pwvalvis" tabindex=4 class="pulseable copyish copyclick"
-          hx-get="/password/{{$id}}"
-          hx-target="#pwval"
-          hx-swap="outerHTML"{{if $r.Tags}}
-          hx-include='select[name="tag"]'{{end}}>
-        (hidden)
+      <td class="ctext">
+        <button id="pwvalvis" tabindex=4 class="ctext pulseable copyish copyclick"
+                hx-get="/password/{{$id}}"
+                hx-target="#pwval"
+                hx-swap="outerHTML"{{if $r.Tags}}
+                hx-include='select[name="tag"]'{{end}}>
+          (hidden)
+        </button>
+        <button id="pwvalnvis" class="nvis"></button>
       </td>
-      <td id="pwvalnvis" class="nvis"></td>
     </tr>{{end}}{{if $r.OTP}}
     <tr><th>OTP:</th>
       <td class="tab">
@@ -76,13 +78,15 @@
           Show
         </button>
       </td>
-      <td id="otpvalvis" tabindex=4 class="pulseable copyish copyclick"
-          hx-get="/totp/{{$id}}?key=1"
-          hx-target="#otpval"
-          hx-swap="outerHTML">
-        (hidden)
+      <td class="ctext">
+        <button id="otpvalvis" tabindex=4 class="ctext pulseable copyish copyclick"
+                hx-get="/totp/{{$id}}?key=1"
+                hx-target="#otpval"
+                hx-swap="outerHTML">
+          (hidden)
+        </button>
+        <button id="otpvalnvis" class="nvis ctext"></button>
       </td>
-      <td id="otpvalnvis" class="nvis"></td>
     </tr>{{end}}{{/* OTP */}}
   </table>{{end}}{{/* secrets */}}
 
@@ -104,8 +108,10 @@
           Show
         </button>
       </td>
-      <td class="pulseable copyish copyclick" tabindex=4 copy-value="{{.Value}}">
-        (hidden)
+      <td class="ctext">
+        <button class="ctext pulseable copyish copyclick" tabindex=4 copy-value="{{.Value}}">
+          (hidden)
+        </button>
       </td>{{else}}{{- if isOTP .Value}}
       <td>
         <button class="tab" tabindex=4
@@ -116,8 +122,10 @@
         </button>
         <input id="r{{$id}}d{{$index}}otp" type="hidden" value="" />
       </td>{{end}}
-      <td class="notes pulseable copyable" tabindex=5 colspan="2">
-        <span class="mono">{{formatText .Value}}</span>
+      <td class="ctext" colspan="2">
+        <button class="ctext notes pulseable copyable" tabindex=5>
+          {{formatText .Value}}
+        </button>
       </td>{{end}}
     </tr>{{end}}
   </table>{{end}}{{end -}}
