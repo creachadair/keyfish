@@ -152,8 +152,8 @@ func runPW(env *command.Env, query string) error {
 		}
 	} else if res.Record.Password != "" {
 		pw = res.Record.Password
-	} else if pw, err = kflib.GenerateHashpass(s.DB(), res.Record, res.Tag); err != nil {
-		return err
+	} else {
+		return fmt.Errorf("no password set for %q", res.Record.Label)
 	}
 	if env.Command.Name == "copy" {
 		if err := clipboard.WriteString(pw); err != nil {

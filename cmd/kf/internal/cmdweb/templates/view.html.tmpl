@@ -30,33 +30,26 @@
   Secrets section, shown only if there is a password or primary OTP code.
   Alternate OTPs are shown in the Details section below.
   
-  */}}{{- if or $r.Password $r.Hashpass $r.OTP}}
+  */}}{{- if or $r.Password $r.OTP}}
   <table>
     <tr><th>Secret</th><th colspan=2>Value</th></tr>
-    {{- if or $r.Password $r.Hashpass}}
+    {{- if $r.Password}}
     <tr>
-      <th>{{if $r.Password}}Password:{{else}}Hashpass:{{end}}</th>
+      <th>Password: </th>
       <td class="tab">
         <button id="pwvalbtn" class="tab" tabindex="-1"
                 hx-get="/password/{{$id}}?vis=1"
                 hx-target="#pwval"
-                hx-swap="outerHTML"{{if $r.Tags}}
-                hx-include='select[name="tag"]'{{end}}>
+                hx-swap="outerHTML">
           Show
-        </button>{{if $r.Tags}}
-        <label for="tag">Tags:</label>
-        <select name="tag" tabindex=5>
-          <option value="">(none)</option>{{range $r.Tags}}
-          <option value="{{.}}">{{.}}</option>{{end}}
-        </select>{{end}}
+        </button>
         <input id="pwval" type="hidden" value="" />
       </td>
       <td class="ctext">
         <button id="pwvalvis" tabindex=4 class="ctext pulseable copyish copyclick"
                 hx-get="/password/{{$id}}"
                 hx-target="#pwval"
-                hx-swap="outerHTML"{{if $r.Tags}}
-                hx-include='select[name="tag"]'{{end}}>
+                hx-swap="outerHTML">
           (hidden)
         </button>
         <button id="pwvalnvis" class="nvis"></button>

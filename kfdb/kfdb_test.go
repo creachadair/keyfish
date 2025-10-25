@@ -6,6 +6,7 @@ import (
 	"io"
 	mrand "math/rand"
 	"testing"
+	"time"
 
 	"github.com/creachadair/keyfish/kfdb"
 	"github.com/creachadair/mds/mtest"
@@ -22,10 +23,16 @@ func TestDB(t *testing.T) {
 		t.Fatalf("New: unexpected error: %v", err)
 	}
 	s.DB().Defaults = &kfdb.Defaults{
-		Hashpass: &kfdb.Hashpass{
-			SecretKey: "Minsc & Boo together again",
+		Web: &kfdb.WebConfig{
+			LockPIN:     "minsc and boo",
+			LockTimeout: kfdb.Duration(3 * time.Minute),
 		},
 	}
+	s.DB().Records = []*kfdb.Record{{
+		Label:    "hamster",
+		Title:    "Miniature giant space hamster",
+		Username: "boo",
+	}}
 
 	var buf bytes.Buffer
 	if _, err := s.WriteTo(&buf); err != nil {

@@ -32,9 +32,6 @@ type DB struct {
 // Defaults are default values applied to records that do not define their own
 // values for certain fields.
 type Defaults struct {
-	// Hashpass, if set, contains defaults for the hashpass generator.
-	Hashpass *Hashpass `json:"hashpass,omitzero" yaml:"hashpass,omitempty"`
-
 	// WebUI, if set, contains defaults for the web UI.
 	Web *WebConfig `json:"webConfig,omitzero" yaml:"web-config,omitempty"`
 }
@@ -66,9 +63,6 @@ type Record struct {
 	// Notes are optional human-readable notes.
 	Notes string `json:"notes,omitzero" yaml:"notes,omitempty"`
 
-	// Hashpass, if non-nil, is a configuration for a hashed password.
-	Hashpass *Hashpass `json:"hashpass,omitzero" yaml:"hashpass,omitempty"`
-
 	// Password, if non-empty, is a generated password.
 	Password string `json:"password,omitzero" yaml:"password,omitempty"`
 
@@ -94,24 +88,6 @@ type Detail struct {
 
 	// Value is the display content of the detail.
 	Value string `json:"value" yaml:"value"`
-}
-
-// Hashpass contains settings for a HKDF password generator.
-type Hashpass struct {
-	// SecretKey, if set, is used as the hashpass generator key.
-	SecretKey string `json:"secretKey,omitzero" yaml:"secret-key,omitempty"`
-
-	// Seed is the seed used for password generation. If empty, the first
-	// element of the Hosts for the record is used.
-	Seed string `json:"seed,omitzero" yaml:"seed,omitempty"`
-
-	// Length specifies the length of the generated password in characters.
-	// If zero, the default length is used.
-	Length int `json:"length,omitzero" yaml:"length,omitempty"`
-
-	// Punct, if non-nil, specifies whether punctuation should be included in
-	// the generated password.
-	Punct *bool `json:"punct,omitzero" yaml:"punct,omitempty"`
 }
 
 // Strings is a convenience alias for an array of strings that decodes from

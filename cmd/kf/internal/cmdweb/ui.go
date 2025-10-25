@@ -176,8 +176,7 @@ func (s *UI) detail(w http.ResponseWriter, r *http.Request) {
 }
 
 // password serves a record password fragment (partial).
-// It serves a storedpassword if one is available, otherwise it falls back to a
-// hashpass. If hashpass=1 is set it always produces a hashpass.
+// It serves a stored password if one is available.
 func (s *UI) password(w http.ResponseWriter, r *http.Request) {
 	st := s.Store()
 	id, err := strconv.Atoi(r.PathValue("id"))
@@ -188,27 +187,21 @@ func (s *UI) password(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "no such record ID", http.StatusNotFound)
 		return
 	}
-	preferHash, _ := strconv.ParseBool(r.FormValue("hashpass"))
 	visible, _ := strconv.ParseBool(r.FormValue("vis"))
 
 	rec := st.DB().Records[id]
-	var pw string
-	if rec.Password != "" && !preferHash {
-		pw = rec.Password
-	} else {
-		pw, err = kflib.GenerateHashpass(st.DB(), rec, r.FormValue("tag"))
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+	if rec.Password == "" {
+		http.Error(w, "no password available", http.StatusNotFound)
+		return
 	}
+
 	// N.B. Capitalization of HX matters here.
 	events := map[string]string{"copyText": "pwval"}
 	if visible {
 		events["setValueToggle"] = "pwval"
 	}
 	w.Header().Set("HX-Trigger-After-Settle", toJSON(events))
-	s.runTemplate(w, r, "pass.html.tmpl", uiDetail{ID: "pwval", Value: pw, Visible: visible})
+	s.runTemplate(w, r, "pass.html.tmpl", uiDetail{ID: "pwval", Value: rec.Password, Visible: visible})
 }
 
 // totp serves a record TOTP fragment (partial).

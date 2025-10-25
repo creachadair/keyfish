@@ -119,9 +119,6 @@ func runRecordShow(env *command.Env, query string) error {
 		if rec.Password != "" {
 			rec.Password = "(hidden)"
 		}
-		if rec.Hashpass != nil && rec.Hashpass.SecretKey != "" {
-			rec.Hashpass.SecretKey = "(hidden)"
-		}
 		if rec.OTP != nil {
 			rec.OTP.RawSecret = " HIDDEN "
 		}
