@@ -28,8 +28,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-
-	"github.com/creachadair/mds/mbits"
 )
 
 // A Store is an encrypted store containing a user-provide DB value.
@@ -106,16 +104,16 @@ func Open[DB any](r io.Reader, accessKey KeyFunc) (*Store[DB], error) {
 	// version matches what we encrypted with.
 	data, err := decryptWithKey(dataKey, s.Data, []byte(s.Format))
 	if err != nil {
-		mbits.Zero(dataKey)
+		clear(dataKey)
 		return nil, fmt.Errorf("decrypt data: %w", err)
 	}
 
 	// Decode the database and discard the raw plaintext.
 	var db DB
 	err = json.Unmarshal(decompressData(data), &db)
-	mbits.Zero(data)
+	clear(data)
 	if err != nil {
-		mbits.Zero(dataKey)
+		clear(dataKey)
 		return nil, fmt.Errorf("decode database: %w", err)
 	}
 
@@ -148,7 +146,7 @@ func (s *Store[DB]) WriteTo(w io.Writer) (int64, error) {
 		KeySalt: s.accessKeySalt,
 	})
 	if err != nil {
-		mbits.Zero(data)
+		clear(data)
 		return 0, fmt.Errorf("encode output: %w", err)
 	}
 	nw, err := w.Write(pkt)
