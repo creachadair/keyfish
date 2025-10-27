@@ -12,13 +12,25 @@
       <td>{{$r.Title}}</td>
     </tr>{{end}}{{if $r.Hosts}}{{$h := index $r.Hosts 0}}
     <tr><th>Host:</th>
-      <td class="pulseable copyable"><a href="{{toURL $h}}" tabindex="-1" target="_blank">{{$h}}</a></td>
+      <td class="ctext">
+        <button class="ctext notes pulseable copyable">
+          <a href="{{toURL $h}}" tabindex="-1" target="_blank">{{$h}}</a>
+        </button>
+      </td>
     </tr>{{end}}{{if $r.Username}}
     <tr><th>Username:</th>
-      <td class="pulseable copyable">{{$r.Username}}</td>
+      <td class="ctext">
+        <button class="ctext notes pulseable copyable">
+          {{$r.Username}}
+        </button>
+      </td>
     </tr>{{end}}{{if $r.Addrs}}
     <tr><th>Address:</th>
-      <td class="pulseable copyable">{{index $r.Addrs 0}}</td>
+      <td class="ctext">
+        <button class="ctext notes pulseable copyable">
+          {{index $r.Addrs 0}}
+        </button>
+      </td>
     </tr>{{end}}{{if $r.Notes}}
     <tr>
       <th>Notes:</th>
@@ -63,7 +75,7 @@
                 hx-swap="outerHTML">
           Code
         </button>
-        <input id="otpval" type="hidden" value="" />
+        <input id="otpvapl" type="hidden" value="" />
         <button id="otpvalbtn" class="tab" tabindex="-1"
                 hx-get="/totp/{{$id}}?vis=1&key=1"
                 hx-target="#otpval"

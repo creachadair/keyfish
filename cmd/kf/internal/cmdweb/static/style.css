@@ -260,7 +260,7 @@ div#view .nvis {
 
 .copyable, .copyish, .ctext, button.ctext {
     background-image: url('/static/copy.svg');
-    background-position: right center;
+    background-position: right 0.5rem center;
     background-repeat: no-repeat;
     background-origin: padding-box;
     background-size: 32px;
