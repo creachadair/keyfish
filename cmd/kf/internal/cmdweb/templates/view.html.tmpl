@@ -93,7 +93,7 @@
         <button class="tab" tabindex=4
                 hx-get="/totp/{{$id}}?detail={{$index}}"
                 hx-target="#r{{$id}}d{{$index}}otp"
-                hx-swap="outerHTML">n
+                hx-swap="outerHTML">
           TOTP
         </button>
         <input id="r{{$id}}d{{$index}}otp" type="hidden" value="" />{{end}}
