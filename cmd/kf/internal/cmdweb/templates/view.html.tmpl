@@ -13,21 +13,21 @@
     </tr>{{end}}{{if $r.Hosts}}{{$h := index $r.Hosts 0}}
     <tr><th>Host:</th>
       <td class="ctext">
-        <button class="ctext notes pulseable copyable">
+        <button tabindex="-1" class="ctext notes pulseable copyable">
           <a href="{{toURL $h}}" tabindex="-1" target="_blank">{{$h}}</a>
         </button>
       </td>
     </tr>{{end}}{{if $r.Username}}
     <tr><th>Username:</th>
       <td class="ctext">
-        <button class="ctext notes pulseable copyable">
+        <button tabindex=3 class="ctext notes pulseable copyable">
           {{$r.Username}}
         </button>
       </td>
     </tr>{{end}}{{if $r.Addrs}}
     <tr><th>Address:</th>
       <td class="ctext">
-        <button class="ctext notes pulseable copyable">
+        <button tabinde="-1" class="ctext notes pulseable copyable">
           {{index $r.Addrs 0}}
         </button>
       </td>
@@ -58,7 +58,7 @@
         <input id="pwval" type="hidden" value="" />
       </td>
       <td class="ctext">
-        <button id="pwvalvis" tabindex=4 class="ctext pulseable copyish copyclick"
+        <button id="pwvalvis" tabindex=3 class="ctext pulseable copyish copyclick"
                 hx-get="/password/{{$id}}"
                 hx-target="#pwval"
                 hx-swap="outerHTML">
@@ -69,7 +69,7 @@
     </tr>{{end}}{{if $r.OTP}}
     <tr><th>OTP:</th>
       <td class="tab">
-        <button class="tab" tabindex=4
+        <button class="tab" tabindex=3
                 hx-get="/totp/{{$id}}"
                 hx-target="#otpval"
                 hx-swap="outerHTML">
@@ -84,7 +84,7 @@
         </button>
       </td>
       <td class="ctext">
-        <button id="otpvalvis" tabindex=4 class="ctext pulseable copyish copyclick"
+        <button id="otpvalvis" tabindex=3 class="ctext pulseable copyish copyclick"
                 hx-get="/totp/{{$id}}?key=1"
                 hx-target="#otpval"
                 hx-swap="outerHTML">
@@ -102,7 +102,7 @@
       <th>{{$d.Label}}</th>
       {{if $d.Hidden -}}
       <td class="tab">{{if isOTP .Value}}
-        <button class="tab" tabindex=4
+        <button class="tab" tabindex=3
                 hx-get="/totp/{{$id}}?detail={{$index}}"
                 hx-target="#r{{$id}}d{{$index}}otp"
                 hx-swap="outerHTML">
@@ -114,12 +114,12 @@
         </button>
       </td>
       <td class="ctext">
-        <button class="ctext pulseable copyish copyclick" tabindex=4 copy-value="{{.Value}}">
+        <button class="ctext pulseable copyish copyclick" tabindex=3 copy-value="{{.Value}}">
           (hidden)
         </button>
       </td>{{else}}{{- if isOTP .Value}}
       <td>
-        <button class="tab" tabindex=4
+        <button class="tab" tabindex=3
                 hx-get="/totp/{{$id}}?detail={{$index}}"
                 hx-target="#r{{$id}}d{{$index}}otp"
                 hx-swap="outerHTML">
@@ -128,7 +128,7 @@
         <input id="r{{$id}}d{{$index}}otp" type="hidden" value="" />
       </td>{{end}}
       <td class="ctext" colspan="2">
-        <button class="ctext notes pulseable copyable" tabindex=5>
+        <button class="ctext notes pulseable copyable" tabindex=4>
           {{formatText .Value}}
         </button>
       </td>{{end}}
