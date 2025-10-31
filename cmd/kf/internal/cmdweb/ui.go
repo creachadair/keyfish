@@ -43,9 +43,6 @@ type UI struct {
 	// automatically locked. If zero, the UI will not auto-lock.
 	LockTimeout time.Duration
 
-	// Expert, if true, enables expert settings.
-	Expert bool
-
 	// Debug, if true, enables debug logging.
 	Debug bool
 }
@@ -95,7 +92,7 @@ func (s *UI) runTemplate(w http.ResponseWriter, r *http.Request, name string, va
 func (s *UI) ui(w http.ResponseWriter, r *http.Request) {
 	s.updateLockLocked(false)
 
-	u := uiData{CanLock: s.LockPIN != "", Locked: s.Locked, Expert: s.Expert}
+	u := uiData{CanLock: s.LockPIN != "", Locked: s.Locked}
 	if query := strings.TrimSpace(r.FormValue("q")); query != "" {
 		if query != "*" && query != "?" {
 			u.Query = query
@@ -117,7 +114,6 @@ func (s *UI) search(w http.ResponseWriter, r *http.Request) {
 	}
 	s.runTemplate(w, r, "search.html.tmpl", uiData{
 		SearchResult: searchRecords(s.Store().DB().Records, query),
-		Expert:       s.Expert,
 	})
 }
 
@@ -137,7 +133,6 @@ func (s *UI) view(w http.ResponseWriter, r *http.Request) {
 			Index:  index,
 			Record: st.DB().Records[index],
 		},
-		Expert: s.Expert,
 	})
 }
 
@@ -171,7 +166,6 @@ func (s *UI) detail(w http.ResponseWriter, r *http.Request) {
 		ID:       tag,
 		Label:    det.Label,
 		Value:    det.Value,
-		Expert:   s.Expert,
 	})
 }
 
@@ -354,7 +348,6 @@ type uiData struct {
 	TargetRecord *uiRecord
 	CanLock      bool // whether locking is enabled
 	Locked       bool // whether the UI is locked now
-	Expert       bool // whether to enable expert features
 }
 
 type uiRecord struct {
@@ -368,7 +361,5 @@ type uiDetail struct {
 	ID       string
 	Label    string
 	Value    string
-	Aux      string
 	Visible  bool
-	Expert   bool // whether to enable expert features
 }
