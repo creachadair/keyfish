@@ -2,7 +2,6 @@ package kflib_test
 
 import (
 	crand "crypto/rand"
-	"fmt"
 	"io"
 	"log"
 	mrand "math/rand"
@@ -49,13 +48,6 @@ func TestChars(t *testing.T) {
 
 		for _, tc := range tests {
 			check(t, kflib.RandomChars(tc.length, tc.charset), tc)
-		}
-	})
-	t.Run("Hashed", func(t *testing.T) {
-		const passphrase, seed = "magic is as magic does", "example.com"
-		for i, tc := range tests {
-			salt := fmt.Sprintf("%d", i+1)
-			check(t, kflib.HashedChars(tc.length, tc.charset, passphrase, seed, salt), tc)
 		}
 	})
 }

@@ -2,7 +2,6 @@ package kflib
 
 import (
 	crand "crypto/rand"
-	"crypto/sha256"
 	"encoding/binary"
 	"fmt"
 	"io"
@@ -10,8 +9,6 @@ import (
 	"strings"
 
 	_ "embed"
-
-	"golang.org/x/crypto/hkdf"
 )
 
 // To update the word list, run "go generate ./kflib".
@@ -61,20 +58,6 @@ func RandomChars(length int, charset Charset) string {
 	length = max(length, 8)
 	out := make([]byte, length)
 	fillRandom(out, expandCharset(charset), crand.Reader)
-	return string(out)
-}
-
-// HashedChars creates a new HKDF password of the given length using the
-// specified character types. A minimum length of 8 is enforced.
-//
-// The passphrase is a strong secret passphrase. The seed is not secret, but
-// must be fixed for a given context. The salt is optional, if non-empty it is
-// mixed in to the HKDF as additional context.
-func HashedChars(length int, charset Charset, passphrase, seed, salt string) string {
-	rng := hkdf.New(sha256.New, []byte(passphrase), []byte(seed), []byte(salt))
-	length = max(length, 8)
-	out := make([]byte, length)
-	fillRandom(out, expandCharset(charset), rng)
 	return string(out)
 }
 
