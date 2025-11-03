@@ -3,8 +3,9 @@ package kfdb
 
 import (
 	"bytes"
+	"crypto/pbkdf2"
 	crand "crypto/rand"
-	"crypto/sha256"
+	"crypto/sha3"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -12,7 +13,6 @@ import (
 
 	"github.com/creachadair/keyfish/kfstore"
 	"github.com/creachadair/otp/otpauth"
-	"golang.org/x/crypto/hkdf"
 	yaml "gopkg.in/yaml.v3"
 )
 
@@ -156,24 +156,24 @@ func Open(r io.Reader, passphrase string) (*Store, error) {
 // New creates a new DB store using the given passphrase to generate a store
 // access key. If init != nil, it is used as the initial database.
 func New(passphrase string, init *DB) (*Store, error) {
-	buf := make([]byte, 2*kfstore.AccessKeyLen)
-	accessKey, keySalt := buf[:kfstore.AccessKeyLen], buf[kfstore.AccessKeyLen:]
-	if _, err := crand.Read(keySalt); err != nil {
-		return nil, fmt.Errorf("generate access key salt: %w", err)
-	}
-	h := hkdf.New(sha256.New, []byte(passphrase), keySalt, nil)
-	if _, err := io.ReadFull(h, accessKey); err != nil {
+	salt := make([]byte, kfstore.AccessKeyLen)
+	crand.Read(salt) // panics on failure
+
+	accessKey, err := pbkdf2.Key(sha3.New256, passphrase, salt, kdfRounds, kfstore.AccessKeyLen)
+	if err != nil {
 		return nil, fmt.Errorf("generate access key: %w", err)
 	}
-	return kfstore.New(accessKey, keySalt, init)
+	return kfstore.New(accessKey, salt, init)
 }
+
+const kdfRounds = 4096
 
 func deriveKey(passphrase string) kfstore.KeyFunc {
 	return func(salt []byte) []byte {
-		h := hkdf.New(sha256.New, []byte(passphrase), salt, nil)
-		key := make([]byte, kfstore.AccessKeyLen)
-		if _, err := io.ReadFull(h, key); err != nil {
-			panic(fmt.Sprintf("derive key: %v", err))
+		key, err := pbkdf2.Key(sha3.New256, passphrase, salt, kdfRounds, kfstore.AccessKeyLen)
+		if err != nil {
+			// Should not be possible in our configuration.
+			panic(fmt.Sprintf("pbkdf2.Key failed: %v", err))
 		}
 		return key
 	}
