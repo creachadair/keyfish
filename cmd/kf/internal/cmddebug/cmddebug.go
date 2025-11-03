@@ -12,7 +12,6 @@ import (
 	"github.com/creachadair/keyfish/cmd/kf/config"
 	"github.com/creachadair/keyfish/kfdb"
 	"github.com/creachadair/keyfish/kflib"
-	"github.com/creachadair/mds/value"
 	"github.com/creachadair/otp/otpauth"
 )
 
@@ -37,17 +36,6 @@ Use "@" to refer to the path set via the --db flag.`,
 			Usage: "<db-path> <json-path>",
 			Help:  "Import a plaintext JSON into a database, replacing its contents.",
 			Run:   command.Adapt(runDebugImport),
-		},
-		{
-			Name:  "hashpass",
-			Usage: "[flags] [salt]@seed",
-			Help: `Generate an HKDF based hashed password.
-
-The seed is the non-secret generator seed. If provided, the salt is
-mixed in to the HKDF as additional context. The user is prompted for
-the HKDF secret. The output is written as a single line to stdout.`,
-			SetFlags: command.Flags(flax.MustBind, &hpFlags),
-			Run:      command.Adapt(runDebugHashpass),
 		},
 		{
 			Name:     "totp",
@@ -88,38 +76,6 @@ func runDebugImport(env *command.Env, dbPath, jsonPath string) error {
 		return err
 	}
 	fmt.Fprintf(env, "Imported %q into %q\n", jsonPath, dp)
-	return nil
-}
-
-var hpFlags struct {
-	Length  int  `flag:"n,The length of the password to generate"`
-	NoDigit bool `flag:"no-digits,Omit digits from the generated password"`
-	Symbols bool `flag:"symbols,Include punctuation in the generated password"`
-	Confirm bool `flag:"c,Confirm passphrase"`
-}
-
-// runDebugHashpass implements the "debug hashpass" subcommand.
-func runDebugHashpass(env *command.Env, input string) error {
-	if hpFlags.Length <= 0 {
-		return env.Usagef("the length (-n) must be positive")
-	}
-
-	salt, seed, ok := strings.Cut(input, "@")
-	if !ok {
-		salt, seed = "", input
-	}
-	pp, err := value.Cond(hpFlags.Confirm, kflib.ConfirmPassphrase, kflib.GetPassphrase)("Passphrase: ")
-	if err != nil {
-		return err
-	}
-	cs := kflib.Letters
-	if !hpFlags.NoDigit {
-		cs |= kflib.Digits
-	}
-	if hpFlags.Symbols {
-		cs |= kflib.Symbols
-	}
-	fmt.Println(kflib.HashedChars(hpFlags.Length, cs, pp, seed, salt))
 	return nil
 }
 
