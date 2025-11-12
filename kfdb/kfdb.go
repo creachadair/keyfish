@@ -3,9 +3,7 @@ package kfdb
 
 import (
 	"bytes"
-	"crypto/pbkdf2"
 	crand "crypto/rand"
-	"crypto/sha3"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -13,6 +11,7 @@ import (
 
 	"github.com/creachadair/keyfish/kfstore"
 	"github.com/creachadair/otp/otpauth"
+	"golang.org/x/crypto/argon2"
 	yaml "gopkg.in/yaml.v3"
 )
 
@@ -159,23 +158,17 @@ func New(passphrase string, init *DB) (*Store, error) {
 	salt := make([]byte, kfstore.AccessKeyLen)
 	crand.Read(salt) // panics on failure
 
-	accessKey, err := pbkdf2.Key(sha3.New256, passphrase, salt, kdfRounds, kfstore.AccessKeyLen)
-	if err != nil {
-		return nil, fmt.Errorf("generate access key: %w", err)
-	}
+	accessKey := keyFromPassphrase(passphrase, salt, kfstore.AccessKeyLen)
 	return kfstore.New(accessKey, salt, init)
 }
 
-const kdfRounds = 4096
+func keyFromPassphrase(passphrase string, salt []byte, keyLen int) []byte {
+	return argon2.IDKey([]byte(passphrase), salt, 3, 16*1024, 1, uint32(keyLen))
+}
 
 func deriveKey(passphrase string) kfstore.KeyFunc {
 	return func(salt []byte) []byte {
-		key, err := pbkdf2.Key(sha3.New256, passphrase, salt, kdfRounds, kfstore.AccessKeyLen)
-		if err != nil {
-			// Should not be possible in our configuration.
-			panic(fmt.Sprintf("pbkdf2.Key failed: %v", err))
-		}
-		return key
+		return keyFromPassphrase(passphrase, salt, kfstore.AccessKeyLen)
 	}
 }
 
