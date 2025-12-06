@@ -8,12 +8,12 @@ github.com/creachadair/flax v0.0.5 h1:zt+CRuXQASxwQ68e9GHAOnEgAU29nF0zYMHOCrL5wz
 github.com/creachadair/flax v0.0.5/go.mod h1:F1PML0JZLXSNDMNiRGK2yjm5f+L9QCHchyHBldFymj8=
 github.com/creachadair/getpass v0.3.0 h1:phkNCSJK3E7z00K61fJN6FVeK7QVB544TfMwrv4wHCg=
 github.com/creachadair/getpass v0.3.0/go.mod h1:uP4qBITSjhKDM0aiWxxkKXo4CbF289NQeqJYKUJPlzk=
-github.com/creachadair/mds v0.25.13 h1:PsSUHV6zsfPd29k4kvm1rMoee1YFia7JyNGeMPmDcPM=
-github.com/creachadair/mds v0.25.13/go.mod h1:4hatI3hRM+qhzuAmqPRFvaBM8mONkS7nsLxkcuTYUIs=
+github.com/creachadair/mds v0.25.15 h1:i8CUqtfgbCqbvZ++L7lm8No3cOeic9YKF4vHEvEoj+Y=
+github.com/creachadair/mds v0.25.15/go.mod h1:XtMfRW15sjd1iOi1Z1k+dq0pRsR5xPbulpoTrpyhk8w=
 github.com/creachadair/otp v0.5.2 h1:3krOkIHA8X1YAnv9lGZi2NlyCZepcsAQkZwKGK5L+9c=
 github.com/creachadair/otp v0.5.2/go.mod h1:0cUM4kl9cQmePbIEy1J1O+esh+S3zDM9s2Foo71KzKA=
-github.com/creachadair/wirepb v0.0.0-20251002031904-78c565c2f93e h1:xwraECKSvz2qkCx7Hv9z7S7ISmX8BkO0L+ZNLm/jvbI=
-github.com/creachadair/wirepb v0.0.0-20251002031904-78c565c2f93e/go.mod h1:dHvCVZSsk3Y/fhY0mUex0U2XBZszomOe7PzlghOtHnQ=
+github.com/creachadair/wirepb v0.0.0-20251201055919-954ef89c4c71 h1:H3EV2OFbtKgFAcxGJiLTNar9krJ9yfsgpE37/QY9vN8=
+github.com/creachadair/wirepb v0.0.0-20251201055919-954ef89c4c71/go.mod h1:dHvCVZSsk3Y/fhY0mUex0U2XBZszomOe7PzlghOtHnQ=
 github.com/fsnotify/fsnotify v1.9.0 h1:2Ml+OJNzbYCTzsxtv8vKSFD9PbJjmhYF14k/jKC7S9k=
 github.com/fsnotify/fsnotify v1.9.0/go.mod h1:8jBTzvmWwFyi3Pb8djgCCO5IBqzKJ/Jwo8TRcHyHii0=
 github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=

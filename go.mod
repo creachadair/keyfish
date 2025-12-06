@@ -5,7 +5,7 @@ require (
 	github.com/creachadair/command v0.2.0
 	github.com/creachadair/flax v0.0.5
 	github.com/creachadair/getpass v0.3.0
-	github.com/creachadair/mds v0.25.13
+	github.com/creachadair/mds v0.25.15
 	github.com/creachadair/otp v0.5.2
 	github.com/fsnotify/fsnotify v1.9.0
 	github.com/google/go-cmp v0.7.0
@@ -15,7 +15,7 @@ require (
 )
 
 require (
-	github.com/creachadair/wirepb v0.0.0-20251002031904-78c565c2f93e // indirect
+	github.com/creachadair/wirepb v0.0.0-20251201055919-954ef89c4c71 // indirect
 	golang.org/x/exp/typeparams v0.0.0-20231108232855-2478ac86f678 // indirect
 	golang.org/x/mod v0.23.0 // indirect
 	golang.org/x/sync v0.11.0 // indirect
@@ -24,7 +24,7 @@ require (
 	honnef.co/go/tools v0.6.1 // indirect
 )
 
-go 1.24.0
+go 1.25
 
 tool honnef.co/go/tools/staticcheck
 
