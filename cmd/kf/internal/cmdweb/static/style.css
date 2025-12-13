@@ -14,7 +14,7 @@
 
     --text-body: var(--c-high);
     --bg-body: var(--c-base);
-    --font-body: -apple-system, system-ui, Helvetica, Arial, sans-serif;
+    --font-body: -apple-system, ui-sans-serif, Helvetica, Arial, sans-serif;
     --font-mono: "andale mono", robota, verdana, mononspace;
     --size-body: var(--f-size);
 }
