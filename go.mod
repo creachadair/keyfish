@@ -9,13 +9,13 @@ require (
 	github.com/creachadair/otp v0.5.2
 	github.com/fsnotify/fsnotify v1.9.0
 	github.com/google/go-cmp v0.7.0
-	golang.org/x/crypto v0.46.0
-	golang.org/x/term v0.38.0
+	golang.org/x/crypto v0.47.0
+	golang.org/x/term v0.39.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
-	github.com/creachadair/wirepb v0.0.0-20251201055919-954ef89c4c71 // indirect
+	github.com/creachadair/wirepb v0.0.0-20260118190344-5e902acb308e // indirect
 	golang.org/x/exp/typeparams v0.0.0-20231108232855-2478ac86f678 // indirect
 	golang.org/x/mod v0.23.0 // indirect
 	golang.org/x/sync v0.11.0 // indirect
