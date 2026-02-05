@@ -97,7 +97,7 @@ func Open[DB any](r io.Reader, accessKey KeyFunc) (*Store[DB], error) {
 	// Decrypt the data key with the access key.
 	dataKey, err := decryptWithKey(akey, s.DataKey, nil)
 	if err != nil {
-		return nil, fmt.Errorf("decrypt data key: %w", err)
+		return nil, fmt.Errorf("invalid access key: %w", err)
 	}
 
 	// Decrypt the data payload with the data key, and verify that the format
