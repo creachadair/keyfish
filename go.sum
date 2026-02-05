@@ -10,8 +10,8 @@ github.com/creachadair/getpass v0.3.0 h1:phkNCSJK3E7z00K61fJN6FVeK7QVB544TfMwrv4
 github.com/creachadair/getpass v0.3.0/go.mod h1:uP4qBITSjhKDM0aiWxxkKXo4CbF289NQeqJYKUJPlzk=
 github.com/creachadair/mds v0.25.15 h1:i8CUqtfgbCqbvZ++L7lm8No3cOeic9YKF4vHEvEoj+Y=
 github.com/creachadair/mds v0.25.15/go.mod h1:XtMfRW15sjd1iOi1Z1k+dq0pRsR5xPbulpoTrpyhk8w=
-github.com/creachadair/otp v0.5.2 h1:3krOkIHA8X1YAnv9lGZi2NlyCZepcsAQkZwKGK5L+9c=
-github.com/creachadair/otp v0.5.2/go.mod h1:0cUM4kl9cQmePbIEy1J1O+esh+S3zDM9s2Foo71KzKA=
+github.com/creachadair/otp v0.5.3 h1:XGqB2vsO0GWPGFewS7FHND9NiZi8E0L5rhKZdSAGnvE=
+github.com/creachadair/otp v0.5.3/go.mod h1:2IYbysfu6EhNP0hq4oLKO1mWMPXvl6SwKMckykHRYRw=
 github.com/creachadair/wirepb v0.0.0-20260118190344-5e902acb308e h1:grH1pkEAAneh0KcqGptyOtuGoOnBX5snTemh8rpNpfc=
 github.com/creachadair/wirepb v0.0.0-20260118190344-5e902acb308e/go.mod h1:dHvCVZSsk3Y/fhY0mUex0U2XBZszomOe7PzlghOtHnQ=
 github.com/fsnotify/fsnotify v1.9.0 h1:2Ml+OJNzbYCTzsxtv8vKSFD9PbJjmhYF14k/jKC7S9k=
