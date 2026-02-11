@@ -19,7 +19,7 @@ type wordmap [256]string
 func (w wordmap) hash(data []byte) string {
 	crc := crc32.ChecksumIEEE(data)
 	segments := make([]string, 4)
-	for i := 0; i < 4; i++ {
+	for i := range 4 {
 		segments[i] = w[crc&0xff]
 		crc >>= 8
 	}
