@@ -22,7 +22,7 @@
       <button id=lockbtn class=lock tabindex=1 hx-get="/lock" hx-target="body">🔒</button>{{end}}
       <input id="query" name="q" type="text" class="textbox" size="25" value="{{.Query}}"
              autofocus autocomplete=off autocorrect=off autocapitalize=none tabindex=2
-             placeholder="Label, hostname, or title; use * to list all"
+             placeholder="Label, hostname, or title; use * to list all, prefix with + to include archived"
              hx-get="/search"
              hx-trigger="keyup changed delay:250ms"
              hx-params="q"

@@ -317,7 +317,12 @@ func wrap(s *UI, h http.HandlerFunc) http.HandlerFunc {
 }
 
 func searchRecords(recs []*kfdb.Record, query string) []kflib.FoundRecord {
-	return slice.Partition(kflib.FindRecords(recs, query), func(fr kflib.FoundRecord) bool {
+	query, archOK := strings.CutPrefix(query, "+")
+	found := kflib.FindRecords(recs, query)
+	if archOK {
+		return found
+	}
+	return slice.Partition(found, func(fr kflib.FoundRecord) bool {
 		return !fr.Record.Archived
 	})
 }
