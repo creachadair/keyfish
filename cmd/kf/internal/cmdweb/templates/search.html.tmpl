@@ -6,7 +6,7 @@
       <button class=sr hx-get="/view/{{.Index}}" hx-target="#result">{{.Record.Label}}</button>
       <input name=quality type=hidden value="{{.Quality}}" />
     </td>
-    <td class=title>
+    <td class={{if .Record.Archived}}archived{{else}}title{{end}}>
       {{if .Record.Title}}{{.Record.Title}}
       {{- else if .Record.Hosts}}{{index .Record.Hosts 0}}{{else}}(no description)
     {{end}}</td>

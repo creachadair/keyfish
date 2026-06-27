@@ -10,6 +10,7 @@
     --c-error: #f73859;
     --c-link: #d3b53d;
     --c-linked: #a3b86c;
+    --c-archived: #2e200d;
     --f-size: 18px;
 
     --text-body: var(--c-high);
@@ -135,6 +136,10 @@ table#sr tr td.label {
     width: 10%;
     height: 100%;  /* so enclosed button.sr can fill vertically */
     padding: 0.1rem;
+}
+
+table#sr tr td.archived {
+    background: var(--c-archived);
 }
 
 button.sr {
