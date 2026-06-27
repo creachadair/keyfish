@@ -94,17 +94,18 @@ func (s *UI) ui(w http.ResponseWriter, r *http.Request) {
 
 	u := uiData{CanLock: s.LockPIN != "", Locked: s.Locked}
 	if query := strings.TrimSpace(r.FormValue("q")); query != "" {
+		query, archOK := strings.CutPrefix(query, "+")
 		if query != "*" && query != "?" {
 			u.Query = query
 		}
-		u.SearchResult = searchRecords(s.Store().DB().Records, u.Query)
+		u.SearchResult = searchRecords(s.Store().DB().Records, query, archOK)
 	}
 	s.runTemplate(w, r, "index.html.tmpl", u)
 }
 
 // search serves search results (partial).
 func (s *UI) search(w http.ResponseWriter, r *http.Request) {
-	query := strings.TrimSpace(r.FormValue("q"))
+	query, archOK := strings.CutPrefix(strings.TrimSpace(r.FormValue("q")), "+")
 	switch query {
 	case "":
 		return // no results, empty response
@@ -113,7 +114,7 @@ func (s *UI) search(w http.ResponseWriter, r *http.Request) {
 	default:
 	}
 	s.runTemplate(w, r, "search.html.tmpl", uiData{
-		SearchResult: searchRecords(s.Store().DB().Records, query),
+		SearchResult: searchRecords(s.Store().DB().Records, query, archOK),
 	})
 }
 
@@ -316,8 +317,7 @@ func wrap(s *UI, h http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-func searchRecords(recs []*kfdb.Record, query string) []kflib.FoundRecord {
-	query, archOK := strings.CutPrefix(query, "+")
+func searchRecords(recs []*kfdb.Record, query string, archOK bool) []kflib.FoundRecord {
 	found := kflib.FindRecords(recs, query)
 	if archOK {
 		return found
