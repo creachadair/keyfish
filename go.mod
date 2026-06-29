@@ -5,7 +5,7 @@ require (
 	github.com/creachadair/command v0.2.6
 	github.com/creachadair/flax v0.0.6
 	github.com/creachadair/getpass v0.3.2
-	github.com/creachadair/mds v0.29.1
+	github.com/creachadair/mds v0.29.2
 	github.com/creachadair/otp v0.5.4
 	github.com/fsnotify/fsnotify v1.10.1
 	github.com/google/go-cmp v0.7.0
