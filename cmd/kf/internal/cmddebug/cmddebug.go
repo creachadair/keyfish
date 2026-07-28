@@ -44,6 +44,7 @@ Use "@" to refer to the path set via the --db flag.`,
 			SetFlags: command.Flags(flax.MustBind, &otpFlags),
 			Run:      command.Adapt(runDebugTOTP),
 		},
+		command.InfoCommand("command-info"),
 	},
 }
 
