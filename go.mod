@@ -4,12 +4,12 @@ require (
 	github.com/creachadair/atomicfile v0.4.2
 	github.com/creachadair/command v0.2.11
 	github.com/creachadair/flax v0.0.6
-	github.com/creachadair/getpass v0.3.5
+	github.com/creachadair/getpass v0.3.6
 	github.com/creachadair/mds v0.30.5
 	github.com/creachadair/otp v0.5.4
 	github.com/fsnotify/fsnotify v1.10.1
 	github.com/google/go-cmp v0.7.0
-	golang.org/x/crypto v0.54.0
+	golang.org/x/crypto v0.55.0
 	golang.org/x/term v0.45.0
 	gopkg.in/yaml.v3 v3.0.1
 )

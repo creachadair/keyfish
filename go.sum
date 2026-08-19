@@ -6,8 +6,8 @@ github.com/creachadair/command v0.2.11 h1:YPpsfKHDgVvOWs0kzlZz1RviLbuyb/tBT39yzb
 github.com/creachadair/command v0.2.11/go.mod h1:p7iYfSCIAVz+oYYIsXsya1hjKgjitd3U/0eOrzTWkBQ=
 github.com/creachadair/flax v0.0.6 h1:IFUdRdfKynNTyR5SRlrHMUGnxxMZZen8RVpwcDq/ftk=
 github.com/creachadair/flax v0.0.6/go.mod h1:F1PML0JZLXSNDMNiRGK2yjm5f+L9QCHchyHBldFymj8=
-github.com/creachadair/getpass v0.3.5 h1:MmRLuI5l3XoU8GHdUhWmRO+NF3QnfadQZuUHxRQZwkc=
-github.com/creachadair/getpass v0.3.5/go.mod h1:Lgc/8/lJI2LuMVkOuG+yYxC8iMwBj3uB7PaK+dB39Yk=
+github.com/creachadair/getpass v0.3.6 h1:7z4XwK15TX9blHN/vMSHCGiMt37+8CaAdbwg25vvshI=
+github.com/creachadair/getpass v0.3.6/go.mod h1:Lgc/8/lJI2LuMVkOuG+yYxC8iMwBj3uB7PaK+dB39Yk=
 github.com/creachadair/mds v0.30.5 h1:JtylThbC3wUndriq7yZiY23AD0L7ZaKSvx3XQwQk8FI=
 github.com/creachadair/mds v0.30.5/go.mod h1:NGUd6kGUG0qQd2kgGOqb8NzakLnSmWZ5be2pHZsrBN4=
 github.com/creachadair/otp v0.5.4 h1:v5LnqQGPPcX1K+mfU8xscKt157Kzh10cDQYEAeLGujk=
@@ -18,8 +18,8 @@ github.com/fsnotify/fsnotify v1.10.1 h1:b0/UzAf9yR5rhf3RPm9gf3ehBPpf0oZKIjtpKrx5
 github.com/fsnotify/fsnotify v1.10.1/go.mod h1:TLheqan6HD6GBK6PrDWyDPBaEV8LspOxvPSjC+bVfgo=
 github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
 github.com/google/go-cmp v0.7.0/go.mod h1:pXiqmnSA92OHEEa9HXL2W4E7lf9JzCmGVUdgjX3N/iU=
-golang.org/x/crypto v0.54.0 h1:YLIA59K4fiNzHzjnZt2tUJQjQtUWfWbeHBqKtk3eScw=
-golang.org/x/crypto v0.54.0/go.mod h1:KWL8ny2AZdGR2cWmzeHrp2azQPGogOv+HeQaVEXC2dk=
+golang.org/x/crypto v0.55.0 h1:+KWHjbgOaAQ66dh/YlkZKHlz9ZUlq61AFirAR9ntP8M=
+golang.org/x/crypto v0.55.0/go.mod h1:uq0V9dE/fzQuJtbnL+2EhWOE63vo164FY8xqEnV9xis=
 golang.org/x/exp/typeparams v0.0.0-20231108232855-2478ac86f678 h1:1P7xPZEwZMoBoz0Yze5Nx2/4pxj6nw9ZqHWXqP0iRgQ=
 golang.org/x/exp/typeparams v0.0.0-20231108232855-2478ac86f678/go.mod h1:AbB0pIl9nAr9wVwH+Z2ZpaocVmF5I4GyWCDIsVjR0bk=
 golang.org/x/mod v0.31.0 h1:HaW9xtz0+kOcWKwli0ZXy79Ix+UW/vOfmWI5QVd2tgI=
