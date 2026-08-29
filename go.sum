@@ -10,10 +10,10 @@ github.com/creachadair/getpass v0.3.6 h1:7z4XwK15TX9blHN/vMSHCGiMt37+8CaAdbwg25v
 github.com/creachadair/getpass v0.3.6/go.mod h1:Lgc/8/lJI2LuMVkOuG+yYxC8iMwBj3uB7PaK+dB39Yk=
 github.com/creachadair/mds v0.30.5 h1:JtylThbC3wUndriq7yZiY23AD0L7ZaKSvx3XQwQk8FI=
 github.com/creachadair/mds v0.30.5/go.mod h1:NGUd6kGUG0qQd2kgGOqb8NzakLnSmWZ5be2pHZsrBN4=
-github.com/creachadair/otp v0.5.4 h1:v5LnqQGPPcX1K+mfU8xscKt157Kzh10cDQYEAeLGujk=
-github.com/creachadair/otp v0.5.4/go.mod h1:Ps6nENtdec8LepzmCHB2QbSIf7te4/5GlvoegNkYlgc=
-github.com/creachadair/wirepb v0.0.0-20260218173010-2346782bc0a5 h1:XMeOCO8SOD/F2Qk8N74AC5ks0pRiHTR0lV7+5BzgCts=
-github.com/creachadair/wirepb v0.0.0-20260218173010-2346782bc0a5/go.mod h1:UWtVo/WF/nHwH0X5rfaCoLWF0b4SeZTG94x0+FM5xC0=
+github.com/creachadair/otp v0.5.5 h1:XYzgfp0esg5HTwqmxp2GYg8OrvTTVajL0Xbqbgs3Eps=
+github.com/creachadair/otp v0.5.5/go.mod h1:oEnY+tYRXh7sR2p9+yonDKI3BxQ+byUtC55V6yTNVr8=
+github.com/creachadair/wirepb v0.0.0-20260803044834-54eb959db0a7 h1:JMZZ0M1YHWWtH3wI7RfZa+9nD7bpAAxEIGDAWrJmuWc=
+github.com/creachadair/wirepb v0.0.0-20260803044834-54eb959db0a7/go.mod h1:UWtVo/WF/nHwH0X5rfaCoLWF0b4SeZTG94x0+FM5xC0=
 github.com/fsnotify/fsnotify v1.10.1 h1:b0/UzAf9yR5rhf3RPm9gf3ehBPpf0oZKIjtpKrx59Ho=
 github.com/fsnotify/fsnotify v1.10.1/go.mod h1:TLheqan6HD6GBK6PrDWyDPBaEV8LspOxvPSjC+bVfgo=
 github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
@@ -38,7 +38,5 @@ gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
 gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
-honnef.co/go/tools v0.8.0 h1:UacpzPr7D6i5BAjTkA7sNVcx4kIbhAZcQ4zYtKiXx68=
-honnef.co/go/tools v0.8.0/go.mod h1:XA+OnlRA9EDh/ukGvXMNSZNKGwFQJ+5dER0ioUkOxks=
 honnef.co/go/tools v0.8.1 h1:+JKf3xJ1ni4CwrhVg4/pqsfPGP6vNAXcKbMXJodYx3w=
 honnef.co/go/tools v0.8.1/go.mod h1:XA+OnlRA9EDh/ukGvXMNSZNKGwFQJ+5dER0ioUkOxks=

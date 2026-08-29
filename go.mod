@@ -6,7 +6,7 @@ require (
 	github.com/creachadair/flax v0.0.6
 	github.com/creachadair/getpass v0.3.6
 	github.com/creachadair/mds v0.30.5
-	github.com/creachadair/otp v0.5.4
+	github.com/creachadair/otp v0.5.5
 	github.com/fsnotify/fsnotify v1.10.1
 	github.com/google/go-cmp v0.7.0
 	golang.org/x/crypto v0.55.0
@@ -15,8 +15,7 @@ require (
 )
 
 require (
-	github.com/BurntSushi/toml v1.4.1-0.20240526193622-a339e1f7089c // indirect
-	github.com/creachadair/wirepb v0.0.0-20260218173010-2346782bc0a5 // indirect
+	github.com/creachadair/wirepb v0.0.0-20260803044834-54eb959db0a7 // indirect
 	golang.org/x/exp/typeparams v0.0.0-20231108232855-2478ac86f678 // indirect
 	golang.org/x/mod v0.35.0 // indirect
 	golang.org/x/sync v0.20.0 // indirect
