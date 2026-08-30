@@ -61,6 +61,7 @@ var addFlags struct {
 	EMail    string `flag:"email,Specify an e-mail for the record"`
 	Host     string `flag:"host,Specify a hostname for the record"`
 	Edit     bool   `flag:"edit,Open the new record in an editor"`
+	Random   int    `flag:"random,Assign a random password"`
 }
 
 // runRecordAdd implements the "record add" subcommand.
@@ -84,6 +85,9 @@ func runRecordAdd(env *command.Env, label string) error {
 	}
 	if addFlags.Host != "" {
 		nr.Hosts = append(nr.Hosts, addFlags.Host)
+	}
+	if n := addFlags.Random; n > 0 {
+		nr.Password = kflib.RandomChars(n, kflib.Letters|kflib.Digits)
 	}
 	if addFlags.Edit {
 		nr, err = kflib.Edit(env.Context(), nr)
