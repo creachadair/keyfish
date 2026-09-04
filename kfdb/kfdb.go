@@ -51,10 +51,10 @@ type Record struct {
 	Username string `json:"username,omitzero" yaml:"username,omitempty"`
 
 	// Hosts are optional hostnames associated with this record.
-	Hosts Strings `json:"hosts,omitempty" yaml:"hosts,flow,omitempty"`
+	Hosts Strings `json:"hosts,omitempty" yaml:"hosts,omitempty"`
 
 	// Addrs are e-mail addresses associated with this record.
-	Addrs Strings `json:"addrs,omitempty" yaml:"addrs,flow,omitempty"`
+	Addrs Strings `json:"addrs,omitempty" yaml:"addrs,omitempty"`
 
 	// Tags are optional query tags associated with this record.
 	Tags []string `json:"tags,omitempty" yaml:"tags,flow,omitempty"`
