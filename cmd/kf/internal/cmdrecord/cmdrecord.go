@@ -66,6 +66,9 @@ var addFlags struct {
 
 // runRecordAdd implements the "record add" subcommand.
 func runRecordAdd(env *command.Env, label string) error {
+	if !kfdb.IsValidLabel(label) {
+		return env.Usagef("invalid label %q", label)
+	}
 	s, err := config.LoadDB(env)
 	if err != nil {
 		return err

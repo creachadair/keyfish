@@ -7,7 +7,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/creachadair/keyfish/kfstore"
 	"github.com/creachadair/otp/otpauth"
@@ -217,3 +219,6 @@ func (d *Duration) UnmarshalText(text []byte) error {
 
 // Get returns d as a [time.Duration].
 func (d Duration) Get() time.Duration { return time.Duration(d) }
+
+// IsValidLabel reports whether s is a valid record label.
+func IsValidLabel(s string) bool { return s != "" && utf8.ValidString(s) && !strings.Contains(s, "/") }
