@@ -15,6 +15,7 @@ import (
 	"github.com/creachadair/keyfish/kfdb"
 	"github.com/creachadair/keyfish/kflib"
 	"github.com/creachadair/mds/slice"
+	"github.com/creachadair/mds/value"
 )
 
 var Command = &command.C{
@@ -39,9 +40,8 @@ var Command = &command.C{
 			Run:  command.Adapt(runDBEdit),
 		},
 		{
-			Name:  "export",
-			Usage: "[query...]",
-			Help: `Export the database to CSV.
+			Name: "export",
+			Help: `Export plaintext database records to another format.
 
 With no arguments, all non-archived records are exported.  Otherwise, only
 records matching the specified queries are chosen. Use "-a" to include archived
@@ -52,10 +52,14 @@ passwords and OTP secrets. You may specify "-" as the output to write to
 stdout, but this is not recommended unless you are piping to another program.
 
 By default, notes are omitted; use --notes to include them.
-By default, OTP codes are included; use --no-otp to exclude them.
-`,
+By default, OTP codes are included; use --no-otp to exclude them.`,
 			SetFlags: command.Flags(flax.MustBind, &exportFlags),
-			Run:      command.Adapt(runDBExport),
+			Commands: []*command.C{{
+				Name:  "apple-csv",
+				Usage: "[query...]",
+				Help:  `Export database records to Apple CSV format.`,
+				Run:   command.Adapt(runDBExportAppleCSV),
+			}},
 		},
 	},
 }
@@ -130,10 +134,12 @@ var exportFlags struct {
 	NoOTP  bool   `flag:"no-otp,Exclude OTP settings from output"`
 }
 
-// runDBExport implements the "db export" subcommand.
-func runDBExport(env *command.Env, queries ...string) error {
+// runDBExportAppleCSV implements the "db export apple-csv" subcommand.
+func runDBExportAppleCSV(env *command.Env, queries ...string) error {
 	if exportFlags.Target == "" {
 		return env.Usagef("a --to file is required (use '-' for stdout)")
+	} else if exportFlags.Target == "-" {
+		fmt.Fprintln(env, ">> CAUTION: Exporting records to stdout in cleartext")
 	}
 	s, err := config.LoadDB(env)
 	if err != nil {
@@ -190,6 +196,6 @@ func runDBExport(env *command.Env, queries ...string) error {
 	if err := f.Close(); err != nil {
 		return err
 	}
-	fmt.Fprintf(env, "Exported %d records\n", nexp)
+	fmt.Fprintf(env, "Exported %d record%s\n", nexp, value.Cond(nexp == 1, "", "s"))
 	return nil
 }
