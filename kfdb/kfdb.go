@@ -67,7 +67,7 @@ type Record struct {
 
 	// OldPassword, if non-empty, contains a previous passwords.  It is stored
 	// so password rotation can be reverted and avoid repetition.
-	OldPassword Strings `json:"oldPassword,omitempty" yaml:"old-password,omitempty"`
+	OldPassword Strings `json:"oldPassword,omitempty" yaml:"old-password,flow,omitempty"`
 
 	// OTP, if non-nil, is used to generate one-time 2FA codes.
 	OTP *otpauth.URL `json:"otp,omitzero" yaml:"otp,omitempty"`
