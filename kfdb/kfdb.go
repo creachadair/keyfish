@@ -122,6 +122,16 @@ func (a *array[T]) UnmarshalJSON(data []byte) error {
 	return json.Unmarshal(data, &(*a)[0])
 }
 
+// MarshalYAML implements yaml.Marshaler. If len(a) == 1, it marshals to the
+// single value a[0] by itself; otherwise it produces an array.
+func (a array[T]) MarshalYAML() (any, error) {
+	if len(a) == 1 {
+		return a[0], nil
+	}
+	type shim[T any] array[T]
+	return (shim[T])(a), nil
+}
+
 // UnmarshalYAML implements yaml.Unmarshaler. If the input is an array, it is
 // unmarshaled normally; otherwise it unmarshals a single value.
 func (a *array[T]) UnmarshalYAML(node *yaml.Node) error {
