@@ -51,10 +51,10 @@ type Record struct {
 	Username string `json:"username,omitzero" yaml:"username,omitempty"`
 
 	// Hosts are optional hostnames associated with this record.
-	Hosts Strings `json:"hosts,omitzero" yaml:"hosts,flow,omitempty"`
+	Hosts Strings `json:"hosts,omitempty" yaml:"hosts,flow,omitempty"`
 
 	// Addrs are e-mail addresses associated with this record.
-	Addrs Strings `json:"addrs,omitzero" yaml:"addrs,flow,omitempty"`
+	Addrs Strings `json:"addrs,omitempty" yaml:"addrs,flow,omitempty"`
 
 	// Tags are optional query tags associated with this record.
 	Tags []string `json:"tags,omitempty" yaml:"tags,flow,omitempty"`
@@ -65,9 +65,9 @@ type Record struct {
 	// Password, if non-empty, is a generated password.
 	Password string `json:"password,omitzero" yaml:"password,omitempty"`
 
-	// OldPassword, if non-empty, is a previous generated password.  It is
-	// stored so password rotation can preserve the previous value.
-	OldPassword string `json:"oldPassword,omitzero" yaml:"old-password,omitempty"`
+	// OldPassword, if non-empty, contains a previous passwords.  It is stored
+	// so password rotation can be reverted and avoid repetition.
+	OldPassword Strings `json:"oldPassword,omitempty" yaml:"old-password,omitempty"`
 
 	// OTP, if non-nil, is used to generate one-time 2FA codes.
 	OTP *otpauth.URL `json:"otp,omitzero" yaml:"otp,omitempty"`

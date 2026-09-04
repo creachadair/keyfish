@@ -123,8 +123,8 @@ func runRecordShow(env *command.Env, query string) error {
 		if rec.Password != "" {
 			rec.Password = "(hidden)"
 		}
-		if rec.OldPassword != "" {
-			rec.OldPassword = "(hidden)"
+		if len(rec.OldPassword) != 0 {
+			rec.OldPassword = kfdb.Strings{"(hidden)"}
 		}
 		if rec.OTP != nil {
 			rec.OTP.RawSecret = " HIDDEN "

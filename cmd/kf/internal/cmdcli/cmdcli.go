@@ -146,10 +146,10 @@ func runPW(env *command.Env, query string) error {
 		}
 		pw = res.Record.Details[dv].Value
 	} else if pwFlags.Old {
-		pw = res.Record.OldPassword
-		if pw == "" {
+		if len(res.Record.OldPassword) == 0 {
 			return fmt.Errorf("no previous password is saved for %q", res.Record.Label)
 		}
+		pw = res.Record.OldPassword[0]
 	} else if res.Record.Password != "" {
 		pw = res.Record.Password
 	} else {
@@ -250,7 +250,8 @@ func runRandom(env *command.Env, length string) error {
 	}
 
 	if r != nil {
-		r.OldPassword, r.Password = r.Password, pw
+		r.OldPassword = append(kfdb.Strings{r.Password}, r.OldPassword...)
+		r.Password = pw
 		fmt.Fprintf(env, "Setting password on record %q\n", r.Label)
 		if err := config.SaveDB(env, s); err != nil {
 			return err
